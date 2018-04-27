@@ -7,7 +7,7 @@ public class Match {
     private ArrayList<Player> players;
     private ArrayList<PublicObjective> publicObjectives;
     private ArrayList<Tool> tools;
-    private ArrayList<Dice> roundTrack;
+    private ArrayList<Die> roundTrack;
     private int round;
 
     public Match() { // Others starting objects? Maybe "Bag"?

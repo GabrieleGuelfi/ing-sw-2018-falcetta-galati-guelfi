@@ -2,23 +2,23 @@ package it.polimi.se2018;
 
 public class Bag extends DiceCollection {
 
-    final int sameColorDices = 18;
+    final int sameColourDices = 18;
 
     public void Bag() {
 
         int i;
 
-        for (i=0; i<sameColorDices; i++) {
-            addDiceOfColor('Red');
-            addDiceOfColor('Blue');
-            addDiceOfColor('Green');
-            addDiceOfColor('Yellow');
-            addDiceOfColor('Purple');
+        for (i=0; i<sameColourDices; i++) {
+            addDiceOfColour(Colour.RED);
+            addDiceOfColour(Colour.BLUE);
+            addDiceOfColour(Colour.GREEN);
+            addDiceOfColour(Colour.YELLOW);
+            addDiceOfColour(Colour.PURPLE);
         }
     }
 
-    private void addDiceOfColor(Color color) { // EXTRA-UML
-        this.bag.add(new Dice(color));
+    private void addDiceOfColour(Colour color) { // EXTRA-UML
+        this.addDice(new Die(color));
     }
 
 }

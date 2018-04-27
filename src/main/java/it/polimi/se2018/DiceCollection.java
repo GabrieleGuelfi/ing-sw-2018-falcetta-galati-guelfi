@@ -4,23 +4,23 @@ import java.util.*;
 
 public class DiceCollection {
 
-    private ArrayList<Dice> bag;
+    private ArrayList<Die> bag;
 
     public DiceCollection() {
-        this.bag = new ArrayList<Dice>;
+        this.bag = new ArrayList<Die>();
     }
 
-    public void addDice(Dice dice) {
-        this.bag.add(Dice);
+    public void addDice(Die die) {
+        this.bag.add(die);
     }
 
-    public void removeDice(Dice dice) {
-        int position = this.bag.indexOf(Dice);
+    public void removeDice(Die die) {
+        int position = this.bag.indexOf(die);
         this.bag.remove(position);
     }
 
-    public Dice extractRandomDice() {
+    /*public Die extractRandomDice() {
         // EXTRA-UML
-    }
+    } */
 
 }
