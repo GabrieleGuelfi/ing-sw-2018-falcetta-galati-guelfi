@@ -14,13 +14,12 @@ public class DiceCollection {
         this.bag.add(die);
     }
 
-    public void removeDice(Die die) {
-        int position = this.bag.indexOf(die);
-        this.bag.remove(position);
+    public Die removeDice(int position) {
+        return this.bag.remove(position);
     }
 
-    /*public Die extractRandomDice() {
-        // EXTRA-UML
-    } */
+    public int size() {
+        return bag.size();
+    }
 
 }

@@ -4,7 +4,9 @@ public class Bag extends DiceCollection {
 
     final int sameColourDices = 18;
 
-    public void Bag() {
+    public Bag() {
+
+        super();
 
         int i;
 
@@ -17,8 +19,8 @@ public class Bag extends DiceCollection {
         }
     }
 
-    private void addDiceOfColour(Colour color) { // EXTRA-UML
-        this.addDice(new Die(color));
+    private void addDiceOfColour(Colour colour) { // EXTRA-UML
+        this.addDice(new Die(colour));
     }
 
 }
