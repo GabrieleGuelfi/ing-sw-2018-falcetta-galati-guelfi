@@ -3,6 +3,7 @@ package it.polimi.se2018;
 import java.util.*;
 
 public class Match {
+
     private Bag bag;
     private ArrayList<Player> players;
     private ArrayList<PublicObjective> publicObjectives;
@@ -10,42 +11,23 @@ public class Match {
     private ArrayList<Die> roundTrack;
     private int round;
 
-    public Match() { // Others starting objects? Maybe "Bag"?
+    public Match(Bag bag, ArrayList<Player> players, ArrayList<PublicObjective> objectives) {
+        this.bag = bag;
+        this.players = players;
+        this.publicObjectives = objectives;
         this.round = 0;
+        this.roundTrack = new ArrayList<Die>();
     }
 
-    public void addPlayer(Player player) {
-        this.players.add(player);
+    public ArrayList<Player> getActivePlayers() {
+        return this.players; // Change with active ones!
     }
 
-    public void removePlayer(Player player) {
-        int position = this.players.indexOf(player);
-        this.players.remove(position);
+    public void nextRound() {
+        this.round++;
     }
 
-    public void addTool(Tool tool) {
-        this.tools.add(tool);
-    }
-
-    public void addPublicObjective(PublicObjective objective) {
-        this.publicObjectives.add(objective);
-    }
-
-    // Maybe these methods go in Controller?
-
-    public void startMatch() {
-
-    }
-
-    public void endMatch() {
-
-    }
-
-    public void prepareMatch() {
-
-    }
-
-    public void giveWindowsPattern() {
-
+    public Bag getBag() {
+        return bag;
     }
 }
