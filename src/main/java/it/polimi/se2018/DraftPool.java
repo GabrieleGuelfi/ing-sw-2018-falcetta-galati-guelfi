@@ -2,6 +2,8 @@ package it.polimi.se2018;
 
 import java.util.Random;
 
+// Shouldn't the random part go in Controller?
+
 public class DraftPool extends DiceCollection {
 
     public DraftPool(Bag bag, int n) {
