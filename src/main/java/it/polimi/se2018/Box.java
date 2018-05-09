@@ -18,7 +18,6 @@ public class Box {
     public Colour getColourRestriction() { return colourRestriction;}
 
     public void setDie(Die d){
-        if (d == null)  return; //Exception??
         die = d;
     }
 

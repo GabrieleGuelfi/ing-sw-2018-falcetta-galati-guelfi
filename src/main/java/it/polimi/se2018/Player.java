@@ -22,10 +22,8 @@ public class Player {
         this.privateObjective = privateObjective;
     }
 
-    public void setWindowPattern(WindowPattern windowPattern1, WindowPattern windowPattern2, WindowPattern windowPattern3) { //or array?
-
-        //WindowPattern userChoice = 1, 2, 3
-        this.windowPattern = userChoice;
+    public void setWindowPattern(WindowPattern windowPattern) {
+        this.windowPattern = windowPattern;
         setFavorTokens(windowPattern.getFavorTokens());
     }
 
@@ -41,7 +39,9 @@ public class Player {
         favorTokens = favorTokens - usage;
     }
 
-    public void setPoints() {}
+    public void setPoints(int points) {
+        this.points = points;
+    }
 
     public int getPoints() {
         return points;
