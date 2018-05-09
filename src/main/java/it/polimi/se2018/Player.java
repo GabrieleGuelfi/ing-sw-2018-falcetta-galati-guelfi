@@ -24,7 +24,7 @@ public class Player {
 
     public void setWindowPattern(WindowPattern windowPattern) {
         this.windowPattern = windowPattern;
-        setFavorTokens(windowPattern.getFavorTokens());
+        setFavorTokens(windowPattern.getDifficulty());
     }
 
     private void setFavorTokens(int favorTokens) { //in UML is public, but is necessary?
