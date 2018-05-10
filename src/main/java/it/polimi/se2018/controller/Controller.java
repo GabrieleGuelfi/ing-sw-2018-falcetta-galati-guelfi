@@ -1,6 +1,8 @@
 package it.polimi.se2018.controller;
 
+import com.sun.istack.internal.NotNull;
 import it.polimi.se2018.events.MoveDie;
+import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.view.View;
 
@@ -94,15 +96,75 @@ public class Controller implements Observer {
 
     }
 
+    private boolean verifyNear (WindowPattern windowPattern, int row, int column) {
+
+        if (windowPattern.getEmptyBox() == 20) {
+            return (row == 1 || row == 4 || column == 1 || column == 5);
+        }
+        for(int i = row-2; i < row+1; i++ ) {
+            for(int j = column-2; j < column+1; j++) {
+                if (i != row-1 || j != column-1) {
+                    try {
+                        if (windowPattern.getBox(i, j) != null)
+                            return true;
+                    } catch (OutOfWindowPattern e) {
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private boolean verifyColor(MoveDie m) {
 
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
-
-
+        try {
+            if (windowPattern.getBox(m.getRow(), m.getColumn()).getColourRestriction() != m.getDie().getColour() && windowPattern.getBox(m.getRow(), m.getColumn()).getColourRestriction() != Colour.WHITE)
+                return false;
+        } catch (OutOfWindowPattern e){}
+        try {
+            if (windowPattern.getBox(m.getRow() - 2, m.getColumn() - 1).getDie().getColour() == m.getDie().getColour()) //if null?
+                return false;
+        } catch (OutOfWindowPattern e) {}
+        try {
+            if (windowPattern.getBox(m.getRow() - 1, m.getColumn() - 2).getDie().getColour() == m.getDie().getColour())
+                return false;
+        } catch (OutOfWindowPattern e) {}
+        try {
+            if (windowPattern.getBox(m.getRow() - 1, m.getColumn()).getDie().getColour() == m.getDie().getColour())
+                return false;
+        } catch (OutOfWindowPattern e) {}
+        try {
+            if (windowPattern.getBox(m.getRow(), m.getColumn() - 1).getDie().getColour() == m.getDie().getColour())
+                return false;
+        } catch (OutOfWindowPattern e) {}
+        return true;
     }
 
     private boolean verifyNumber( MoveDie m) {
 
+        WindowPattern windowPattern = m.getPlayer().getWindowPattern();
+        try {
+            if (windowPattern.getBox(m.getRow(), m.getColumn()).getValueRestriction() != m.getDie().getValue() && windowPattern.getBox(m.getRow(), m.getColumn()).getValueRestriction() != -1) //-1 equals to no restriction
+                return false;
+        } catch (OutOfWindowPattern e){}
+        try {
+            if (windowPattern.getBox(m.getRow() - 2, m.getColumn() - 1).getDie().getValue() == m.getDie().getValue()) //if null?
+                return false;
+        } catch (OutOfWindowPattern e) {}
+        try {
+            if (windowPattern.getBox(m.getRow() - 1, m.getColumn() - 2).getDie().getValue() == m.getDie().getValue())
+                return false;
+        } catch (OutOfWindowPattern e) {}
+        try {
+            if (windowPattern.getBox(m.getRow() - 1, m.getColumn()).getDie().getValue() == m.getDie().getValue())
+                return false;
+        } catch (OutOfWindowPattern e) {}
+        try {
+            if (windowPattern.getBox(m.getRow(), m.getColumn() - 1).getDie().getValue() == m.getDie().getValue())
+                return false;
+        } catch (OutOfWindowPattern e) {}
+        return true;
     }
 
     private void calcResults() {
