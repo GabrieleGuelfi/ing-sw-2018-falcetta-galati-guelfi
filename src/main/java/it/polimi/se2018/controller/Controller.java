@@ -1,8 +1,8 @@
-package it.polimi.se2018.Controller;
+package it.polimi.se2018.controller;
 
-import it.polimi.se2018.*;
-import it.polimi.se2018.Events.MoveDie;
-import it.polimi.se2018.View.View;
+import it.polimi.se2018.events.MoveDie;
+import it.polimi.se2018.model.*;
+import it.polimi.se2018.view.View;
 
 import java.util.*;
 

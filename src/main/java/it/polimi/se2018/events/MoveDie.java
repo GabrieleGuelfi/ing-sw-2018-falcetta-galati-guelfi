@@ -1,7 +1,6 @@
-package it.polimi.se2018.Events;
+package it.polimi.se2018.events;
 
-import it.polimi.se2018.Die;
-import it.polimi.se2018.Player;
+import it.polimi.se2018.model.*;
 
 public class MoveDie {
 

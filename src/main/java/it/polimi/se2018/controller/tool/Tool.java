@@ -1,4 +1,6 @@
-package it.polimi.se2018;
+package it.polimi.se2018.controller.tool;
+
+import it.polimi.se2018.model.*;
 
 public abstract class Tool {
 
@@ -17,4 +19,8 @@ public abstract class Tool {
     public void firstUse() {
         this.used = true;
     }
-}
+
+    public abstract void use(Match match, Player player);
+
+    }
+
