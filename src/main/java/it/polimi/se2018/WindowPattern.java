@@ -4,13 +4,13 @@ import java.util.*;
 
 public class WindowPattern {
 
-    private Box[][] grid ;
+    private Box[][] grid;
     private int difficulty;
     private int emptyBox;
 
     public WindowPattern(int difficulty){
 
-        grid = new Box[5][4];
+        grid = new Box[4][5];
         this.difficulty = difficulty;
         //placedDie = new Die[16];
         emptyBox = 20;
@@ -20,13 +20,13 @@ public class WindowPattern {
 
     public int getDifficulty() { return (difficulty); }
 
-    public int getWhiteBox(){ return emptyBox;}
+    public int getEmptyBox(){ return emptyBox;}
 
-    public void putDice(Die d, Box b){
+    public void putDice(Die d, int row, int column){
         //if (d == null) return; //Exception??
         //if (b == null) return; //Exception??
 
-        b.setDie(d);
+        grid[row][column].setDie(d);
         decreaseEmptyBox();
 
     }

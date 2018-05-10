@@ -14,8 +14,32 @@ public class Player {
 
     private int points;
 
+    private boolean placedDie;
+
+    private boolean usedTool;
+
     Player(String nickname) {
         this.nickname = nickname;
+    }
+
+    public boolean isUsedTool() {
+        return usedTool;
+    }
+
+    public boolean isPlacedDie() {
+        return placedDie;
+    }
+
+    public void setPlacedDie(boolean placedDie) {
+        this.placedDie = placedDie;
+    }
+
+    public void setUsedTool(boolean usedTool) {
+        this.usedTool = usedTool;
+    }
+
+    public WindowPattern getWindowPattern() {
+        return windowPattern;
     }
 
     public void setPrivateObjective(PrivateObjective privateObjective) {
