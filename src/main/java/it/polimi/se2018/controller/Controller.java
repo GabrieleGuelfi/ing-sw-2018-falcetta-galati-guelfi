@@ -60,13 +60,13 @@ public class Controller implements Observer {
             match.getActivePlayers().get(i).setUsedTool(false);
             //update(view, new MoveDie(player, row, column)); //verify correct use
 
-            manageMove(match.getActivePlayers().get(i)); //two moves per turn, but only one per type, how we can manage this?
-            manageMove(match.getActivePlayers().get(i));
+            //manageMove(match.getActivePlayers().get(i)); //two moves per turn, but only one per type, how we can manage this?
+            //manageMove(match.getActivePlayers().get(i));
         }
         for(i=match.getActivePlayers().size(); i>=0 ; i--) { //ritorno
             currentRound.setPlayerTurn(match.getActivePlayers().get(i));
-            manageMove(match.getActivePlayers().get(i)); //two moves per turn
-            manageMove(match.getActivePlayers().get(i));
+            //manageMove(match.getActivePlayers().get(i)); //two moves per turn
+            //manageMove(match.getActivePlayers().get(i));
         }
 
     }
@@ -97,11 +97,13 @@ public class Controller implements Observer {
     private boolean verifyColor(MoveDie m) {
 
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
+        return true; // Made for avoid errors
 
 
     }
 
     private boolean verifyNumber( MoveDie m) {
+        return true; // Made for avoid errors
 
     }
 
@@ -109,4 +111,8 @@ public class Controller implements Observer {
         
     }
 
+    @Override
+    public void update(Observable observable, Object o) {
+
+    }
 }

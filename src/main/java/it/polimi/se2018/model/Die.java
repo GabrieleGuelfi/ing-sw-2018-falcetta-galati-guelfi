@@ -12,6 +12,9 @@ public class Die {
     private Random generator;
 
     public Die(Colour c){
+        if ((c!=Colour.BLUE) && (c!=Colour.PURPLE) && (c!=Colour.GREEN) && (c!=Colour.RED) && (c!=Colour.YELLOW )) {
+           throw new IllegalArgumentException("Colour not supported!");
+        }
         colour = c;
         value = -1;
         generator = new Random();
@@ -19,7 +22,14 @@ public class Die {
 
     public int getValue(){ return value;  }
     public Colour getColour(){ return colour;}
-    public void setValue(int n) {value = n;}
+
+    public void setValue(int n) {
+        if ((n < 1) || (n > 6)) {
+            throw new IllegalArgumentException("Value not allowed!");
+        }
+        value = n;
+        }
+
     public void setRandomValue() { value = generator.nextInt(6) + 1;}
 
 }
