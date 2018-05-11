@@ -1,13 +1,12 @@
-package it.polimi.se2018.View;
+package it.polimi.se2018.view;
 
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.controller.tool.*;
 import it.polimi.se2018.events.*;
-import it.polimi.se2018.controller.*;
-import java.util.*;
-import it.polimi.se2018.view.View;
 
-import static it.polimi.se2018.View.TypeDecision.*;
+import java.util.*;
+
+import static it.polimi.se2018.view.TypeDecision.*;
 
 
 public class Decision  {

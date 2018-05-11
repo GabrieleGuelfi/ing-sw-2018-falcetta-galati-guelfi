@@ -1,16 +1,12 @@
 package it.polimi.se2018.view;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-import it.polimi.se2018.View.Decision;
-import it.polimi.se2018.View.MessageNewTurn;
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.controller.*;
-import it.polimi.se2018.events.*;
 
 public class View extends Observable implements Observer{
 
