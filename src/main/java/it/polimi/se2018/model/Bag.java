@@ -2,7 +2,7 @@ package it.polimi.se2018.model;
 
 public class Bag extends DiceCollection {
 
-    final int sameColourDices = 18;
+    private static final int SAME_COLOUR_DICE = 18;
 
     public Bag() {
 
@@ -10,7 +10,7 @@ public class Bag extends DiceCollection {
 
         int i;
 
-        for (i=0; i<sameColourDices; i++) {
+        for (i=0; i<SAME_COLOUR_DICE; i++) {
             addDieOfColour(Colour.RED);
             addDieOfColour(Colour.BLUE);
             addDieOfColour(Colour.GREEN);
