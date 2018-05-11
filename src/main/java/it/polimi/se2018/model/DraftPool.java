@@ -15,5 +15,4 @@ public class DraftPool extends DiceCollection {
             addDice(die);
         }
     }
-
 }
