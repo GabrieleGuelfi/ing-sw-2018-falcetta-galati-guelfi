@@ -27,6 +27,7 @@ public class View extends Observable implements Observer{
         }
         else{
               view = new View(c, m);
+              return view;
         }
     }
 
@@ -49,4 +50,8 @@ public class View extends Observable implements Observer{
     }
 
 
+    @Override
+    public void update(Observable observable, Object o) {
+
+    }
 }

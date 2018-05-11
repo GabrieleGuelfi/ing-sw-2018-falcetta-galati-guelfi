@@ -11,16 +11,16 @@ public class Bag extends DiceCollection {
         int i;
 
         for (i=0; i<sameColourDices; i++) {
-            addDiceOfColour(Colour.RED);
-            addDiceOfColour(Colour.BLUE);
-            addDiceOfColour(Colour.GREEN);
-            addDiceOfColour(Colour.YELLOW);
-            addDiceOfColour(Colour.PURPLE);
+            addDieOfColour(Colour.RED);
+            addDieOfColour(Colour.BLUE);
+            addDieOfColour(Colour.GREEN);
+            addDieOfColour(Colour.YELLOW);
+            addDieOfColour(Colour.PURPLE);
         }
     }
 
-    private void addDiceOfColour(Colour colour) { // EXTRA-UML
-        this.addDice(new Die(colour));
+    private void addDieOfColour(Colour colour) { // EXTRA-UML
+        this.addDie(new Die(colour));
     }
 
 }

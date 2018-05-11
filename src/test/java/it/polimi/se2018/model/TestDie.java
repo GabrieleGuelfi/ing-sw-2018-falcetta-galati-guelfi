@@ -5,51 +5,43 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class DieTest {
+public class TestDie {
 
     @Test
     public void testConstructorPositive() {
 
         Die die = null;
-        try {
-            die = new Die(Colour.BLUE); }
-        catch(IllegalArgumentException e) {
-            fail("Illegal argument");
+
+        for(Colour c: Colour.values()) {
+            die = new Die(c);
+
+            assertEquals(c, die.getColour());
+
+            assertEquals(-1, die.getValue());
+
+            die = null;
         }
 
-        assertEquals(Colour.BLUE, die.getColour());
 
-        assertEquals(-1, die.getValue());
+    }
 
-        }
+
     @Test
     public void testSetValuePositive() {
 
         Die die = new Die(Colour.BLUE);
         assertEquals(-1, die.getValue());
 
-        die.setValue(1);
-        assertEquals(1, die.getValue());
-
-        die.setValue(2);
-        assertEquals(2, die.getValue());
-
-        die.setValue(3);
-        assertEquals(3, die.getValue());
-
-        die.setValue(4);
-        assertEquals(4, die.getValue());
-
-        die.setValue(5);
-        assertEquals(5, die.getValue());
-
-        die.setValue(6);
-        assertEquals(6, die.getValue());
+        int i;
+        for(i=1; i<7; i++) {
+            die.setValue(i);
+            assertEquals(i, die.getValue());
+        }
 
     }
 
     @Test
-    public void testSetValueNegative() {
+    public void testSetValueNegativeInf() {
         Die die = new Die(Colour.BLUE);
 
         try {
@@ -61,6 +53,22 @@ public class DieTest {
 
         fail();
     }
+
+    @Test
+    public void testSetValueNegativeSup() {
+        Die die = new Die(Colour.BLUE);
+
+        try {
+            die.setValue(7);
+        }
+        catch(IllegalArgumentException e) {
+            return;
+        }
+
+        fail();
+    }
+
+
 
     @Test
     public void testRandomValue() {

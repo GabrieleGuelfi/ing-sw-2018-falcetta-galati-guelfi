@@ -7,14 +7,14 @@ public class DiceCollection {
     private ArrayList<Die> bag;
 
     public DiceCollection() {
-        this.bag = new ArrayList<Die>();
+        this.bag = new ArrayList<>();
     }
 
-    public void addDice(Die die) {
+    public void addDie(Die die) {
         this.bag.add(die);
     }
 
-    public Die removeDice(int position) {
+    public Die removeDie(int position) {
         return this.bag.remove(position);
     }
 
