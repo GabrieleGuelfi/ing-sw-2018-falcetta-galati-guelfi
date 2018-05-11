@@ -35,11 +35,11 @@ public class BoxTest {
     }
 
     @Test
-    public void TestsetDie() {
+    public void testsetDie() {
         Box box = new Box(3, Colour.BLUE);
         Die die = new Die(Colour.BLUE);
         box.setDie(die);
         assertEquals(die, box.getDie());
     }
-    
+
 }
