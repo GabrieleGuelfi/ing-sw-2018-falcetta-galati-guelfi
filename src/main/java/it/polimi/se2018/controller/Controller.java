@@ -142,7 +142,6 @@ public class Controller implements Observer {
     }
 
     private boolean verifyNumber( MoveDie m) {
-        return true; // Made for avoid errors
 
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
         try {

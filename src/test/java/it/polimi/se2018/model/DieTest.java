@@ -1,11 +1,9 @@
 package it.polimi.se2018.model;
 
-import static it.polimi.se2018.model.Colour.BLUE;
-
-import org.junit.AfterClass;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class DieTest {
 
