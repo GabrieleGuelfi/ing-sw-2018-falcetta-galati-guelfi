@@ -12,7 +12,7 @@ public abstract class Tool {
         return description;
     }
 
-    public boolean getUsed() {
+    public boolean isUsed() {
         return used;
     }
 

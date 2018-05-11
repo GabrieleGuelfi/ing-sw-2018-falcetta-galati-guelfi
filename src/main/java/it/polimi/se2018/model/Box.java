@@ -8,8 +8,8 @@ public class Box {
 
     public Box(int n, Colour c){
 
-        valueRestriction = n; //Exception??
-        colourRestriction = c; //Exception??
+        valueRestriction = n; //exceptions??
+        colourRestriction = c; //exceptions??
 
     }
 
@@ -21,6 +21,6 @@ public class Box {
         die = d;
     }
 
-    public Die getDie(){ return die;} //Exception??
+    public Die getDie(){ return die;} //exceptions??
 
 }
