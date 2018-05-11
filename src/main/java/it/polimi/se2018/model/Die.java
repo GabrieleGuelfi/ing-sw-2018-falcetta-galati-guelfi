@@ -12,7 +12,7 @@ public class Die {
     private Random generator;
 
     public Die(Colour c){
-        if ((c!=Colour.BLUE) && (c!=Colour.PURPLE) && (c!=Colour.GREEN) && (c!=Colour.RED) && (c!=Colour.YELLOW )) {
+        if ((c!=Colour.BLUE) && (c!=Colour.PURPLE) && (c!=Colour.GREEN) && (c!=Colour.RED) && (c!=Colour.YELLOW ) && (c!=Colour.WHITE)) {
            throw new IllegalArgumentException("Colour not supported!");
         }
         colour = c;

@@ -62,18 +62,18 @@ public class Controller implements Observer {
             match.getActivePlayers().get(i).setUsedTool(false);
             //update(view, new MoveDie(player, row, column)); //verify correct use
 
-            //manageMove(match.getActivePlayers().get(i)); //two moves per turn, but only one per type, how we can manage this?
-            //manageMove(match.getActivePlayers().get(i));
+            //manageMoveDie(match.getActivePlayers().get(i)); //two moves per turn, but only one per type, how we can manage this?
+            //manageMoveDie(match.getActivePlayers().get(i));
         }
         for(i=match.getActivePlayers().size(); i>=0 ; i--) { //ritorno
             currentRound.setPlayerTurn(match.getActivePlayers().get(i));
-            //manageMove(match.getActivePlayers().get(i)); //two moves per turn
-            //manageMove(match.getActivePlayers().get(i));
+            //manageMoveDie(match.getActivePlayers().get(i)); //two moves per turn
+            //manageMoveDie(match.getActivePlayers().get(i));
         }
 
     }
 
-    private void manageMove(MoveDie m) { //better manageMovedie(MoveDie m)
+    private void manageMoveDie(MoveDie m) { //better manageMovedie(MoveDie m)
         if (m.getPlayer().isPlacedDie()) { //maybe we can place this in manageRound
             //notify(view, "die already placed")
             return;
@@ -82,21 +82,33 @@ public class Controller implements Observer {
             //error input not valid
             return;
         }
-        if (m.getPlayer().getWindowPattern().getEmptyBox() == 20) {
-            if ( m.getColumn() == 1 || m.getColumn() == 5 || m.getRow() == 1 || m.getRow() == 4 )
-            if (!verifyColor(m))
-                //error
-                return;
-            if (!verifyNumber(m))
-                //error
-                return;
+        if (verifyNear(m) && verifyColor(m) && verifyNumber(m)){
             m.getPlayer().getWindowPattern().putDice(m.getDie(), m.getRow(), m.getColumn());
             return;
         }
-
+        //3 if for search the restrictions violated and notify all to users
+        if (!verifyNear(m)) {
+            //error
+        }
+        if (!verifyColor(m)) {
+            //error
+        }
+        if (!verifyNumber(m)) {
+            //error
+        }
+        return;
     }
 
-    private boolean verifyNear (WindowPattern windowPattern, int row, int column) {
+    /**
+     * Verify if there is another Die near the position chosen by user
+     * @param m move performed by user
+     * @return false if there is another die near
+     */
+    private boolean verifyNear (MoveDie m) {
+
+        WindowPattern windowPattern = m.getPlayer().getWindowPattern();
+        int row = m.getRow();
+        int column = m.getColumn();
 
         if (windowPattern.getEmptyBox() == 20) {
             return (row == 1 || row == 4 || column == 1 || column == 5);
@@ -115,32 +127,42 @@ public class Controller implements Observer {
         return false;
     }
 
+    /**
+     * verify if there is another Die with the same colour near, or if there is colourRestriction in the Box
+     * @param m move performed by user
+     * @return false if Die break colour restriction
+     */
     private boolean verifyColor(MoveDie m) {
 
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
         try {
             if (windowPattern.getBox(m.getRow(), m.getColumn()).getColourRestriction() != m.getDie().getColour() && windowPattern.getBox(m.getRow(), m.getColumn()).getColourRestriction() != Colour.WHITE)
                 return false;
-        } catch (OutOfWindowPattern e){}
+        } catch (OutOfWindowPattern | NullPointerException e){}
         try {
-            if (windowPattern.getBox(m.getRow() - 2, m.getColumn() - 1).getDie().getColour() == m.getDie().getColour()) //if null?
+            if (windowPattern.getBox(m.getRow() - 2, m.getColumn() - 1).getDie().getColour() == m.getDie().getColour())
                 return false;
-        } catch (OutOfWindowPattern e) {}
+        } catch (OutOfWindowPattern | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow() - 1, m.getColumn() - 2).getDie().getColour() == m.getDie().getColour())
                 return false;
-        } catch (OutOfWindowPattern e) {}
+        } catch (OutOfWindowPattern | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow() - 1, m.getColumn()).getDie().getColour() == m.getDie().getColour())
                 return false;
-        } catch (OutOfWindowPattern e) {}
+        } catch (OutOfWindowPattern | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow(), m.getColumn() - 1).getDie().getColour() == m.getDie().getColour())
                 return false;
-        } catch (OutOfWindowPattern e) {}
+        } catch (OutOfWindowPattern | NullPointerException e) {}
         return true;
     }
 
+    /**
+     * verify if there is another Die with the same number near, or if there is numberRestriction in the Box
+     * @param m move performed by user
+     * @return false if Die break number restriction
+     */
     private boolean verifyNumber( MoveDie m) {
 
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
