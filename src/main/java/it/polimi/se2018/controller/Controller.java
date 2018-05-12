@@ -1,12 +1,15 @@
 package it.polimi.se2018.controller;
 
 
+import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.MoveDie;
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.view.View;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 public class Controller implements Observer {
 
@@ -20,8 +23,9 @@ public class Controller implements Observer {
 
         ArrayList<PublicObjective> objectives = new ArrayList<PublicObjective>(); // Here we should have the real Public Objectives...
 
+        ArrayList<Tool> tools = new ArrayList<>();
         // Create the match...
-        this.match = new Match(new Bag(), players, objectives);
+        this.match = new Match(new Bag(), players, objectives, tools);
 
         for(Player player: match.getActivePlayers()) {
             givePrivateObjective(player);
