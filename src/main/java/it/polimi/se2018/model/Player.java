@@ -68,4 +68,8 @@ public class Player {
     public int getPoints() {
         return points;
     }
+
+    public PrivateObjective getPrivateObjective() {
+        return this.privateObjective;
+    }
 }

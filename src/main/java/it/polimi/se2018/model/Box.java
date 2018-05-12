@@ -8,8 +8,10 @@ public class Box {
 
     public Box(int n, Colour c){
 
-        valueRestriction = n; //exceptions??
-        colourRestriction = c; //exceptions??
+        if(n<1 || n>6) throw new IllegalArgumentException("Invalid value restriction!");
+        valueRestriction = n;
+
+        colourRestriction = c;
 
     }
 
