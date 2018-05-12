@@ -7,6 +7,7 @@ import java.util.Observer;
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.controller.*;
+import it.polimi.se2018.model.publicObjective.PublicObjective;
 
 public class View extends Observable implements Observer{
 

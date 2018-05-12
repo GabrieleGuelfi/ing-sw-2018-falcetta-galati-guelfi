@@ -1,8 +1,21 @@
 package it.polimi.se2018.model;
 
-public class PrivateObjective extends Objective{
+public class PrivateObjective {
 
-    PrivateObjective(String description) {
+    private Colour shade;
+
+    protected String description;
+
+    public PrivateObjective(String description, Colour shade) {
         this.description = description;
+        this.shade = shade;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Colour getShade() {
+        return shade;
     }
 }

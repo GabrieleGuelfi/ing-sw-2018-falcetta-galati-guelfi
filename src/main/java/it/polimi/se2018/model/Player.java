@@ -18,6 +18,7 @@ public class Player {
 
     Player(String nickname) {
         this.nickname = nickname;
+        points = 0;
     }
 
     public boolean isUsedTool() {
@@ -61,8 +62,8 @@ public class Player {
         favorTokens = favorTokens - usage;
     }
 
-    public void setPoints(int points) {
-        this.points = points;
+    public void addPoints(int points) {
+        this.points = this.points + points;
     }
 
     public int getPoints() {
