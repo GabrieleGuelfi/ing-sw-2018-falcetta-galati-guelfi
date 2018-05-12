@@ -1,22 +1,23 @@
 package it.polimi.se2018.view;
 
+import it.polimi.se2018.controller.Controller;
+import it.polimi.se2018.controller.tool.Tool;
+import it.polimi.se2018.model.Match;
+import it.polimi.se2018.model.Player;
+import it.polimi.se2018.model.dicecollection.DiceCollection;
+import it.polimi.se2018.model.dicecollection.DraftPool;
+import it.polimi.se2018.model.publicObjective.PublicObjective;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 
-import it.polimi.se2018.controller.tool.Tool;
-import it.polimi.se2018.model.*;
-import it.polimi.se2018.controller.*;
-import it.polimi.se2018.model.dicecollection.DiceCollection;
-import it.polimi.se2018.model.dicecollection.DraftPool;
-import it.polimi.se2018.model.publicObjective.PublicObjective;
-
 /**
  * Class View is the representation of the Model.
  * Handle the comunication with Controller through class MessageNewTurn and with Model through MessageUpdate.
  * View is a Singleton.
- * @Author Federico Galati
+ * @author Federico Galati
  *
  *
  */

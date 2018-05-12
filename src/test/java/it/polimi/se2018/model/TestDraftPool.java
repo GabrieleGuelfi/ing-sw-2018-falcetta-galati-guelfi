@@ -23,6 +23,7 @@ public class TestDraftPool {
         int yellowDice=0;
 
         Bag bag = new Bag();
+        bag.populateBag();
         assertEquals(90, bag.size());
         Die die;
 
@@ -63,12 +64,9 @@ public class TestDraftPool {
     @Test
     public void testConstructorNegativeBag() {
         Bag bag = new Bag();
+
         DraftPool draftPool;
         int i;
-
-        for(i=0; i<90; i++) {
-            bag.removeDie(0);
-        }
 
         try {
             draftPool = new DraftPool(bag, PLAYERS_NUMBER);
@@ -97,6 +95,7 @@ public class TestDraftPool {
     @Test
     public void testConstructorNegativePlayersNumberInf() {
         Bag bag = new Bag();
+        bag.populateBag();
         DraftPool draftPool;
 
         try {
@@ -112,6 +111,7 @@ public class TestDraftPool {
     @Test
     public void testConstructorNegativePlayersNumberSup() {
         Bag bag = new Bag();
+        bag.populateBag();
         DraftPool draftPool;
 
         try {
@@ -126,6 +126,8 @@ public class TestDraftPool {
 
     @Test
     public void testCopy() {
+        int i;
+
         Bag bag = new Bag();
         bag.populateBag();
         DraftPool dp = new DraftPool(bag, 4);
@@ -136,7 +138,7 @@ public class TestDraftPool {
         assertNotEquals(dp, dp1);
         assertEquals(dp.size(), dp1.size());
 
-        for(int i=0; i<9; i++) {
+        for(i=0; i<9; i++) {
             Die temp = dp.removeDie(0);
             Die temp2 = dp1.removeDie(0);
             assertEquals(temp.getColour(), temp2.getColour());

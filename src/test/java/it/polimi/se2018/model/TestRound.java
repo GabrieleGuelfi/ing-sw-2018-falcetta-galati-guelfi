@@ -10,6 +10,7 @@ public class TestRound {
     @Test
     public void testConstructorPositive() {
         Bag bag = new Bag();
+        bag.populateBag();
         DraftPool draftPool = new DraftPool(bag, 4);
         Player player = new Player("foo");
 
@@ -38,6 +39,7 @@ public class TestRound {
     public void testConstructorNegativePlayer() {
 
         Bag bag = new Bag();
+        bag.populateBag();
         DraftPool draftPool = new DraftPool(bag, 4);
         Player player = null;
 
@@ -53,6 +55,7 @@ public class TestRound {
     @Test
     public void testSetPlayerTurn() {
         Bag bag = new Bag();
+        bag.populateBag();
         DraftPool draftPool = new DraftPool(bag, 4);
         Player player = new Player("foo");
 

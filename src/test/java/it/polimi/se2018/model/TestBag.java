@@ -9,6 +9,12 @@ public class TestBag {
 
     @Test
     public void testConstructor() {
+        Bag bag = new Bag();
+        assertEquals(0, bag.size());
+    }
+
+    @Test
+    public void testPopulateBag() {
 
         final int sameColourDices = 18;
 
@@ -16,6 +22,7 @@ public class TestBag {
 
         Bag bag;
         bag = new Bag();
+        bag.populateBag();
         Die die;
 
         int redDice = 0;
@@ -47,6 +54,8 @@ public class TestBag {
 
     @Test
     public void testCopy() {
+        int i;
+
         Bag bag = new Bag();
         bag.populateBag();
 
@@ -55,7 +64,7 @@ public class TestBag {
         assertNotEquals(bag, bag1);
         assertEquals(bag.size(), bag1.size());
 
-        for(int i=0; i<89; i++) {
+        for(i=0; i<89; i++) {
             Die temp = bag.removeDie(0);
             Die temp2 = bag1.removeDie(0);
             assertEquals(temp.getColour(), temp2.getColour());
