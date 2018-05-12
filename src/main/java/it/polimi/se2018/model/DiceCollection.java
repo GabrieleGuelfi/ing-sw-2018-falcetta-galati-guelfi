@@ -22,4 +22,14 @@ public class DiceCollection {
         return bag.size();
     }
 
+    public DiceCollection copy(){
+        DiceCollection d = new DiceCollection();
+        for(Die x : this.bag){
+
+            d.bag.add(x.copy());
+        }
+        return d;
+
+    }
+
 }

@@ -73,4 +73,24 @@ public class Player {
     public PrivateObjective getPrivateObjective() {
         return this.privateObjective;
     }
+
+
+    //MISS THE COPY OF OBJECTIVE
+
+    /**
+     *
+     * @return Copy of this Object
+     */
+    public Player copy(){
+        Player playerCopy = new Player(this.nickname);
+
+        playerCopy.favorTokens = this.favorTokens;
+        playerCopy.windowPattern = this.windowPattern.copy();
+        playerCopy.points = this.points;
+        playerCopy.placedDie = this.placedDie;
+        playerCopy.usedTool = this.usedTool;
+
+        return playerCopy;
+    }
+
 }

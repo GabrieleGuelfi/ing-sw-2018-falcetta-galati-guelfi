@@ -1,6 +1,7 @@
 package it.polimi.se2018.view;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -9,17 +10,27 @@ import it.polimi.se2018.model.*;
 import it.polimi.se2018.controller.*;
 import it.polimi.se2018.model.publicObjective.PublicObjective;
 
+/**
+ * Class View is the representation of the Model.
+ * Handle the comunication with Controller through class MessageNewTurn and with Model through MessageUpdate.
+ * View is a Singleton.
+ * @Author Federico Galati
+ *
+ *
+ */
 public class View extends Observable implements Observer{
+
 
     private static Controller controller;
     private static Match match;
     private static View view = null;
 
     private ArrayList<Player> player;
-    private DraftPool draftPool;
+    private DiceCollection draftPool;
     private ArrayList<Tool> tool;
     private ArrayList<PublicObjective> publicObjective;
-    private Round round;
+
+    private Decision currentDecision;
 
     public static View getView(Controller c, Match m){
 
@@ -33,11 +44,15 @@ public class View extends Observable implements Observer{
     }
 
     private View(Controller c, Match m){
-        //RICORDARSI DI FARE CORRETTAMENTE TUTTE GLI ADDOBSERVER
-
+        //REMEMBER TO ADD COPY ON TOOL AND OBJECTIVE.
 
         controller = c;
         match = m;
+
+        for(Player playerMatch : match.getPlayers()) {
+
+            this.player.add(playerMatch.copy()); //Copy of all players.
+        }
 
         //ADD ALL OBSERVER
         this.addObserver(controller);
@@ -46,13 +61,31 @@ public class View extends Observable implements Observer{
 
     //UPDATE WHEN CONTROLLER NOTIFY NEW PLAYERTURN
 
-    void update(MessageNewTurn sms, Player player){
-        Decision d= new Decision(player, this);
+    private void update(MessageNewTurn sms, Player p){
+        currentDecision = new Decision(p, this);
     }
 
+    private void update(MessageUpdate sms, Player playerUpdated){
+        Iterator<Player> playerIterator = player.iterator();
+        //if (player.isEmpty())
+        do{
+            Player p = playerIterator.next();
+            if(p.equals(playerUpdated)) {
+                p = playerUpdated.copy();
+                player.add(p);
+                playerIterator.remove();
+                break;
+            }
+        }while(playerIterator.hasNext());
 
-    @Override
+
+    }
+
+    private void update(MessageUpdate sms, DraftPool d){ draftPool = d.copy();}
+
     public void update(Observable observable, Object o) {
 
     }
+
+
 }

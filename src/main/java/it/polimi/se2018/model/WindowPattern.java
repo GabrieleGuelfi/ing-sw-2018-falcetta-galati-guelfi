@@ -25,8 +25,6 @@ public class WindowPattern {
     public int getEmptyBox(){ return emptyBox;}
 
     public void putDice(Die d, int row, int column){
-        //if (d == null) return; //exceptions??
-        //if (b == null) return; //exceptions??
 
         grid[row][column].setDie(d);
         decreaseEmptyBox();
@@ -43,5 +41,21 @@ public class WindowPattern {
         return grid[row][column];
     }
 
+    /**
+     *
+     * @return Copy of this Object
+     */
+    public WindowPattern copy(){
+
+        WindowPattern w = new WindowPattern(this.difficulty);
+        w.emptyBox = this.emptyBox;
+        for(int i = 0; i<4; i++){
+            for(int j = 0; j<5; j++){
+                w.grid[i][j] = this.grid[i][j].copy();
+            }
+        }
+
+        return w;
+    }
 }
 
