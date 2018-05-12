@@ -8,6 +8,8 @@ public class Round {
 
     public Round(DraftPool dp, Player p) {
 
+        if((dp==null) || (p==null)) throw new IllegalArgumentException("Arguments can't be null!");
+
         draftPool = dp;
         playerTurn = p;
 
