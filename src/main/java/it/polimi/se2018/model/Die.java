@@ -60,6 +60,10 @@ public class Die {
 
     public void setRandomValue() { value = generator.nextInt(6) + 1;}
 
+    /**
+     *
+     * @return Copy of this Object
+     */
     public Die copy(){
         Die d = new Die(this.colour);
         d.value = this.value;

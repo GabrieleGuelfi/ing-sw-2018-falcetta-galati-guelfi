@@ -39,6 +39,10 @@ public class WindowPattern {
         return grid[row][column];
     }
 
+    /**
+     *
+     * @return Copy of this Object
+     */
     public WindowPattern copy(){
 
         WindowPattern w = new WindowPattern(this.difficulty);

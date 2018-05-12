@@ -25,6 +25,10 @@ public class Box {
 
     public Die getDie(){ return die;}
 
+    /**
+     *
+     * @return Copy of this Object.
+     */
     public Box copy(){
 
         Box b = new Box(this.valueRestriction, this.colourRestriction);
