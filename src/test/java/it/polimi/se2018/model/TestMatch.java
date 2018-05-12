@@ -1,14 +1,13 @@
 package it.polimi.se2018.model;
 
 import it.polimi.se2018.controller.tool.Tool;
-import it.polimi.se2018.model.publicobjective.PublicObjective;
+import it.polimi.se2018.model.dicecollection.Bag;
+import it.polimi.se2018.model.publicObjective.PublicObjective;
 import org.junit.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class TestMatch {
 
@@ -127,6 +126,29 @@ public class TestMatch {
     }
 
     @Test
+    public void testDeactivatePlayerNegative() {
+        Bag bag=new Bag();
+        ArrayList<Player> players = new ArrayList<>();
+        ArrayList<PublicObjective> objectives = new ArrayList<>();
+        ArrayList<Tool> tools = new ArrayList<>();
+
+        Player player = new Player("foo");
+
+        Match match = new Match(bag, players, objectives, tools);
+
+        assertFalse(match.getActivePlayers().contains(player));
+        assertTrue(match.getPlayers().isEmpty());
+
+        try {
+            match.deactivatePlayer(player);
+        }
+        catch(IllegalArgumentException e) {
+            return;
+        }
+        fail();
+    }
+
+    @Test
     public void testActivatePlayer() {
 
         Bag bag=new Bag();
@@ -150,6 +172,29 @@ public class TestMatch {
         assertTrue(match.getActivePlayers().contains(player));
         assertTrue(match.getPlayers().isEmpty());
 
+    }
+
+    @Test
+    public void testActivatePlayerNegative() {
+        Bag bag=new Bag();
+        ArrayList<Player> players = new ArrayList<>();
+        ArrayList<PublicObjective> objectives = new ArrayList<>();
+        ArrayList<Tool> tools = new ArrayList<>();
+
+        Player player = new Player("foo");
+
+        Match match = new Match(bag, players, objectives, tools);
+
+        assertFalse(match.getActivePlayers().contains(player));
+        assertTrue(match.getPlayers().isEmpty());
+
+        try {
+            match.activatePlayer(player);
+        }
+        catch(IllegalArgumentException e) {
+            return;
+        }
+        fail();
     }
 
     @Test

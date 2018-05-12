@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class BoxTest {
+public class TestBox {
 
     @Test
     public void testConstructorPositive() {
@@ -42,4 +42,27 @@ public class BoxTest {
         assertEquals(die, box.getDie());
     }
 
+    @Test
+    public void testCopy() {
+        Box box = new Box(4, Colour.BLUE);
+        Box box1=null;
+
+        Die die = new Die(Colour.BLUE);
+        die.setRandomValue();
+
+        box.setDie(die);
+        box1 = box.copy();
+
+        assertNotEquals(box, box1);
+
+        assertEquals(box.getColourRestriction(), box1.getColourRestriction());
+        assertEquals(box.getValueRestriction(), box1.getValueRestriction());
+
+        assertEquals(box.getDie().getValue(), box1.getDie().getValue());
+        assertEquals(box.getDie().getColour(), box1.getDie().getColour());
+
+
+
+
+    }
 }

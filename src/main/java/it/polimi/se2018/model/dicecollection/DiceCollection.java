@@ -1,10 +1,12 @@
-package it.polimi.se2018.model;
+package it.polimi.se2018.model.dicecollection;
+
+import it.polimi.se2018.model.Die;
 
 import java.util.*;
 
 public class DiceCollection {
 
-    private ArrayList<Die> bag;
+    protected ArrayList<Die> bag;
 
     public DiceCollection() {
         this.bag = new ArrayList<>();

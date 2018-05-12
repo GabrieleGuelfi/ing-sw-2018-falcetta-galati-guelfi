@@ -1,4 +1,6 @@
-package it.polimi.se2018.model;
+package it.polimi.se2018.model.dicecollection;
+
+import it.polimi.se2018.model.Die;
 
 import java.security.InvalidParameterException;
 import java.util.Random;
@@ -6,6 +8,10 @@ import java.util.Random;
 // Shouldn't the random part go in controller?
 
 public class DraftPool extends DiceCollection {
+
+    public DraftPool() {
+        super();
+    }
 
     public DraftPool(Bag bag, int playersNumber) {
 
@@ -30,4 +36,12 @@ public class DraftPool extends DiceCollection {
         }
     }
 
+    public DraftPool copy() {
+        DraftPool d = new DraftPool();
+        for(Die x : this.bag){
+
+            d.bag.add(x.copy());
+        }
+        return d;
+    }
 }

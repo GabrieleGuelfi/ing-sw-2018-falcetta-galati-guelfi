@@ -1,6 +1,6 @@
 package it.polimi.se2018.view;
 
-import it.polimi.se2018.model.DraftPool;
+import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.model.Player;
 
 import java.util.Observable;
