@@ -8,7 +8,9 @@ public class Box {
 
     public Box(int n, Colour c){
 
+        if(n<1 || n>6) throw new IllegalArgumentException("Invalid value restriction!");
         valueRestriction = n;
+
         colourRestriction = c;
 
     }
@@ -21,12 +23,6 @@ public class Box {
         die = d;
     }
 
-    public Die getDie(){ return die;}
-
-    public Box copy(){
-        Box b = new Box(this.valueRestriction, this.colourRestriction);
-        b.die = this.die.copy();
-        return b;
-    }
+    public Die getDie(){ return die;} //exceptions??
 
 }

@@ -15,6 +15,10 @@ public class DraftPool extends DiceCollection {
             throw new InvalidParameterException("Invalid number of players!");
         }
 
+        if (bag==null) {
+            throw new InvalidParameterException("Invalid bag!");
+        }
+
         if (bag.size()<2*playersNumber+1) {
             throw new InvalidParameterException("Bag too small!");
         }

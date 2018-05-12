@@ -8,11 +8,11 @@ import static org.junit.Assert.*;
 
 public class TestDraftPool {
 
-    final int sameColourDice=18;
-    final int playersNumber=4;
+    private final int PLAYERS_NUMBER=4;
 
     @Test
     public void testConstructor() {
+        final int SAME_COLOUR_DICE=18;
         int i;
         int blueDice=0;
         int greenDice=0;
@@ -24,7 +24,7 @@ public class TestDraftPool {
         assertEquals(90, bag.size());
         Die die;
 
-        DraftPool draftPool = new DraftPool(bag, playersNumber);
+        DraftPool draftPool = new DraftPool(bag, PLAYERS_NUMBER);
 
         assertEquals(81, bag.size());
         assertEquals(9, draftPool.size());
@@ -51,11 +51,11 @@ public class TestDraftPool {
 
         assertEquals(0, bag.size());
 
-        assertEquals(sameColourDice, blueDice);
-        assertEquals(sameColourDice, yellowDice);
-        assertEquals(sameColourDice, greenDice);
-        assertEquals(sameColourDice, redDice);
-        assertEquals(sameColourDice, purpleDice);
+        assertEquals(SAME_COLOUR_DICE, blueDice);
+        assertEquals(SAME_COLOUR_DICE, yellowDice);
+        assertEquals(SAME_COLOUR_DICE, greenDice);
+        assertEquals(SAME_COLOUR_DICE, redDice);
+        assertEquals(SAME_COLOUR_DICE, purpleDice);
     }
 
     @Test
@@ -69,7 +69,21 @@ public class TestDraftPool {
         }
 
         try {
-            draftPool = new DraftPool(bag, playersNumber);
+            draftPool = new DraftPool(bag, PLAYERS_NUMBER);
+        }
+        catch(InvalidParameterException e) {
+            return;
+        }
+
+        fail();
+    }
+
+    @Test public void testConstructorNullBag() {
+        Bag bag=null;
+        DraftPool draftPool;
+
+        try {
+            draftPool = new DraftPool(bag, PLAYERS_NUMBER);
         }
         catch(InvalidParameterException e) {
             return;
