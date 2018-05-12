@@ -3,6 +3,7 @@ package it.polimi.se2018.model;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
 public class TestDie {
@@ -79,5 +80,20 @@ public class TestDie {
         if (die.getValue()<1 || die.getValue()>6) {
             fail();
         }
+    }
+
+    @Test
+    public void testCopy(){
+        Die die = new Die(Colour.BLUE);
+        Die die2;
+
+        die2=die.copy();
+
+        assertEquals(die.getColour(), die2.getColour());
+
+        assertEquals(die.getValue(), die2.getValue());
+
+        assertNotEquals(die, die2);
+
     }
 }

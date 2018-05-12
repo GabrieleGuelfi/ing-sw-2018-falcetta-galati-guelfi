@@ -1,6 +1,7 @@
 package it.polimi.se2018.model;
 
 import it.polimi.se2018.controller.tool.Tool;
+import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.publicObjective.PublicObjective;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class Match {
             // Is it necessary to check the size and content of all parameters?
         }
         this.bag = bag;
+        bag.populateBag();
         this.activePlayers = players;
         this.publicObjectives = objectives;
         this.tools = tools;
@@ -69,4 +71,40 @@ public class Match {
         index = players.indexOf(p);
         activePlayers.add(players.remove(index));
     }
+
+    // Is this needed? If yes, we have to implement copy() for PublicObjectives and Tools, but it can be tough.
+    /* public Match copy() {
+        ArrayList<Player> activePlayersCopy = new ArrayList<>();
+        for(Player p: this.activePlayers) {
+            activePlayersCopy.add(p.copy());
+        }
+
+        ArrayList<Player> playersCopy = new ArrayList<>();
+        for(Player p: this.players) {
+            playersCopy.add(p.copy());
+        }
+
+        ArrayList<PublicObjective> publicObjectivesCopy= new ArrayList<>();
+        for(PublicObjective p: this.publicObjectives) {
+            publicObjectivesCopy.add(p.copy());
+        }
+
+        ArrayList<PublicObjective> toolsCopy= new ArrayList<>();
+        for(Tool t: this.tools) {
+            toolsCopy.add(t.copy());
+        }
+
+        ArrayList<Die> roundTrackCopy = new ArrayList<>();
+        for(Die d: this.roundTrack) {
+            roundTrackCopy.add(d.copy());
+        }
+
+        Match matchCopy = new Match(this.bag.copy(), activePlayersCopy, publicObjectivesCopy, toolsCopy);
+
+        matchCopy.players = playersCopy;
+        matchCopy.round = this.round;
+        matchCopy.roundTrack = roundTrackCopy;
+
+        return matchCopy;
+    }*/
 }

@@ -1,5 +1,7 @@
 package it.polimi.se2018.model;
 
+import it.polimi.se2018.model.dicecollection.Bag;
+import it.polimi.se2018.model.dicecollection.DraftPool;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

@@ -1,5 +1,6 @@
 package it.polimi.se2018.model;
 
+import it.polimi.se2018.model.dicecollection.DiceCollection;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -57,6 +58,39 @@ public class TestDiceCollection {
             assertEquals(i, dice.size());
             dice.removeDie(0);
         }
+    }
+
+    @Test
+    public void testCopy() {
+        DiceCollection dc = new DiceCollection();
+        DiceCollection dc1 = null;
+
+        Die die1 = new Die(Colour.BLUE);
+        Die die2 = new Die(Colour.GREEN);
+        Die die3 = new Die(Colour.PURPLE);
+
+        die1.setRandomValue();
+        die2.setRandomValue();
+        die3.setRandomValue();
+
+        dc.addDie(die1);
+        dc.addDie(die2);
+        dc.addDie(die3);
+
+        dc1 = dc.copy();
+
+        assertNotEquals(dc, dc1);
+        assertEquals(dc.size(), dc1.size());
+
+        for(int i=0; i<3; i++) {
+            Die temp = dc.removeDie(0);
+            Die temp2 = dc1.removeDie(0);
+            assertEquals(temp.getColour(), temp2.getColour());
+            assertEquals(temp.getValue(), temp2.getValue());
+            assertNotEquals(temp, temp2);
+        }
+
+        assertEquals(dc.size(), dc1.size());
 
     }
 }

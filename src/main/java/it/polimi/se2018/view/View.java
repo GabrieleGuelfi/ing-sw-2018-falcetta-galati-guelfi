@@ -8,6 +8,8 @@ import java.util.Observer;
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.controller.*;
+import it.polimi.se2018.model.dicecollection.DiceCollection;
+import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.model.publicObjective.PublicObjective;
 
 /**

@@ -1,5 +1,6 @@
 package it.polimi.se2018.model;
 
+import it.polimi.se2018.model.dicecollection.Bag;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -41,6 +42,28 @@ public class TestBag {
         assertEquals(sameColourDices, purpleDice);
 
         assertEquals(0, bag.size());
+
+    }
+
+    @Test
+    public void testCopy() {
+        Bag bag = new Bag();
+        bag.populateBag();
+
+        Bag bag1 = bag.copy();
+
+        assertNotEquals(bag, bag1);
+        assertEquals(bag.size(), bag1.size());
+
+        for(int i=0; i<89; i++) {
+            Die temp = bag.removeDie(0);
+            Die temp2 = bag1.removeDie(0);
+            assertEquals(temp.getColour(), temp2.getColour());
+            assertEquals(temp.getValue(), temp2.getValue());
+            assertNotEquals(temp, temp2);
+        }
+
+        assertEquals(bag.size(), bag1.size());
 
     }
 }

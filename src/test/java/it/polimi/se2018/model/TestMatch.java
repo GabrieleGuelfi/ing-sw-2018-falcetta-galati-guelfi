@@ -1,6 +1,7 @@
 package it.polimi.se2018.model;
 
 import it.polimi.se2018.controller.tool.Tool;
+import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.publicObjective.PublicObjective;
 import org.junit.Test;
 
