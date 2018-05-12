@@ -5,7 +5,7 @@ import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.MoveDie;
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.*;
-import it.polimi.se2018.model.publicObjective.PublicObjective;
+import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.view.View;
 
 import java.util.ArrayList;
@@ -48,15 +48,15 @@ public class Controller implements Observer {
     }
 
     private void giveWindowPatterns(Player player){
-
+        //give window pattern to the player
     }
 
     private void givePrivateObjective(Player player) {
-
+        //give private objective to the player
     }
 
-    private void giveFavorTokens(Player player) { //probably useless, we can make this in giveWindowPattern
-
+    private void giveFavorTokens(Player player) {
+        //probably useless, we can make this in giveWindowPattern
     }
 
     private void manageRound() {
@@ -117,7 +117,7 @@ public class Controller implements Observer {
         int column = m.getColumn();
 
         if (windowPattern.getEmptyBox() == 20) {
-            return (row == 1 || row == windowPattern.Max_ROW || column == 1 || column == windowPattern.MAX_COL);
+            return (row == 1 || row == WindowPattern.MAX_ROW || column == 1 || column == WindowPattern.MAX_COL);
         }
         for(int i = row-2; i < row+1; i++ ) {
             for(int j = column-2; j < column+1; j++) {
@@ -125,8 +125,7 @@ public class Controller implements Observer {
                     try {
                         if (windowPattern.getBox(i, j) != null)
                             return true;
-                    } catch (OutOfWindowPattern e) {
-                    }
+                    } catch (OutOfWindowPattern e) {}
                 }
             }
         }
@@ -205,8 +204,8 @@ public class Controller implements Observer {
         WindowPattern windowPattern = player.getWindowPattern();
 
         //privateObjective
-        for(int i=0; i<windowPattern.Max_ROW; i++) {
-            for (int j=0; j<windowPattern.MAX_COL; j++) {
+        for(int i = 0; i<WindowPattern.MAX_ROW; i++) {
+            for (int j=0; j<WindowPattern.MAX_COL; j++) {
                 try {
                     if (windowPattern.getBox(i, j).getDie().getColour() == player.getPrivateObjective().getShade())
                         player.addPoints(windowPattern.getBox(i, j).getDie().getValue());

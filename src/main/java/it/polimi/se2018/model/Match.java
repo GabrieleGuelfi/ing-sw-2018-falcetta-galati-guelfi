@@ -1,7 +1,7 @@
 package it.polimi.se2018.model;
 
 import it.polimi.se2018.controller.tool.Tool;
-import it.polimi.se2018.model.publicObjective.PublicObjective;
+import it.polimi.se2018.model.publicobjective.PublicObjective;
 
 import java.util.ArrayList;
 

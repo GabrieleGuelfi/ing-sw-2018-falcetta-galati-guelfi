@@ -1,4 +1,4 @@
-package it.polimi.se2018.model.publicObjective;
+package it.polimi.se2018.model.publicobjective;
 
 import it.polimi.se2018.model.WindowPattern;
 
@@ -10,17 +10,17 @@ public abstract class PublicObjective {
 
     private String description;
 
-    int PV;
+    int vp;
     int points;
 
     /**
      * Class Constructor
      * @param description the short description of the objective
-     * @param PV how much points give the objective
+     * @param vp how much points give the objective
      */
-    PublicObjective(String description, int PV) {
+    PublicObjective(String description, int vp) {
         this.description = description;
-        this.PV = PV;
+        this.vp = vp;
     }
 
     /**
@@ -33,12 +33,12 @@ public abstract class PublicObjective {
     /**
      * @return the points given by the objective
      */
-    public int getPV() {
-        return PV;
+    public int getVp() {
+        return vp;
     }
 
     /**
-     * calculate the score of the WindowPattern
+     * calculate the score of the windowPattern
      * @param windowPattern the scheme on which the score is calculated
      * @return score of the windowPattern
      */

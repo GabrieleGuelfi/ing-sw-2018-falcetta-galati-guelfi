@@ -8,11 +8,11 @@ import java.util.Observer;
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.controller.*;
-import it.polimi.se2018.model.publicObjective.PublicObjective;
+import it.polimi.se2018.model.publicobjective.PublicObjective;
 
 /**
  * Class View is the representation of the Model.
- * Handle the comunication with Controller through class MessageNewTurn and with Model through MessageUpdate.
+ * Handle the communication with Controller through class MessageNewTurn and with Model through MessageUpdate.
  * View is a Singleton.
  * @Author Federico Galati
  *
