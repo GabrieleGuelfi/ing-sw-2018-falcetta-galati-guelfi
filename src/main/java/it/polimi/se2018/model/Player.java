@@ -72,4 +72,17 @@ public class Player {
     public PrivateObjective getPrivateObjective() {
         return this.privateObjective;
     }
+
+    public Player copy(){
+        Player playerCopy = new Player(this.nickname);
+
+        playerCopy.favorTokens = this.favorTokens;
+        playerCopy.windowPattern = this.windowPattern.copy();
+        playerCopy.points = this.points;
+        playerCopy.placedDie = this.placedDie;
+        playerCopy.usedTool = this.usedTool;
+
+        return playerCopy;
+    }
+
 }

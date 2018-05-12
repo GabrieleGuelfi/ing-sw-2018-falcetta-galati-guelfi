@@ -23,6 +23,13 @@ public class Box {
         die = d;
     }
 
-    public Die getDie(){ return die;} //exceptions??
+    public Die getDie(){ return die;}
+
+    public Box copy(){
+
+        Box b = new Box(this.valueRestriction, this.colourRestriction);
+        b.die = this.die.copy();
+        return b;
+    }
 
 }
