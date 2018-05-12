@@ -73,6 +73,8 @@ public class Player {
         return this.privateObjective;
     }
 
+
+    //MISS THE COPY OF OBJECTIVE
     public Player copy(){
         Player playerCopy = new Player(this.nickname);
 

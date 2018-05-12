@@ -32,4 +32,6 @@ public class Match {
     public Bag getBag() {
         return bag;
     }
+
+    public ArrayList<Player> getPlayers(){ return players;}
 }

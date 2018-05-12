@@ -6,13 +6,10 @@ import java.util.Observable;
 
 public class MessageNewTurn extends Observable{
 
-    private Player player;
-
     public MessageNewTurn(Player p, View v){
 
-        player = p;
         this.addObserver(v);
         //IS CORRECT WRITTEN LIKE THIS?
-        this.notifyObservers(player);
+        this.notifyObservers(p);
     }
 }

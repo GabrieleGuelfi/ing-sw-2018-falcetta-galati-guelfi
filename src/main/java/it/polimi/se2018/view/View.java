@@ -15,10 +15,10 @@ public class View extends Observable implements Observer{
     private static View view = null;
 
     private ArrayList<Player> player;
-    private DraftPool draftPool;
+    private DiceCollection draftPool;
     private ArrayList<Tool> tool;
     private ArrayList<PublicObjective> publicObjective;
-    private Round round;
+
 
     public static View getView(Controller c, Match m){
 
@@ -33,10 +33,15 @@ public class View extends Observable implements Observer{
 
     private View(Controller c, Match m){
         //RICORDARSI DI FARE CORRETTAMENTE TUTTE GLI ADDOBSERVER
-
+        //REMEMBER TO ADD COPY ON TOOL AND OBJECTIVE.
 
         controller = c;
         match = m;
+
+        for(Player playerMatch : match.getPlayers()) {
+
+            this.player.add(playerMatch.copy()); //Copy of all players.
+        }
 
         //ADD ALL OBSERVER
         this.addObserver(controller);
@@ -45,13 +50,21 @@ public class View extends Observable implements Observer{
 
     //UPDATE WHEN CONTROLLER NOTIFY NEW PLAYERTURN
 
-    void update(MessageNewTurn sms, Player player){
-        Decision d= new Decision(player, this);
+    private void update(MessageNewTurn sms, Player p){
+        Decision d= new Decision(p, this);
     }
 
+    private void update(MessageUpdate sms, Player playerUpdated){
+        for (Player p : player) {
+            if (p.equals(playerUpdated)) p = playerUpdated.copy();
+        }
+    }
 
-    @Override
+    private void update(MessageUpdate sms, DraftPool d){ draftPool = d.copy();}
+
     public void update(Observable observable, Object o) {
 
     }
+
+
 }
