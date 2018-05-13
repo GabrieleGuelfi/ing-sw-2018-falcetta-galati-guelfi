@@ -1,15 +1,16 @@
 package it.polimi.se2018.model;
 
-/**
- * Class Match
- * @author Alessandro Falcetta
- */
-
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.model.dicecollection.Bag;
-import it.polimi.se2018.model.publicObjective.PublicObjective;
+import it.polimi.se2018.model.publicobjective.PublicObjective;
 
 import java.util.ArrayList;
+
+/**
+ * Class Match
+ *
+ * @author Alessandro Falcetta
+ */
 
 public class Match {
 

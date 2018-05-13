@@ -7,7 +7,7 @@ import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.dicecollection.DraftPool;
-import it.polimi.se2018.model.publicObjective.PublicObjective;
+import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.view.View;
 
 import java.util.ArrayList;
@@ -119,7 +119,7 @@ public class Controller implements Observer {
         int column = m.getColumn();
 
         if (windowPattern.getEmptyBox() == 20) {
-            return (row == 1 || row == windowPattern.Max_ROW || column == 1 || column == windowPattern.MAX_COL);
+            return (row == 1 || row == windowPattern.MAX_ROW || column == 1 || column == windowPattern.MAX_COL);
         }
         for(int i = row-2; i < row+1; i++ ) {
             for(int j = column-2; j < column+1; j++) {
@@ -207,7 +207,7 @@ public class Controller implements Observer {
         WindowPattern windowPattern = player.getWindowPattern();
 
         //privateObjective
-        for(int i=0; i<windowPattern.Max_ROW; i++) {
+        for(int i=0; i<windowPattern.MAX_ROW; i++) {
             for (int j=0; j<windowPattern.MAX_COL; j++) {
                 try {
                     if (windowPattern.getBox(i, j).getDie().getColour() == player.getPrivateObjective().getShade())

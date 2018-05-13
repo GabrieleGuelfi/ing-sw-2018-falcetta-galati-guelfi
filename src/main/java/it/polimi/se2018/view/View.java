@@ -6,7 +6,7 @@ import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
 import it.polimi.se2018.model.dicecollection.DiceCollection;
 import it.polimi.se2018.model.dicecollection.DraftPool;
-import it.polimi.se2018.model.publicObjective.PublicObjective;
+import it.polimi.se2018.model.publicobjective.PublicObjective;
 
 import java.util.ArrayList;
 import java.util.Iterator;

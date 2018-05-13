@@ -21,6 +21,8 @@ public class Player {
         points = 0;
     }
 
+    public String getNickname() { return this.nickname; }
+
     public boolean isUsedTool() {
         return usedTool;
     }
@@ -46,6 +48,7 @@ public class Player {
     }
 
     public void setWindowPattern(WindowPattern windowPattern) {
+        if (windowPattern==null) throw new IllegalArgumentException("Invalid window pattern!");
         this.windowPattern = windowPattern;
         setFavorTokens(windowPattern.getDifficulty());
     }
@@ -59,6 +62,7 @@ public class Player {
     }
 
     public void removeFavorTokens(int usage) { //usage = number of favorTokens on the used Toll Card at that moment
+        if(this.favorTokens-usage<0) throw new IllegalStateException("Insufficient favor tokens!");
         favorTokens = favorTokens - usage;
     }
 

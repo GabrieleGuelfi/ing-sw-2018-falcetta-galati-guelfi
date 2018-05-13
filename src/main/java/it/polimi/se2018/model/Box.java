@@ -32,7 +32,7 @@ public class Box {
     public Box copy(){
 
         Box b = new Box(this.valueRestriction, this.colourRestriction);
-        b.die = this.die.copy();
+        if(this.die!=null) b.die = this.die.copy();
         return b;
     }
 

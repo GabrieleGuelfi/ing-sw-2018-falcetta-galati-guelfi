@@ -11,8 +11,16 @@ public class WindowPattern {
     private int emptyBox;
 
     public WindowPattern(int difficulty){
+        int i;
+        int j;
 
         grid = new Box[MAX_ROW][MAX_COL];
+
+        for(i = 0; i<4; i++) {
+            for (j = 0; j < 5; j++) {
+                grid[i][j] = new Box(1, Colour.WHITE);
+            }
+        }
         this.difficulty = difficulty;
         //placedDie = new Die[16];
         emptyBox = 20;
@@ -46,11 +54,12 @@ public class WindowPattern {
      * @return Copy of this Object
      */
     public WindowPattern copy(){
-
+        int i;
+        int j;
         WindowPattern w = new WindowPattern(this.difficulty);
         w.emptyBox = this.emptyBox;
-        for(int i = 0; i<4; i++){
-            for(int j = 0; j<5; j++){
+        for(i = 0; i<4; i++){
+            for(j = 0; j<5; j++){
                 w.grid[i][j] = this.grid[i][j].copy();
             }
         }
