@@ -5,14 +5,28 @@ import it.polimi.se2018.model.Die;
 import java.security.InvalidParameterException;
 import java.util.Random;
 
+/**
+ * This class represents the "Draft pool", aka the group of 5-7-9 dice estracted from the bag in the begin of a round.
+ * @author Alessandro Falcetta
+ */
+
 // Shouldn't the random part go in controller?
 
 public class DraftPool extends DiceCollection {
 
+    /**
+     * Basic constructor, used by copy()
+     */
     public DraftPool() {
         super();
     }
 
+    /**
+     * Constructor for building a draft pool, starting from a bag
+     * @param bag Bag to extract dice from
+     * @param playersNumber number of players
+     * @throws InvalidParameterException if: player number out of range, bag is null or too small
+     */
     public DraftPool(Bag bag, int playersNumber) {
 
         super();
@@ -36,6 +50,11 @@ public class DraftPool extends DiceCollection {
         }
     }
 
+    /**
+     * Copy method
+     * @return Draftpool with a copy of all the dice of this, in a different object
+     */
+    @Override
     public DraftPool copy() {
         DraftPool d = new DraftPool();
         for(Die x : this.bag){

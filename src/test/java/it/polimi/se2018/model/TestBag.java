@@ -65,11 +65,11 @@ public class TestBag {
         assertEquals(bag.size(), bag1.size());
 
         for(i=0; i<89; i++) {
-            Die temp = bag.removeDie(0);
-            Die temp2 = bag1.removeDie(0);
-            assertEquals(temp.getColour(), temp2.getColour());
-            assertEquals(temp.getValue(), temp2.getValue());
-            assertNotEquals(temp, temp2);
+            Die tempDie = bag.removeDie(0);
+            Die tempDie2 = bag1.removeDie(0);
+            assertEquals(tempDie.getColour(), tempDie2.getColour());
+            assertEquals(tempDie.getValue(), tempDie2.getValue());
+            assertNotEquals(tempDie, tempDie2);
         }
 
         assertEquals(bag.size(), bag1.size());
