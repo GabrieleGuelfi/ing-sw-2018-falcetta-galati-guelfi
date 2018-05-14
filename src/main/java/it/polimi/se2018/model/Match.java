@@ -7,8 +7,6 @@ import it.polimi.se2018.model.publicobjective.PublicObjective;
 import java.util.ArrayList;
 
 /**
- * Class Match
- *
  * @author Alessandro Falcetta
  */
 
