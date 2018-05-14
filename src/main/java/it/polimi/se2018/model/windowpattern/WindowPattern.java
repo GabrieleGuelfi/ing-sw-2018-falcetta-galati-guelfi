@@ -1,12 +1,15 @@
-package it.polimi.se2018.model;
+package it.polimi.se2018.model.windowpattern;
 
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
+import it.polimi.se2018.model.Box;
+import it.polimi.se2018.model.Colour;
+import it.polimi.se2018.model.Die;
 
 public class WindowPattern {
 
     public static final int MAX_ROW = 4;
     public static final int MAX_COL = 5;
-    private Box[][] grid;
+    protected Box[][] grid;
     private int difficulty;
     private int emptyBox;
 

@@ -6,6 +6,18 @@ public class Box {
     private Colour colourRestriction;
     private Die die;
 
+    public Box(Colour c) {
+        colourRestriction = c;
+        valueRestriction = 0;
+    }
+
+    public Box(int n) {
+        if(n<1 || n>6) throw new IllegalArgumentException("Invalid value restriction!");
+        valueRestriction = n;
+        colourRestriction = Colour.WHITE;
+    }
+
+    // Maybe this can be removed.
     public Box(int n, Colour c){
 
         if(n<1 || n>6) throw new IllegalArgumentException("Invalid value restriction!");
