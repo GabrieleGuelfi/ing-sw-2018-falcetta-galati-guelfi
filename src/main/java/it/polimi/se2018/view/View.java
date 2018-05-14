@@ -2,11 +2,13 @@ package it.polimi.se2018.view;
 
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.controller.tool.Tool;
+import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.MessageUpdate;
 import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
 import it.polimi.se2018.model.dicecollection.DiceCollection;
-import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
+import it.polimi.se2018.network.SagradaServer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,30 +29,36 @@ public class View extends Observable implements Observer{
     private static Controller controller;
     private static Match match;
     private static View view = null;
+    private static SagradaServer sagradaServer;
 
     private ArrayList<Player> player;
     private DiceCollection draftPool;
     private ArrayList<Tool> tool;
     private ArrayList<PublicObjective> publicObjective;
 
-    private Decision currentDecision;
-
-    public static View getView(Controller c, Match m){
+    public static View createView(Controller c, Match m, SagradaServer s){
 
         if (view != null){
             return view;
         }
         else{
-              view = new View(c, m);
+              view = new View(c, m, s);
               return view;
         }
     }
 
-    private View(Controller c, Match m){
+    public static View getView(){
+
+        return view;
+
+    }
+
+    private View(Controller c, Match m, SagradaServer s){
         //REMEMBER TO ADD COPY ON TOOL AND OBJECTIVE.
 
         controller = c;
         match = m;
+        sagradaServer = s;
 
         for(Player playerMatch : match.getPlayers()) {
 
@@ -62,11 +70,8 @@ public class View extends Observable implements Observer{
 
     }
 
-    //UPDATE WHEN CONTROLLER NOTIFY NEW PLAYERTURN
+    //UPDATE WHEN CONTROLLER NOTIFY NEW PLAYER_TURN
 
-    private void update(MessageNewTurn sms, Player p){
-        currentDecision = new Decision(p, this);
-    }
 
     private void update(MessageUpdate sms, Player playerUpdated){
         Iterator<Player> playerIterator = player.iterator();
@@ -84,9 +89,13 @@ public class View extends Observable implements Observer{
 
     }
 
-    private void update(MessageUpdate sms, DraftPool d){ draftPool = d.copy();}
+    public ArrayList<Player> getPlayer(){return this.player;};
 
     public void update(Observable observable, Object o) {
+        if(o instanceof Message){
+           // switch(((Message) o).getTypeMessage())
+        }
+
 
     }
 
