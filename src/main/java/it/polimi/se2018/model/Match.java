@@ -50,9 +50,15 @@ public class Match {
         return firstPlayerRound;
     }
 
+    public void setRound(Round r) {
+        if(r==null) throw new IllegalArgumentException("Invalid round!");
+        this.round = r;
+    }
+
     public Round getRound() {
         return round;
     }
+
     public void nextNumRound() {
         if (this.numRound == 10) throw new IllegalStateException("Maximum number of turns reached!");
             this.numRound++;
