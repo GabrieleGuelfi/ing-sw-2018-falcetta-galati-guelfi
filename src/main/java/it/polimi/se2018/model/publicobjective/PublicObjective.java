@@ -23,6 +23,22 @@ public abstract class PublicObjective {
         this.vp = vp;
     }
 
+    public PublicObjective factory(int n) {
+        switch(n) {
+            case 1: return new DiffRow("foo", 6, true);
+            case 2: return new DiffColumn("foo", 5, true);
+            case 3: return new DiffRow("foo", 5, false);
+            case 4: return new DiffColumn("foo", 4, false);
+            case 5: return new SetShades("foo", 2, 1);
+            case 6: return new SetShades("foo", 2, 3);
+            case 7: return new SetShades("foo", 2, 5);
+            case 8: return new DiffEverywhere("foo", 5, false);
+            case 9: return new DiagColour("foo");
+            case 10: return new DiffEverywhere("foo", 4, true);
+            default: throw new IllegalArgumentException("Invalid parameter!");
+        }
+    }
+
     /**
      * @return the short description of the objective
      */

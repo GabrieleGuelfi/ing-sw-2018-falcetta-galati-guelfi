@@ -12,10 +12,9 @@ public class DiagColour extends PublicObjective {
     /**
      * Class Constructor
      * @param description the short description of the objective
-     * @param vp how much points give the objective
      */
-    public DiagColour (String description, int vp) {
-        super(description, vp);
+    public DiagColour (String description) {
+        super(description, 0);
     }
 
     /**
