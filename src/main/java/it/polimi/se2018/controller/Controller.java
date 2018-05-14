@@ -2,7 +2,9 @@ package it.polimi.se2018.controller;
 
 
 import it.polimi.se2018.controller.tool.Tool;
+import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.MoveDie;
+import it.polimi.se2018.events.TypeMessage;
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.Bag;
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Controller implements Observer {
+public class Controller extends Observable implements Observer{
 
     Match match;
 
@@ -30,6 +32,8 @@ public class Controller implements Observer {
         // Create the match...
         this.match = new Match(new Bag(), players, objectives, tools);
 
+        addObserver(View.getView());  //verify
+
         for(Player player: match.getActivePlayers()) {
             givePrivateObjective(player);
         }
@@ -41,12 +45,11 @@ public class Controller implements Observer {
 
         // TOOLS PART!
 
-        for (int i = 0; i < 10; i++) {
-            manageRound();
-        }
-        for(Player player: match.getActivePlayers()) {
-            calcResults(player, objectives);
-        }
+        /*for (int i = 0; i < 10; i++) {
+            match.nextNumRound();
+            //manageRound(i % match.getPlayers().size());
+        }*/
+
     }
 
     private void giveWindowPatterns(Player player){
@@ -61,29 +64,9 @@ public class Controller implements Observer {
 
     }
 
-    private void manageRound() {
-        int i;
-        Round currentRound = new Round(new DraftPool(match.getBag(), match.getActivePlayers().size()), match.getActivePlayers().get(0));
-        for(i=0; i<match.getActivePlayers().size(); i++) { //andata
-            currentRound.setPlayerTurn(match.getActivePlayers().get(i));
-            match.getActivePlayers().get(i).setPlacedDie(false);
-            match.getActivePlayers().get(i).setUsedTool(false);
-            //update(view, new MoveDie(player, row, column)); //verify correct use
-
-            //manageMoveDie(match.getActivePlayers().get(i)); //two moves per turn, but only one per type, how we can manage this?
-            //manageMoveDie(match.getActivePlayers().get(i));
-        }
-        for(i=match.getActivePlayers().size(); i>=0 ; i--) { //ritorno
-            currentRound.setPlayerTurn(match.getActivePlayers().get(i));
-            //manageMoveDie(match.getActivePlayers().get(i)); //two moves per turn
-            //manageMoveDie(match.getActivePlayers().get(i));
-        }
-
-    }
-
-    private void manageMoveDie(MoveDie m) { //better manageMovedie(MoveDie m)
+    private void manageMoveDie(MoveDie m) {
         if (m.getPlayer().isPlacedDie()) { //maybe we can place this in manageRound
-            //notify(view, "die already placed")
+            //notify(view, "die already placed");
             return;
         }
         if (m.getRow() < 1 || m.getRow() > 4 || m.getColumn() < 1 || m.getColumn() > 5) {
@@ -92,6 +75,7 @@ public class Controller implements Observer {
         }
         if (verifyNear(m) && verifyColor(m) && verifyNumber(m)){
             m.getPlayer().getWindowPattern().putDice(m.getDie(), m.getRow(), m.getColumn());
+            //notify(view, "die placed");
             return;
         }
         //3 if for search the restrictions violated and notify all to users
@@ -207,8 +191,8 @@ public class Controller implements Observer {
         WindowPattern windowPattern = player.getWindowPattern();
 
         //privateObjective
-        for(int i=0; i<windowPattern.MAX_ROW; i++) {
-            for (int j=0; j<windowPattern.MAX_COL; j++) {
+        for(int i=0; i<WindowPattern.MAX_ROW; i++) {
+            for (int j=0; j<WindowPattern.MAX_COL; j++) {
                 try {
                     if (windowPattern.getBox(i, j).getDie().getColour() == player.getPrivateObjective().getShade())
                         player.addPoints(windowPattern.getBox(i, j).getDie().getValue());
@@ -225,6 +209,35 @@ public class Controller implements Observer {
 
     @Override
     public void update(Observable observable, Object o) {
+        if (o instanceof MoveDie) {
+            if (((MoveDie) o).getPlayer() != match.getRound().getPlayerTurn()) {
+                notifyObservers(new Message(TypeMessage.ERROR_TURN, ((MoveDie) o).getPlayer()));
+                return;
+            }
+            if (((MoveDie) o).getPlayer().isPlacedDie()) {
+                notifyObservers(new Message(TypeMessage.ERROR_DIE, ((MoveDie) o).getPlayer()));
+                return;
+            }
+            manageMoveDie((MoveDie) o);
+            ((MoveDie) o).getPlayer().setPlacedDie(true);
+            if (((MoveDie) o).getPlayer().isPlacedDie() && ((MoveDie) o).getPlayer().isUsedTool()) {
+                ((MoveDie) o).getPlayer().setPlacedDie(false);
+                ((MoveDie) o).getPlayer().setUsedTool(false);
+                match.getRound().nextTurn(match.getPlayers());
+                notifyObservers(new Message(TypeMessage.NEW_TURN, match.getRound().getPlayerTurn()));
+            }
+        }
 
+        if (match.getRound().getNumTurn() == 2*match.getActivePlayers().size()) {
+            try {
+                match.setRound();
+                notifyObservers(new Message(TypeMessage.NEW_ROUND, match.getRound().getPlayerTurn()));
+            } catch (IllegalStateException e) {
+                for(Player player: match.getActivePlayers()) {
+                    calcResults(player, match.getPublicObjectives());
+                }
+                notifyObservers(new Message(TypeMessage.END_MATCH, null));
+            }
+        }
     }
 }

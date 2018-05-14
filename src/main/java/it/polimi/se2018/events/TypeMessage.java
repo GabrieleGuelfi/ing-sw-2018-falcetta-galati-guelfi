@@ -6,6 +6,10 @@ public enum TypeMessage {
     TOOL,
     UPDATE,
     NEW_TURN,
-    CHOOSE_MOVE
+    CHOOSE_MOVE,
+    ERROR_TURN,
+    ERROR_DIE,
+    NEW_ROUND,
+    END_MATCH
 
 }

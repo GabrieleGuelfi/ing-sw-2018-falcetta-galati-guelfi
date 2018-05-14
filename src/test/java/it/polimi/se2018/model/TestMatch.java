@@ -208,11 +208,11 @@ public class TestMatch {
         Match match = new Match(bag, players, objectives, tools);
 
         for(int i=0; i<9; i++) {
-            match.nextRound();
+            match.nextNumRound();
         }
 
         try {
-            match.nextRound();
+            match.nextNumRound();
         }
         catch(IllegalStateException e) {
             return;

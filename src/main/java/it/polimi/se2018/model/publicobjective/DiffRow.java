@@ -41,7 +41,7 @@ public class DiffRow extends PublicObjective {
             else
                 shades = new ArrayList<>();
 
-            for (int j = 0; j<WindowPattern.MAX_COL; j++) {
+            for (int j = 0; j<WindowPattern.MAX_COL && !same; j++) {
                 try {
                     if (isColour) {
                         if (!colours.contains(windowPattern.getBox(i, j).getDie().getColour())) {

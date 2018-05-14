@@ -2,6 +2,7 @@ package it.polimi.se2018.model;
 
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.model.dicecollection.Bag;
+import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 
 import java.util.ArrayList;
@@ -18,7 +19,9 @@ public class Match {
     private ArrayList<PublicObjective> publicObjectives;
     private ArrayList<Tool> tools;
     private ArrayList<Die> roundTrack;
-    private int round;
+    private int numRound;
+    private Round round;
+    private Player firstPlayerRound;
 
     /**
      * Constructor of the class
@@ -38,18 +41,34 @@ public class Match {
         this.activePlayers = players;
         this.publicObjectives = objectives;
         this.tools = tools;
-        this.round = 1; // Human convention?
+        this.numRound = 1; // Human convention?
         this.roundTrack = new ArrayList<>();
         this.players = new ArrayList<>();
+    }
+
+    public Player getFirstPlayerRound() {
+        return firstPlayerRound;
+    }
+
+    public Round getRound() {
+        return round;
+    }
+    public void nextNumRound() {
+        if (this.numRound == 10) throw new IllegalStateException("Maximum number of turns reached!");
+            this.numRound++;
     }
 
     /**
      * Updates the round number, to a maximum of 10
      * @throws IllegalStateException if 10 rounds are already reached
      */
-    public void nextRound() {
-        if (this.round==10) throw new IllegalStateException("Maximum number of turns reached!");
-        this.round++;
+    public void setRound() {
+        nextNumRound();
+        if (players.indexOf(firstPlayerRound) == players.size())
+            firstPlayerRound = players.get(0);
+        else
+            firstPlayerRound = players.get(players.indexOf(firstPlayerRound)+1);
+        this.round = new Round(new DraftPool(bag, getPlayers().size()), getFirstPlayerRound());
     }
 
     /**
@@ -103,7 +122,7 @@ public class Match {
      * @return round number of the match
      */
 
-    public int getRound() { return this.round;}
+    public int getNumRound() { return this.numRound;}
 
     /**
      * Method which deactivates a player; this means that the player goes from "active players" to "players"
