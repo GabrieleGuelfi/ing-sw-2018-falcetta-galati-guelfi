@@ -2,7 +2,7 @@ package it.polimi.se2018.model;
 
 import it.polimi.se2018.model.dicecollection.DraftPool;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Alessandro Falcetta
@@ -46,7 +46,7 @@ public class Round {
     public Player getPlayerTurn() { return playerTurn;}
 
 
-    public void nextTurn(ArrayList<Player> players) {
+    public void nextTurn(List<Player> players) {
         if (numTurn < players.size())
             if (players.indexOf(playerTurn) < players.size()-1) {
                 playerTurn = players.get(players.indexOf(playerTurn)+1);

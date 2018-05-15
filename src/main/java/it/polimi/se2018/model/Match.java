@@ -6,6 +6,7 @@ import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Alessandro Falcetta
@@ -14,11 +15,11 @@ import java.util.ArrayList;
 public class Match {
 
     private Bag bag;
-    private ArrayList<Player> players;
-    private ArrayList<Player> activePlayers;
-    private ArrayList<PublicObjective> publicObjectives;
-    private ArrayList<Tool> tools;
-    private ArrayList<Die> roundTrack;
+    private List<Player> players;
+    private List<Player> activePlayers;
+    private List<PublicObjective> publicObjectives;
+    private List<Tool> tools;
+    private List<Die> roundTrack;
     private int numRound;
     private Round round;
     private Player firstPlayerRound;
@@ -31,7 +32,7 @@ public class Match {
      * @param objectives Set of public objectives
      * @param tools Set of tools
      */
-    public Match(Bag bag, ArrayList<Player> players, ArrayList<PublicObjective> objectives, ArrayList<Tool> tools) {
+    public Match(Bag bag, List<Player> players, List<PublicObjective> objectives, List<Tool> tools) {
         if ((bag==null) || (players==null) || (objectives==null) || (tools==null)) {
             throw new IllegalArgumentException("Parameters can't be null!");
             // Is it necessary to check the size and content of all parameters?
@@ -61,7 +62,7 @@ public class Match {
 
     public void nextNumRound() {
         if (this.numRound == 10) throw new IllegalStateException("Maximum number of turns reached!");
-            this.numRound++;
+        this.numRound++;
     }
 
     /**
@@ -89,7 +90,7 @@ public class Match {
      * Method which returns the active players, aka the ones still online and playing
      * @return active players of the match
      */
-    public ArrayList<Player> getActivePlayers() {
+    public List<Player> getActivePlayers() {
         return this.activePlayers;
     }
 
@@ -97,21 +98,21 @@ public class Match {
      * Method which returns the players, aka the ones who were playing, but then disconnected
      * @return players of the match
      */
-    public ArrayList<Player> getPlayers(){ return this.players;}
+    public List<Player> getPlayers(){ return this.players;}
 
     /**
      * Getter for tools
      * @return tools of the match
      */
 
-    public ArrayList<Tool> getTools() { return this.tools;}
+    public List<Tool> getTools() { return this.tools;}
 
     /**
      * Getter for public objectives
      * @return public objectives of the match
      */
 
-    public ArrayList<PublicObjective> getPublicObjectives() {
+    public List<PublicObjective> getPublicObjectives() {
         return this.publicObjectives;
     }
 
@@ -119,7 +120,7 @@ public class Match {
      * Getter for roundtrack
      * @return roundtrack of the match
      */
-    public ArrayList<Die> getRoundTrack() {
+    public List<Die> getRoundTrack() {
         return this.roundTrack;
     }
 

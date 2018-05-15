@@ -2,37 +2,34 @@ package it.polimi.se2018.controller;
 
 
 import it.polimi.se2018.controller.tool.Tool;
-import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.MoveDie;
-import it.polimi.se2018.events.TypeMessage;
+import it.polimi.se2018.events.*;
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.model.windowpattern.WindowPattern;
 import it.polimi.se2018.view.View;
+import it.polimi.se2018.utils.Observer;
 
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.List;
 
-public class Controller extends Observable implements Observer{
+public class Controller implements Observer {
 
-    Match match;
+    private Match match;
 
     public Controller() {
         this.match = null;
     }
 
-    public void startGame(ArrayList<Player> players, View view) {
+    public void startGame(List<Player> players, View view) {
 
-        ArrayList<PublicObjective> objectives = new ArrayList<>(); // Here we should have the real Public Objectives...
+        List<PublicObjective> objectives = new ArrayList<>(); // Here we should have the real Public Objectives...
 
-        ArrayList<Tool> tools = new ArrayList<>();
+        List<Tool> tools = new ArrayList<>();
         // Create the match...
         this.match = new Match(new Bag(), players, objectives, tools);
 
-        addObserver(View.getView());  //verify
 
         for(Player player: match.getActivePlayers()) {
             givePrivateObjective(player);
@@ -73,13 +70,13 @@ public class Controller extends Observable implements Observer{
             //error input not valid
             return;
         }
-        if (verifyNear(m) && verifyColor(m) && verifyNumber(m)){
+        if (isNearDie(m) && verifyColor(m) && verifyNumber(m)){
             m.getPlayer().getWindowPattern().putDice(m.getDie(), m.getRow(), m.getColumn());
             //notify(view, "die placed");
             return;
         }
         //3 if for search the restrictions violated and notify all to users
-        if (!verifyNear(m)) {
+        if (!isNearDie(m)) {
             //error
         }
         if (!verifyColor(m)) {
@@ -96,20 +93,20 @@ public class Controller extends Observable implements Observer{
      * @param m move performed by user
      * @return false if there is another die near
      */
-    private boolean verifyNear (MoveDie m) {
+    private boolean isNearDie(MoveDie m) {
 
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
         int row = m.getRow();
         int column = m.getColumn();
 
         if (windowPattern.getEmptyBox() == 20) {
-            return (row == 1 || row == windowPattern.MAX_ROW || column == 1 || column == windowPattern.MAX_COL);
+            return (row == 1 || row == WindowPattern.MAX_ROW || column == 1 || column == WindowPattern.MAX_COL);
         }
         for(int i = row-2; i < row+1; i++ ) {
             for(int j = column-2; j < column+1; j++) {
                 if (i != row-1 || j != column-1) {
                     try {
-                        if (windowPattern.getBox(i, j) != null)
+                        if (windowPattern.getBox(i, j).getDie() != null)
                             return true;
                     } catch (OutOfWindowPattern e) {
                     }
@@ -186,7 +183,7 @@ public class Controller extends Observable implements Observer{
      * @param player player whose score is calculated
      * @param p public objective of the match
      */
-    private void calcResults(Player player, ArrayList<PublicObjective> p) {
+    private void calcResults(Player player, List<PublicObjective> p) {
 
         WindowPattern windowPattern = player.getWindowPattern();
 
@@ -200,7 +197,7 @@ public class Controller extends Observable implements Observer{
             }
         }
 
-        //publicOjectives
+        //publicObjectives
         for (PublicObjective publicObjective : p) {
             player.addPoints(publicObjective.calcScore(player.getWindowPattern()));
         }
@@ -208,36 +205,43 @@ public class Controller extends Observable implements Observer{
     }
 
     @Override
-    public void update(Observable observable, Object o) {
-        if (o instanceof MoveDie) {
-            if (((MoveDie) o).getPlayer() != match.getRound().getPlayerTurn()) {
-                notifyObservers(new Message(TypeMessage.ERROR_TURN, ((MoveDie) o).getPlayer()));
-                return;
-            }
-            if (((MoveDie) o).getPlayer().isPlacedDie()) {
-                notifyObservers(new Message(TypeMessage.ERROR_DIE, ((MoveDie) o).getPlayer()));
-                return;
-            }
-            manageMoveDie((MoveDie) o);
-            ((MoveDie) o).getPlayer().setPlacedDie(true);
-            if (((MoveDie) o).getPlayer().isPlacedDie() && ((MoveDie) o).getPlayer().isUsedTool()) {
-                ((MoveDie) o).getPlayer().setPlacedDie(false);
-                ((MoveDie) o).getPlayer().setUsedTool(false);
-                match.getRound().nextTurn(match.getPlayers());
-                notifyObservers(new Message(TypeMessage.NEW_TURN, match.getRound().getPlayerTurn()));
-            }
+    public void update(MoveDie m) {
+
+        if (m.getPlayer() != match.getRound().getPlayerTurn()) {
+            //notifyObservers(new Message(TypeMessage.ERROR_TURN, ((MoveDie) o).getPlayer()));
+            return;
+        }
+        if (m.getPlayer().isPlacedDie()) {
+            //notifyObservers(new Message(TypeMessage.ERROR_DIE, ((MoveDie) o).getPlayer()));
+            return;
+        }
+        manageMoveDie(m);
+        m.getPlayer().setPlacedDie(true);
+        if (m.getPlayer().isPlacedDie() && m.getPlayer().isUsedTool()) {
+            m.getPlayer().setPlacedDie(false);
+            m.getPlayer().setUsedTool(false);
+            match.getRound().nextTurn(match.getPlayers());
+            //notifyObservers(new Message(TypeMessage.NEW_TURN, match.getRound().getPlayerTurn()));
+        }
+        else {
+            //notifyObservers(new Message(TypeMessage.CHOOSE_MOVE, match.getRound().getPlayerTurn()));
         }
 
         if (match.getRound().getNumTurn() == 2*match.getActivePlayers().size()) {
             try {
                 match.setRound();
-                notifyObservers(new Message(TypeMessage.NEW_ROUND, match.getRound().getPlayerTurn()));
+                //notifyObservers(new Message(TypeMessage.NEW_ROUND, match.getRound().getPlayerTurn()));
             } catch (IllegalStateException e) {
                 for(Player player: match.getActivePlayers()) {
                     calcResults(player, match.getPublicObjectives());
                 }
-                notifyObservers(new Message(TypeMessage.END_MATCH, null));
+                //notifyObservers(new Message(TypeMessage.END_MATCH, null));
             }
         }
+    }
+
+    @Override
+    public void update(Message message) {
+        System.out.println("prova observer");
     }
 }

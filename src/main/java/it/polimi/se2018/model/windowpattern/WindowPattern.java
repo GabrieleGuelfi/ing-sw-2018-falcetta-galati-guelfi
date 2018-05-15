@@ -21,7 +21,7 @@ public class WindowPattern {
 
         for(i = 0; i<4; i++) {
             for (j = 0; j < 5; j++) {
-                grid[i][j] = new Box(1, Colour.WHITE);
+                grid[i][j] = new Box(0, Colour.WHITE);
             }
         }
         this.difficulty = difficulty;

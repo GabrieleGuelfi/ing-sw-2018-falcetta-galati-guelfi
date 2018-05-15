@@ -7,6 +7,7 @@ import it.polimi.se2018.model.publicobjective.PublicObjective;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +28,7 @@ public class TestMatch {
         assertEquals(tools, match.getTools());
         assertEquals(objectives, match.getPublicObjectives());
 
-        ArrayList<Die> roundTrack = match.getRoundTrack();
+        List<Die> roundTrack = match.getRoundTrack();
 
         assertTrue(roundTrack.isEmpty());
         assertEquals(1, match.getNumRound());
