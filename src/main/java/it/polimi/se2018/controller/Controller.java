@@ -8,8 +8,8 @@ import it.polimi.se2018.events.TypeMessage;
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.Bag;
-import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
+import it.polimi.se2018.model.windowpattern.WindowPattern;
 import it.polimi.se2018.view.View;
 
 import java.util.ArrayList;

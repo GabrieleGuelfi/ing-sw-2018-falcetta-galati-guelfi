@@ -1,6 +1,6 @@
 package it.polimi.se2018.model.publicobjective;
 
-import it.polimi.se2018.model.WindowPattern;
+import it.polimi.se2018.model.windowpattern.WindowPattern;
 
 /**
  * abstract class for public objectives with short description and score, here is calculated a score for a window pattern

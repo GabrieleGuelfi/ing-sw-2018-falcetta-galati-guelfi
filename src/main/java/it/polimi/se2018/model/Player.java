@@ -1,5 +1,7 @@
 package it.polimi.se2018.model;
 
+import it.polimi.se2018.model.windowpattern.WindowPattern;
+
 public class Player {
 
     private String nickname;
