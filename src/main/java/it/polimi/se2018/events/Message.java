@@ -5,7 +5,7 @@ import it.polimi.se2018.model.Player;
 import java.util.Observable;
 
 /**
- * @Author Federico Galati
+ * @author Federico Galati
  *
  */
 public class Message extends Observable {

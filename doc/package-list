@@ -1,0 +1,14 @@
+it.polimi.se2018
+it.polimi.se2018.controller
+it.polimi.se2018.controller.tool
+it.polimi.se2018.events
+it.polimi.se2018.exceptions
+it.polimi.se2018.model
+it.polimi.se2018.model.dicecollection
+it.polimi.se2018.model.publicobjective
+it.polimi.se2018.model.windowpattern
+it.polimi.se2018.network
+it.polimi.se2018.network.socket.client
+it.polimi.se2018.network.socket.server
+it.polimi.se2018.utils
+it.polimi.se2018.view
