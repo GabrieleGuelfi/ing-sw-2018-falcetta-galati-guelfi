@@ -8,7 +8,7 @@ import java.util.Observable;
  * @Author: Federico Galati
  *
  */
-public class Message extends Observable {
+public class Message {
     private TypeMessage typeMessage;
     private Player player;
 

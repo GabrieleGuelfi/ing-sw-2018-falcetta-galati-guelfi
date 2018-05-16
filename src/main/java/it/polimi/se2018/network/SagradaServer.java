@@ -25,11 +25,14 @@ public class SagradaServer {
     public void startSagradaServer() throws IOException{
         for(int i = 0; i < this.numberOfClient; i++)  { this.serverThreads.add(new ServerThread(this.port, this.ip)); }
         for(int i = 0; i < this.numberOfClient; i++)  {
-            serverThreads.get(i).setPlayer(View.getView().getPlayer().get(i));
+            serverThreads.get(i).setPlayer(View.getView().getViewModel().getPlayer().get(i));
             serverThreads.get(i).start();
         }
-
-        }
-
     }
 
+
+    public ArrayList<ServerThread> getServerThread(){
+        return this.serverThreads;
+    }
+
+}

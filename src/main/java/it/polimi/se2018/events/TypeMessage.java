@@ -5,7 +5,10 @@ public enum TypeMessage {
     MOVE_DIE,
     TOOL,
     UPDATE,
-    NEW_TURN,
-    CHOOSE_MOVE
+    CHOOSE_MOVE,
+    NEW_TURN
 
 }
+
+
+

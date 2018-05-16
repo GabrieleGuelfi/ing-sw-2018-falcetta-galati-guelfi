@@ -37,4 +37,7 @@ public class Round {
      */
     public Player getPlayerTurn() { return playerTurn;}
 
+    public DraftPool getDraftPool() {
+        return draftPool;
+    }
 }

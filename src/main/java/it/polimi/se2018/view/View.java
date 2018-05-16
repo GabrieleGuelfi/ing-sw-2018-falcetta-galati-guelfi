@@ -1,19 +1,16 @@
 package it.polimi.se2018.view;
 
 import it.polimi.se2018.controller.Controller;
-import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.MessageUpdate;
 import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
-import it.polimi.se2018.model.dicecollection.DiceCollection;
-import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.network.SagradaServer;
+import it.polimi.se2018.network.ServerThread;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
+
+import static it.polimi.se2018.events.TypeMessage.*;
 
 /**
  * Class View is the representation of the Model.
@@ -30,11 +27,7 @@ public class View extends Observable implements Observer{
     private static Match match;
     private static View view = null;
     private static SagradaServer sagradaServer;
-
-    private ArrayList<Player> player;
-    private DiceCollection draftPool;
-    private ArrayList<Tool> tool;
-    private ArrayList<PublicObjective> publicObjective;
+    private static ViewModel viewModel;
 
     public static View createView(Controller c, Match m, SagradaServer s){
 
@@ -59,10 +52,11 @@ public class View extends Observable implements Observer{
         controller = c;
         match = m;
         sagradaServer = s;
+        viewModel = new ViewModel();
 
         for(Player playerMatch : match.getPlayers()) {
 
-            this.player.add(playerMatch.copy()); //Copy of all players.
+            viewModel.getPlayer().add(playerMatch.copy()); //Copy of all players.
         }
 
         //ADD ALL OBSERVER
@@ -70,33 +64,50 @@ public class View extends Observable implements Observer{
 
     }
 
-    //UPDATE WHEN CONTROLLER NOTIFY NEW PLAYER_TURN
+    /*
+    public void update(Message message, int j){
+        int i = 0;
+        i++;
+    }
+    */
 
+    @Override
+    public void update(Observable observable, Object o) {
 
-    private void update(MessageUpdate sms, Player playerUpdated){
-        Iterator<Player> playerIterator = player.iterator();
-        //if (player.isEmpty())
-        do{
-            Player p = playerIterator.next();
-            if(p.equals(playerUpdated)) {
-                p = playerUpdated.copy();
-                player.add(p);
-                playerIterator.remove();
-                break;
+        if(o instanceof Message){
+            switch (((Message) o).getTypeMessage()) {
+                case UPDATE:
+                    //viewModel.setViewModel(match);
+                    for(ServerThread serverThread: sagradaServer.getServerThread()){
+                        serverThread.setMessage((Message)o);
+                    }
+
+                    break;
+                case NEW_TURN:
+                    for(ServerThread serverThread: sagradaServer.getServerThread()){
+                        if(serverThread.getPlayer() == ((Message) o).getPlayer()){
+                            serverThread.setMessage((Message)o);
+                        }
+                    }
+                    break;
+                case CHOOSE_MOVE:
+                    break;
+                case MOVE_DIE:
+                    break;
+                case TOOL:
+                    break;
+                case NOTHING:
+                    break;
+                default:
+                    break;
             }
-        }while(playerIterator.hasNext());
+        }
 
 
     }
 
-    public ArrayList<Player> getPlayer(){return this.player;};
-
-    public void update(Observable observable, Object o) {
-        if(o instanceof Message){
-           // switch(((Message) o).getTypeMessage())
-        }
-
-
+    public ViewModel getViewModel(){
+        return viewModel;
     }
 
 

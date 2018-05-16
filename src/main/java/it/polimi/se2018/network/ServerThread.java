@@ -62,9 +62,10 @@ public class ServerThread extends Thread {
             this.out = new ObjectOutputStream(clientSocket.getOutputStream());
             this.in = new ObjectInputStream(clientSocket.getInputStream());
 
-            while(!toClose){
+
+             while(!toClose){
                 if(!toSend) {
-                    Thread.yield();
+                    this.wait();
                 }
                 else{
                     this.toSend = false;
@@ -75,7 +76,7 @@ public class ServerThread extends Thread {
 
             }
         }
-        catch (IOException | ClassNotFoundException e) { }
+        catch (IOException | ClassNotFoundException | InterruptedException e) { }
 
         finally {
             this.serverSocket.close();
