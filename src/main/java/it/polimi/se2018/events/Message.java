@@ -2,13 +2,11 @@ package it.polimi.se2018.events;
 
 import it.polimi.se2018.model.Player;
 
-import java.util.Observable;
-
 /**
  * @author Federico Galati
  *
  */
-public class Message extends Observable {
+public class Message {
     private TypeMessage typeMessage;
     private Player player;
 

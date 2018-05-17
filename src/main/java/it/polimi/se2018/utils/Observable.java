@@ -1,14 +1,11 @@
 package it.polimi.se2018.utils;
 
-import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.MoveDie;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class Observable {
+public class Observable<T> {
 
-    private final List<Observer> observers = new ArrayList<>();
+    private final List<Observer<T>> observers = new ArrayList<>();
 
     public void register(Observer observer){
         synchronized (observers) {
@@ -22,18 +19,18 @@ public class Observable {
         }
     }
 
-    protected void notifyObservers(MoveDie m){
+    /* protected void notifyObservers(MoveDie m){
         synchronized (observers) {
             for(Observer observer : observers){
                 observer.update(m);
             }
         }
-    }
+    } */
 
-    protected void notifyObservers(Message m){
+    protected void notify(T message){
         synchronized (observers) {
-            for(Observer observer : observers){
-                observer.update(m);
+            for(Observer<T> observer : observers){
+                observer.update(message);
             }
         }
     }
