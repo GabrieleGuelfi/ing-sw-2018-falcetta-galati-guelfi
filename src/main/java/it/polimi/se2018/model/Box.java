@@ -32,7 +32,8 @@ public class Box {
     public Colour getColourRestriction() { return colourRestriction;}
 
     public void setDie(Die d){
-        die = d;
+        if (die == null) //else throw exception? verify this here or in another class(tool can move die in pattern)?
+            die = d;
     }
 
     public Die getDie(){ return die;}

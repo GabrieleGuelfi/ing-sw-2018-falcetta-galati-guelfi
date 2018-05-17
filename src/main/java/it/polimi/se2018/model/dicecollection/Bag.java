@@ -25,7 +25,6 @@ public class Bag extends DiceCollection {
      * Method which fill the bag with 90 dice, divided in 5 colours (from model.Colour).
      * Constant SAME_COLOUR_DICE is set to 18.
      */
-
     public void populateBag() {
 
         int i;
@@ -43,7 +42,6 @@ public class Bag extends DiceCollection {
      * Creates a die with the given colour and adds it to the bag
      * @param colour of the new die
      */
-
     private void addDieOfColour(Colour colour) { // EXTRA-UML
         this.addDie(new Die(colour));
     }

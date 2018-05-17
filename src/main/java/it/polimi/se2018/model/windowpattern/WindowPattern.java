@@ -37,7 +37,7 @@ public class WindowPattern {
 
     public void putDice(Die d, int row, int column){
 
-        grid[row][column].setDie(d);
+        grid[row][column].setDie(d); //exception?
         decreaseEmptyBox();
 
     }

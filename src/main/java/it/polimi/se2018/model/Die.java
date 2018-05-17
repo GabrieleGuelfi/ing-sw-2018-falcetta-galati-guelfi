@@ -1,15 +1,11 @@
 package it.polimi.se2018.model;
 
+import java.util.Random;
+
 /**
  * Class Die
  * @author Federico Galati
  */
-
-
-import java.util.Random;
-
-
-
 public class Die {
 
     private Colour colour;
@@ -20,7 +16,6 @@ public class Die {
      * Costructor
      * @param c Colour of the new die
      */
-
     public Die(Colour c){
         colour = c;
         value = -1;
@@ -31,7 +26,6 @@ public class Die {
      * Returns the current value, if the die has been rolled
      * @return value
      */
-
     public int getValue(){ return value;  }
 
     /**
@@ -45,7 +39,6 @@ public class Die {
      * @throws IllegalArgumentException if the value is not possible for a die
      * @param n value
      */
-
     public void setValue(int n) {
         if ((n < 1) || (n > 6)) {
             throw new IllegalArgumentException("Value not allowed!");
@@ -57,7 +50,6 @@ public class Die {
      * Rolls the die
      * Sets a random value between 1 and 6
     */
-
     public void setRandomValue() { value = generator.nextInt(6) + 1;}
 
     /**

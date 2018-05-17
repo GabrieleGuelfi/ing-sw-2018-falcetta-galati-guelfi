@@ -15,10 +15,11 @@ public class MoveDie extends Observable{
     private Die die;
 
 
-      public MoveDie(Player player, int row, int column) {
+      public MoveDie(Player player, int row, int column, Die die) {
         this.player = player;
         this.row = row;
         this.column = column;
+        this.die = die;
      }
 
 

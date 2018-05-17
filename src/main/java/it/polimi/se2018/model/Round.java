@@ -7,7 +7,6 @@ import java.util.List;
 /**
  * @author Alessandro Falcetta
  */
-
 public class Round {
 
     private DraftPool draftPool;
@@ -37,7 +36,7 @@ public class Round {
      * Setter for playing player
      * @param p Player who will become the current one playing
      */
-    public void setPlayerTurn(Player p) { playerTurn = p;}
+    public void setPlayerTurn(Player p) { playerTurn = p;} //useless?
 
     /**
      * Getter for playing player
