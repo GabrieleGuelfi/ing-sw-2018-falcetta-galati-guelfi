@@ -5,5 +5,5 @@ import it.polimi.se2018.events.MessageDie;
 
 public interface ClientInterface {
 
-    public void notify(MessageDie message);
+    public void notify(Message message);
 }

@@ -1,7 +1,8 @@
 package it.polimi.se2018.utils;
 
-import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.MoveDie;
+
+import it.polimi.se2018.model.Match;
+import it.polimi.se2018.events.*;
 
 public interface Observer {
 
@@ -9,4 +10,5 @@ public interface Observer {
 
     void update(Message m);
 
+    void update(MessageDie m);
 }
