@@ -51,7 +51,7 @@ public class View extends Observable {
 
     }
 
-    public void chooseDieDraftPool(Player player){
+    /*public void chooseDieDraftPool(Player player){
         VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
         virtualClient.notify(new Message(player));
     }
@@ -80,12 +80,13 @@ public class View extends Observable {
         VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
         virtualClient.notify(new Message(player));
     }
-
-    public void chooseValue(Player player){
+    */
+    public void chooseValue(Player player, String s){
         VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
-        virtualClient.notify(new Message(player));
+        //System.out.println("Virtualclient trovato! glielo mando...");
+        virtualClient.notify(new Message(s));
     }
-
+    /*
     public void chooseMove(Player player){
         VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
         virtualClient.notify(new Message(player));
@@ -98,17 +99,14 @@ public class View extends Observable {
     public void updateModel(DraftPool draftPool){
 
     }
+*/
 
+
+
+
+    // CHIAMATA DAL VIRTUALCLIENT
     public void notifyController(Message message){
-        this.notifyObservers(message);
-    }
-
-    public void notifyController(MoveDie moveDie){
-       // this.notifyObservers(moveDie);
-    }
-
-    public void notifyController(MessageDie messageDie){
-        this.notifyObservers(messageDie);
+        message.notifyThis(this);
     }
 
 }

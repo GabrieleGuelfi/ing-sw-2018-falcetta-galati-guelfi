@@ -1,9 +1,13 @@
 package it.polimi.se2018.utils;
 
-public interface Observer<T> {
+import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.MessageDie;
 
-    void update(T m);
+public interface Observer {
 
-    //void update(Message m);
+    void update(Message m);
+
+    void update(MessageDie m);
+
 
 }

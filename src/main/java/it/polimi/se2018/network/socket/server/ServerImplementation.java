@@ -14,12 +14,6 @@ public class ServerImplementation implements ServerInterface {
         this.sagradaServer = server;
     }
 
-    public void send(MessageDie messageDie) {
-
-            getView().notifyController(messageDie);
-        }
-
-
     public void send(Message message){
         getView().notifyController(message);
     }

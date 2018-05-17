@@ -20,7 +20,7 @@ public class Box {
     // Maybe this can be removed.
     public Box(int n, Colour c){
 
-        if(n<1 || n>6) throw new IllegalArgumentException("Invalid value restriction!");
+        if(n<0 || n>6) throw new IllegalArgumentException("Invalid value restriction!");
         valueRestriction = n;
 
         colourRestriction = c;

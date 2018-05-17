@@ -17,6 +17,8 @@ import static it.polimi.se2018.view.View.getView;
 
 public class VirtualClient extends Thread implements ClientInterface{
     private Socket clientConnection;
+    private ObjectInputStream inputStream;
+    private ObjectOutputStream outputStream;
     private final SagradaServer sagradaServer;
     private Player player;
 
@@ -27,25 +29,30 @@ public class VirtualClient extends Thread implements ClientInterface{
         this.clientConnection = socket;
     }
 
+
+    public void setPlayer(Player p) {
+        this.player = p;
+    }
+
     @Override
     public void run(){
         try {
-            ObjectInputStream in = new ObjectInputStream(this.clientConnection.getInputStream());
+            inputStream = new ObjectInputStream(this.clientConnection.getInputStream());
 
             loop = true;
 
             while(loop && !this.clientConnection.isClosed()){
-
-                System.out.println("waiting...");
-                MoveDie message = this.readMessage(in);
-                getView().notifyController(message);
-
+                Message message = (Message) inputStream.readObject();
+                sagradaServer.getImplementation().send(message);
             }
 
-            in.close();
+            inputStream.close();
         }
         catch(IOException e){
             e.printStackTrace();
+        }
+        catch(ClassNotFoundException e) {
+
         }
         finally{
             try{
@@ -59,12 +66,11 @@ public class VirtualClient extends Thread implements ClientInterface{
     }
 
     public void notify(Message message){
-        ObjectOutputStream out;
 
         try{
-            out = new ObjectOutputStream(this.clientConnection.getOutputStream());
-            out.writeObject(message);
-            out.flush();
+            outputStream = new ObjectOutputStream(this.clientConnection.getOutputStream());
+            outputStream.writeObject(message);
+            outputStream.flush();
         }
         catch(IOException e){
             e.printStackTrace();
@@ -72,22 +78,8 @@ public class VirtualClient extends Thread implements ClientInterface{
 
     }
 
-    private MoveDie readMessage(ObjectInputStream i){
-        Object sms = new Object();
-        try {
-            sms = i.readObject();
-        }
-        catch(ClassNotFoundException | IOException e){
-            e.printStackTrace();
-        }
-
-        return (MoveDie) sms;
-    }
-
     public Player getPlayer() {
         return player;
     }
-
-
 
 }

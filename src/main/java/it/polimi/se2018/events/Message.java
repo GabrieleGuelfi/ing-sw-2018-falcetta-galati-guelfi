@@ -1,24 +1,28 @@
 package it.polimi.se2018.events;
 
 import it.polimi.se2018.model.Player;
+import it.polimi.se2018.view.View;
+
+import java.io.Serializable;
 
 /**
  * @author Federico Galati
  *
  */
-public class Message {
-    private TypeMessage typeMessage;
-    private Player player;
+public class Message implements Serializable  {
+    String s;
 
-    public Message(TypeMessage type, Player p){
-        this.typeMessage = type;
-        this.player = p;
+    public Message(String string){
+
+        s = string;
     }
 
-    public Player getPlayer(){ return this.player;    }
+    public String getString() {
+        return s;
+    }
 
-    public TypeMessage getTypeMessage() {
-        return typeMessage;
+    public void notifyThis(View v) {
+        v.notifyObservers(this);
     }
 
 }

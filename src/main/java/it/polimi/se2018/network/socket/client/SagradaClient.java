@@ -1,5 +1,6 @@
 package it.polimi.se2018.network.socket.client;
 
+import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.MessageDie;
 import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.Die;
@@ -30,8 +31,11 @@ public class SagradaClient {
             Die newDie = new Die(Colour.YELLOW);
             newDie.setValue(n);
 
-            MessageDie message = new MessageDie(newDie);
+            Message message = new Message("Prova di un messaggio");
+            Message messagedie = new MessageDie(newDie);
+
             server.send(message);
+            server.send(messagedie);
         }
     }
 }

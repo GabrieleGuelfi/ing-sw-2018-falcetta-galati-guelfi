@@ -16,7 +16,7 @@ public class TestBox {
     @Test
     public void testConstructorNegativeValueInf() {
         try {
-            Box box = new Box(0, Colour.BLUE);
+            Box box = new Box(-1, Colour.BLUE);
         }
         catch(IllegalArgumentException e) {
             return;

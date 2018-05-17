@@ -4,7 +4,6 @@ import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.MessageDie;
 
 public interface ServerInterface {
-    void send(MessageDie message);
     void send(Message message);
 
 }
