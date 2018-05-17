@@ -2,19 +2,25 @@ package it.polimi.se2018.controller;
 
 
 import it.polimi.se2018.controller.tool.Tool;
-import it.polimi.se2018.events.*;
+import it.polimi.se2018.events.MoveDie;
+import it.polimi.se2018.events.ViewUpdate;
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
-import it.polimi.se2018.model.*;
+import it.polimi.se2018.model.Colour;
+import it.polimi.se2018.model.Match;
+import it.polimi.se2018.model.Player;
 import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.model.windowpattern.WindowPattern;
-import it.polimi.se2018.view.View;
 import it.polimi.se2018.utils.Observer;
+import it.polimi.se2018.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Controller implements Observer {
+
+// This means that when the View uses notify( ), the Controller will handle
+// it using "update(ViewUpdate v)
+public class Controller implements Observer<ViewUpdate> {
 
     private Match match;
 
@@ -205,6 +211,11 @@ public class Controller implements Observer {
     }
 
     @Override
+    public void update(ViewUpdate v) {
+        // Here the controller should take the news from the view and handle them.
+    }
+
+    /* @Override
     public void update(MoveDie m) {
 
         if (m.getPlayer() != match.getRound().getPlayerTurn()) {
@@ -243,5 +254,5 @@ public class Controller implements Observer {
     @Override
     public void update(Message message) {
         System.out.println("prova observer");
-    }
+    } */
 }

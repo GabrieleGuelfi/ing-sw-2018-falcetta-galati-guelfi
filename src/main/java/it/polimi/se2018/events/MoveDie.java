@@ -1,10 +1,9 @@
 package it.polimi.se2018.events;
 
-import it.polimi.se2018.model.*;
+import it.polimi.se2018.model.Die;
+import it.polimi.se2018.model.Player;
 
-import java.util.Observable;
-
-public class MoveDie extends Observable{
+public class MoveDie {
 
     private final Player player;
 

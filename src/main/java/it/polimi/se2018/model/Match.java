@@ -1,9 +1,11 @@
 package it.polimi.se2018.model;
 
 import it.polimi.se2018.controller.tool.Tool;
+import it.polimi.se2018.events.ModelUpdate;
 import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
+import it.polimi.se2018.utils.Observable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,12 @@ import java.util.List;
  * @author Alessandro Falcetta
  */
 
-public class Match {
+// This means that, when Match ( = Model ) is modified
+// notify(ModelUpdate) is called. This message contains a copy of the new
+// Match, with all the new objects. This can be changed, if we decide to
+// update only the objects modified.
+
+public class Match extends Observable<ModelUpdate> {
 
     private Bag bag;
     private List<Player> players;
@@ -45,6 +52,10 @@ public class Match {
         this.numRound = 1; // Human convention?
         this.roundTrack = new ArrayList<>();
         this.players = new ArrayList<>();
+
+        notify(new ModelUpdate(this)); // EXAMPLE: here Model throws a ModelUpdate.
+        // All the Observers will be notified with this message (ie: View will be notified!)
+        // We should use this.copy(), however.
     }
 
     public Player getFirstPlayerRound() {

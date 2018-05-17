@@ -3,27 +3,34 @@ package it.polimi.se2018.view;
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.MessageUpdate;
+import it.polimi.se2018.events.ModelUpdate;
+import it.polimi.se2018.events.ViewUpdate;
 import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
 import it.polimi.se2018.model.dicecollection.DiceCollection;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.network.SagradaServer;
+import it.polimi.se2018.utils.Observable;
+import it.polimi.se2018.utils.Observer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Observable;
-import java.util.Observer;
+
+
 
 /**
  * Class View is the representation of the Model.
- * Handle the comunication with Controller through class MessageNewTurn and with Model through MessageUpdate.
+ * Handle the comunication with Controller through class MessageNewTurn and with Model through ModelUpdate.
  * View is a Singleton.
  * @author Federico Galati
  *
  *
  */
-public class View extends Observable implements Observer{
+
+// Whenever the View gets modified, it has to call notify(new ViewUpdate) in order to
+// let the Controller know that something has changed.
+
+public class View extends Observable<ViewUpdate> implements Observer<ModelUpdate> {
 
 
     private static Controller controller;
@@ -66,14 +73,13 @@ public class View extends Observable implements Observer{
         }
 
         //ADD ALL OBSERVER
-        this.addObserver(controller);
+        // this.addObserver(controller);
 
     }
 
     //UPDATE WHEN CONTROLLER NOTIFY NEW PLAYER_TURN
 
-
-    private void update(MessageUpdate sms, Player playerUpdated){
+    private void update(ModelUpdate sms, Player playerUpdated){
         Iterator<Player> playerIterator = player.iterator();
         //if (player.isEmpty())
         do{
@@ -99,5 +105,9 @@ public class View extends Observable implements Observer{
 
     }
 
-
+    @Override
+    public void update(ModelUpdate m) {
+        // Here View receives an update from MODEL. View should updates herself using
+        // the objects in this message.
+    }
 }
