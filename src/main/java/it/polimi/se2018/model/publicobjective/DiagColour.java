@@ -1,7 +1,7 @@
 package it.polimi.se2018.model.publicobjective;
 
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
-import it.polimi.se2018.model.WindowPattern;
+import it.polimi.se2018.model.windowpattern.WindowPattern;
 
 /**
  * public objective that check how many dice of the same colour are diagonally adjacent are placed in the whole window pattern
@@ -12,10 +12,9 @@ public class DiagColour extends PublicObjective {
     /**
      * Class Constructor
      * @param description the short description of the objective
-     * @param vp how much points give the objective
      */
-    public DiagColour (String description, int vp) {
-        super(description, vp);
+    public DiagColour (String description) {
+        super(description, 0);
     }
 
     /**

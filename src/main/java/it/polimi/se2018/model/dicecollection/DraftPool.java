@@ -6,7 +6,7 @@ import java.security.InvalidParameterException;
 import java.util.Random;
 
 /**
- * This class represents the "Draft pool", aka the group of 5-7-9 dice estracted from the bag in the begin of a round.
+ * This class represents the "Draft pool", aka the group of 5-7-9 dice extracted from the bag in the begin of a round.
  * @author Alessandro Falcetta
  */
 

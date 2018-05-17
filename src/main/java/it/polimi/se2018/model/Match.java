@@ -2,9 +2,11 @@ package it.polimi.se2018.model;
 
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.model.dicecollection.Bag;
+import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Alessandro Falcetta
@@ -13,12 +15,14 @@ import java.util.ArrayList;
 public class Match {
 
     private Bag bag;
-    private ArrayList<Player> players;
-    private ArrayList<Player> activePlayers;
-    private ArrayList<PublicObjective> publicObjectives;
-    private ArrayList<Tool> tools;
-    private ArrayList<Die> roundTrack;
-    private int round;
+    private List<Player> players;
+    private List<Player> activePlayers;
+    private List<PublicObjective> publicObjectives;
+    private List<Tool> tools;
+    private List<Die> roundTrack;
+    private int numRound;
+    private Round round;
+    private Player firstPlayerRound;
 
     /**
      * Constructor of the class
@@ -28,7 +32,7 @@ public class Match {
      * @param objectives Set of public objectives
      * @param tools Set of tools
      */
-    public Match(Bag bag, ArrayList<Player> players, ArrayList<PublicObjective> objectives, ArrayList<Tool> tools) {
+    public Match(Bag bag, List<Player> players, List<PublicObjective> objectives, List<Tool> tools) {
         if ((bag==null) || (players==null) || (objectives==null) || (tools==null)) {
             throw new IllegalArgumentException("Parameters can't be null!");
             // Is it necessary to check the size and content of all parameters?
@@ -38,18 +42,40 @@ public class Match {
         this.activePlayers = players;
         this.publicObjectives = objectives;
         this.tools = tools;
-        this.round = 1; // Human convention?
+        this.numRound = 1; // Human convention?
         this.roundTrack = new ArrayList<>();
         this.players = new ArrayList<>();
+    }
+
+    public Player getFirstPlayerRound() {
+        return firstPlayerRound;
+    }
+
+    public void setRound(Round r) {
+        if(r==null) throw new IllegalArgumentException("Invalid round!");
+        this.round = r;
+    }
+
+    public Round getRound() {
+        return round;
+    }
+
+    public void nextNumRound() {
+        if (this.numRound == 10) throw new IllegalStateException("Maximum number of turns reached!");
+        this.numRound++;
     }
 
     /**
      * Updates the round number, to a maximum of 10
      * @throws IllegalStateException if 10 rounds are already reached
      */
-    public void nextRound() {
-        if (this.round==10) throw new IllegalStateException("Maximum number of turns reached!");
-        this.round++;
+    public void setRound() {
+        nextNumRound();
+        if (players.indexOf(firstPlayerRound) == players.size())
+            firstPlayerRound = players.get(0);
+        else
+            firstPlayerRound = players.get(players.indexOf(firstPlayerRound)+1);
+        this.round = new Round(new DraftPool(bag, getPlayers().size()), getFirstPlayerRound());
     }
 
     /**
@@ -64,7 +90,7 @@ public class Match {
      * Method which returns the active players, aka the ones still online and playing
      * @return active players of the match
      */
-    public ArrayList<Player> getActivePlayers() {
+    public List<Player> getActivePlayers() {
         return this.activePlayers;
     }
 
@@ -72,21 +98,21 @@ public class Match {
      * Method which returns the players, aka the ones who were playing, but then disconnected
      * @return players of the match
      */
-    public ArrayList<Player> getPlayers(){ return this.players;}
+    public List<Player> getPlayers(){ return this.players;}
 
     /**
      * Getter for tools
      * @return tools of the match
      */
 
-    public ArrayList<Tool> getTools() { return this.tools;}
+    public List<Tool> getTools() { return this.tools;}
 
     /**
      * Getter for public objectives
      * @return public objectives of the match
      */
 
-    public ArrayList<PublicObjective> getPublicObjectives() {
+    public List<PublicObjective> getPublicObjectives() {
         return this.publicObjectives;
     }
 
@@ -94,7 +120,7 @@ public class Match {
      * Getter for roundtrack
      * @return roundtrack of the match
      */
-    public ArrayList<Die> getRoundTrack() {
+    public List<Die> getRoundTrack() {
         return this.roundTrack;
     }
 
@@ -103,7 +129,7 @@ public class Match {
      * @return round number of the match
      */
 
-    public int getRound() { return this.round;}
+    public int getNumRound() { return this.numRound;}
 
     /**
      * Method which deactivates a player; this means that the player goes from "active players" to "players"

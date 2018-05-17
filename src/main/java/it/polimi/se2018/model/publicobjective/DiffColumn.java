@@ -2,7 +2,7 @@ package it.polimi.se2018.model.publicobjective;
 
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.Colour;
-import it.polimi.se2018.model.WindowPattern;
+import it.polimi.se2018.model.windowpattern.WindowPattern;
 
 import java.util.ArrayList;
 
@@ -42,7 +42,7 @@ public class DiffColumn extends PublicObjective{
                 colours = new ArrayList<>();
             else
                 shades = new ArrayList<>();
-            for (int i = 0; i<WindowPattern.MAX_ROW; i++) {
+            for (int i = 0; i<WindowPattern.MAX_ROW && !same; i++) {
                 try {
                     if (isColour) {
                         if (!colours.contains(windowPattern.getBox(i, j).getDie().getColour())) {

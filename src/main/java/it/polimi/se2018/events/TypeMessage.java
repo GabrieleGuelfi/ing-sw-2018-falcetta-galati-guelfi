@@ -5,10 +5,11 @@ public enum TypeMessage {
     MOVE_DIE,
     TOOL,
     UPDATE,
+    NEW_TURN,
     CHOOSE_MOVE,
-    NEW_TURN
+    ERROR_TURN,
+    ERROR_DIE,
+    NEW_ROUND,
+    END_MATCH
 
 }
-
-
-

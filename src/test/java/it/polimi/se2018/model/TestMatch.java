@@ -2,10 +2,12 @@ package it.polimi.se2018.model;
 
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.model.dicecollection.Bag;
+import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -20,15 +22,16 @@ public class TestMatch {
 
         Match match = new Match(bag, players, objectives, tools);
 
+        assertEquals(1, match.getNumRound());
         assertEquals(bag, match.getBag());
         assertEquals(players, match.getActivePlayers());
         assertEquals(tools, match.getTools());
         assertEquals(objectives, match.getPublicObjectives());
 
-        ArrayList<Die> roundTrack = match.getRoundTrack();
+        List<Die> roundTrack = match.getRoundTrack();
 
         assertTrue(roundTrack.isEmpty());
-        assertEquals(1, match.getRound());
+        assertEquals(1, match.getNumRound());
     }
 
     @Test
@@ -208,16 +211,39 @@ public class TestMatch {
         Match match = new Match(bag, players, objectives, tools);
 
         for(int i=0; i<9; i++) {
-            match.nextRound();
+            match.nextNumRound();
         }
 
         try {
-            match.nextRound();
+            match.nextNumRound();
         }
         catch(IllegalStateException e) {
             return;
         }
 
         fail();
+    }
+
+    @Test
+    public void testGetSetRound() {
+        Bag bag = new Bag();
+        bag.populateBag();
+        ArrayList<Player> players = new ArrayList<>();
+        ArrayList<PublicObjective> objectives = new ArrayList<>();
+        ArrayList<Tool> tools = new ArrayList<>();
+
+        Match match = new Match(bag, players, objectives, tools);
+
+        Player p = new Player("foo");
+
+        DraftPool dp = new DraftPool(bag, 4);
+
+        Round round = new Round(dp, p);
+
+        match.setRound(round);
+
+        assertEquals(round, match.getRound());
+
+
     }
 }
