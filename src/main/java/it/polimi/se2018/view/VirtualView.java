@@ -12,6 +12,8 @@ import it.polimi.se2018.utils.*;
 
 import java.util.ArrayList;
 
+import static it.polimi.se2018.events.TypeMessage.*;
+
 /**
  * @author Federico Galati
  *
@@ -49,7 +51,7 @@ public class View extends Observable {
 
     }
 
-    public void chooseDieDraftPool(Player player){
+    /*public void chooseDieDraftPool(Player player){
         VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
         virtualClient.notify(new Message(player));
     }
@@ -78,12 +80,13 @@ public class View extends Observable {
         VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
         virtualClient.notify(new Message(player));
     }
-
-    public void chooseValue(Player player){
+    */
+    public void chooseValue(Player player, String s){
         VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
-        virtualClient.notify(new Message(player));
+        //System.out.println("Virtualclient trovato! glielo mando...");
+        virtualClient.notify(new Message(s));
     }
-
+    /*
     public void chooseMove(Player player){
         VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
         virtualClient.notify(new Message(player));
@@ -93,15 +96,18 @@ public class View extends Observable {
 
     }
 
-    public void updateModel(DraftPool draftPool) {
+    public void updateModel(DraftPool draftPool){
 
     }
+*/
 
-    public void notifyController(MoveDie moveDie){
-       // this.notifyObservers(moveDie);
+
+
+
+    // CHIAMATA DAL VIRTUALCLIENT
+    public void notifyController(Message message){
+        message.notifyThis(this);
     }
-
-
 
 }
 

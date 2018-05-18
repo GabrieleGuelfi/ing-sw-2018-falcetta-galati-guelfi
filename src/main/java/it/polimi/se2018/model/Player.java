@@ -18,7 +18,7 @@ public class Player {
 
     private boolean usedTool;
 
-    Player(String nickname) {
+    public Player(String nickname) {
         this.nickname = nickname;
         points = 0;
     }
