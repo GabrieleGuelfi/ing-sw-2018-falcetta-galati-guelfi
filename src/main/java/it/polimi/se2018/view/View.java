@@ -12,8 +12,6 @@ import it.polimi.se2018.utils.*;
 
 import java.util.ArrayList;
 
-import static it.polimi.se2018.events.TypeMessage.*;
-
 /**
  * @author Federico Galati
  *
@@ -95,21 +93,15 @@ public class View extends Observable {
 
     }
 
-    public void updateModel(DraftPool draftPool){
+    public void updateModel(DraftPool draftPool) {
 
-    }
-
-    public void notifyController(Message message){
-        this.notifyObservers(message);
     }
 
     public void notifyController(MoveDie moveDie){
        // this.notifyObservers(moveDie);
     }
 
-    public void notifyController(MessageDie messageDie){
-        this.notifyObservers(messageDie);
-    }
+
 
 }
 

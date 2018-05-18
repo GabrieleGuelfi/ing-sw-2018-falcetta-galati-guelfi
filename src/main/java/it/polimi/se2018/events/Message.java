@@ -10,8 +10,7 @@ public class Message {
     private TypeMessage typeMessage;
     private Player player;
 
-    public Message(TypeMessage type, Player p){
-        this.typeMessage = type;
+    public Message(Player p){
         this.player = p;
     }
 
