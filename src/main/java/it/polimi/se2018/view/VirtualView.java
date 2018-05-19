@@ -7,6 +7,7 @@ import it.polimi.se2018.model.Player;
 
 import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.network.socket.server.SagradaServer;
+import it.polimi.se2018.network.socket.server.ServerImplementation;
 import it.polimi.se2018.network.socket.server.VirtualClient;
 import it.polimi.se2018.utils.*;
 
@@ -19,30 +20,14 @@ import static it.polimi.se2018.events.TypeMessage.*;
  *
  *
  */
-public class View extends Observable {
+public class VirtualView extends Observable implements Observer {
 
 
-    private static Controller controller;
-    private static View view = null;
-    private SagradaServer sagradaServer;
+    private Controller controller;
+    private ServerImplementation sagradaServer;
 
-    public static View createView(Controller c, SagradaServer s) {
 
-        if (view != null) {
-            return view;
-        } else {
-            view = new View(c,s);
-            return view;
-        }
-    }
-
-    public static View getView() {
-
-        return view;
-
-    }
-
-    private View(Controller c, SagradaServer s) {
+    public VirtualView(Controller c, ServerImplementation s) {
         //REMEMBER TO ADD COPY ON TOOL AND OBJECTIVE.
 
         controller = c;
@@ -50,6 +35,12 @@ public class View extends Observable {
         this.register(controller);
 
     }
+
+    @Override
+    public void update(Message message){
+        message.accept(new Visitor(sagradaServer));
+    }
+
 
     /*public void chooseDieDraftPool(Player player){
         VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
@@ -81,11 +72,13 @@ public class View extends Observable {
         virtualClient.notify(new Message(player));
     }
     */
+    /*
     public void chooseValue(Player player, String s){
         VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
         //System.out.println("Virtualclient trovato! glielo mando...");
         virtualClient.notify(new Message(s));
     }
+    */
     /*
     public void chooseMove(Player player){
         VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
@@ -101,13 +94,10 @@ public class View extends Observable {
     }
 */
 
-
-
-
     // CHIAMATA DAL VIRTUALCLIENT
-    public void notifyController(Message message){
-        message.notifyThis(this);
-    }
+    //public void notifyController(Message message){
+      //  message.notifyThis(this);
+   // }
 
 }
 

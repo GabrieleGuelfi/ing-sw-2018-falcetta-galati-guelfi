@@ -5,7 +5,6 @@ import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.MessageDie;
 import it.polimi.se2018.events.MoveDie;
-import it.polimi.se2018.events.ViewUpdate;
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.Match;
@@ -14,13 +13,13 @@ import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.model.windowpattern.WindowPattern;
 import it.polimi.se2018.utils.Observer;
-import it.polimi.se2018.view.View;
+import it.polimi.se2018.view.VirtualView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-// This means that when the View uses notify( ), the Controller will handle
+// This means that when the VirtualView uses notify( ), the Controller will handle
 // it using "update(ViewUpdate v)
 public class Controller implements Observer {
 
@@ -30,7 +29,7 @@ public class Controller implements Observer {
         this.match = null;
     }
 
-    public void startGame(List<Player> players, View view) {
+    public void startGame(List<Player> players, VirtualView view) {
 
         List<PublicObjective> objectives = new ArrayList<>(); // Here we should have the real Public Objectives...
 
@@ -63,7 +62,7 @@ public class Controller implements Observer {
 
     private void givePrivateObjective(Player player, String s) {
         System.out.println("Scrivo a... " + s);
-        View.getView().chooseValue(player, "Ciao!");
+
     }
 
     private void giveFavorTokens(Player player) { //probably useless, we can make this in giveWindowPattern
@@ -262,4 +261,6 @@ public class Controller implements Observer {
     public void update(Message message) {
         System.out.println("prova observer");
     } */
+
+    public void update(Object o){}
 }

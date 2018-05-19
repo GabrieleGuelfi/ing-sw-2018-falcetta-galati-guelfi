@@ -1,9 +1,6 @@
 package it.polimi.se2018.network.socket.client;
 
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.MessageDie;
-import it.polimi.se2018.model.Player;
-import it.polimi.se2018.view.View;
 
 public class ClientImplementation implements ClientInterface {
 

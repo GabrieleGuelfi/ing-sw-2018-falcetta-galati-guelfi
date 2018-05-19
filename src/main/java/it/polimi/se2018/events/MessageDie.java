@@ -1,11 +1,9 @@
 package it.polimi.se2018.events;
 
 import it.polimi.se2018.model.Die;
-import it.polimi.se2018.model.Player;
-import it.polimi.se2018.view.View;
+import it.polimi.se2018.view.VirtualView;
 
 import java.io.Serializable;
-import java.util.Observable;
 
 public class MessageDie extends Message implements Serializable {
 
@@ -20,7 +18,7 @@ public class MessageDie extends Message implements Serializable {
 
     public Die getDie() { return die; }
 
-    public void notifyThis(View v) {
+    public void notifyThis(VirtualView v) {
         v.notifyObservers(this);
     }
 }

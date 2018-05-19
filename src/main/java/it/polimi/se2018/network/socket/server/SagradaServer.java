@@ -1,9 +1,10 @@
 package it.polimi.se2018.network.socket.server;
 
 import it.polimi.se2018.controller.Controller;
+import it.polimi.se2018.events.Message;
 import it.polimi.se2018.model.Player;
 import it.polimi.se2018.network.socket.client.ClientInterface;
-import it.polimi.se2018.view.View;
+import it.polimi.se2018.view.VirtualView;
 
 import java.net.Socket;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class SagradaServer {
                 players.add(player2);
                 System.out.println("Partita iniziata!");
                 Controller controller = new Controller();
-                controller.startGame(players, View.createView(controller, this));
+                //controller.startGame(players, VirtualView.createView(controller, this));
             }
         }
         catch(InterruptedException e){
@@ -65,6 +66,7 @@ public class SagradaServer {
         return server;
     }
 
+    /*
     public VirtualClient searchVirtualClient(Player player){
         try {
             for(VirtualClient v : this.clients){
@@ -76,6 +78,7 @@ public class SagradaServer {
         }
         return null;
     }
+    */
 
     public static void main(String[] args) {
         new SagradaServer();

@@ -13,8 +13,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import it.polimi.se2018.utils.Observable;
 
-import static it.polimi.se2018.view.View.getView;
-
 public class VirtualClient extends Thread implements ClientInterface{
     private Socket clientConnection;
     private ObjectInputStream inputStream;
