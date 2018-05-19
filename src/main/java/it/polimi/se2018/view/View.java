@@ -2,17 +2,10 @@ package it.polimi.se2018.view;
 
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.*;
-import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
-
-import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.network.socket.server.SagradaServer;
 import it.polimi.se2018.network.socket.server.VirtualClient;
 import it.polimi.se2018.utils.*;
-
-import java.util.ArrayList;
-
-import static it.polimi.se2018.events.TypeMessage.*;
 
 /**
  * @author Federico Galati

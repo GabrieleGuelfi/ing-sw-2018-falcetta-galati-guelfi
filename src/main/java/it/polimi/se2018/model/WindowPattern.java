@@ -1,9 +1,6 @@
-package it.polimi.se2018.model.windowpattern;
+package it.polimi.se2018.model;
 
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
-import it.polimi.se2018.model.Box;
-import it.polimi.se2018.model.Colour;
-import it.polimi.se2018.model.Die;
 
 public class WindowPattern {
 

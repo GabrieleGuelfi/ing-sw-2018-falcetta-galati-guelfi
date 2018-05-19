@@ -1,16 +1,12 @@
 package it.polimi.se2018.model;
 
+import java.io.Serializable;
+import java.util.Random;
+
 /**
  * Class Die
  * @author Federico Galati
  */
-
-
-import java.io.Serializable;
-import java.util.Random;
-
-
-
 public class Die implements Serializable {
 
     private Colour colour;

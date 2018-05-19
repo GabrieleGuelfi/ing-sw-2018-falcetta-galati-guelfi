@@ -1,6 +1,5 @@
 package it.polimi.se2018.model;
 
-import it.polimi.se2018.model.windowpattern.WindowPattern;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -33,7 +32,7 @@ public class TestPlayer {
     @Test
     public void testSetWindowPatternPositive() {
         Player player = new Player("foo");
-        WindowPattern windowPattern = new WindowPattern(10);
+        WindowPattern windowPattern = new WindowPattern(null,10);
         assertNull(player.getWindowPattern());
         player.setWindowPattern(windowPattern);
         assertEquals(windowPattern, player.getWindowPattern());
@@ -56,7 +55,7 @@ public class TestPlayer {
     @Test
     public void testRemoveFavorTokensPositive() {
         Player player = new Player("foo");
-        WindowPattern windowPattern = new WindowPattern(10);
+        WindowPattern windowPattern = new WindowPattern(null,10);
         player.setWindowPattern(windowPattern);
         assertEquals(10, player.getFavorTokens());
         player.removeFavorTokens(5);
@@ -66,7 +65,7 @@ public class TestPlayer {
     @Test
     public void testRemoveFavorTokensNegative() {
         Player player = new Player("foo");
-        WindowPattern windowPattern = new WindowPattern(10);
+        WindowPattern windowPattern = new WindowPattern(null,10);
         player.setWindowPattern(windowPattern);
         assertEquals(10, player.getFavorTokens());
         try {
@@ -100,7 +99,7 @@ public class TestPlayer {
         Player player = new Player("foo");
 
         PrivateObjective po = new PrivateObjective("foo", Colour.BLUE);
-        WindowPattern wp = new WindowPattern(10);
+        WindowPattern wp = new WindowPattern(null,10);
 
         player.setPrivateObjective(po);
         player.setWindowPattern(wp);
@@ -118,8 +117,8 @@ public class TestPlayer {
         assertEquals(player.getNickname(), player1.getNickname());
 
         // Implement copy() for private objective: if tested, it will verify the following conditions
-//        assertEquals(player.getPrivateObjective().getDescription(), player1.getPrivateObjective().getDescription());
-//        assertEquals(player.getPrivateObjective().getShade(), player1.getPrivateObjective().getShade());
+        //assertEquals(player.getPrivateObjective().getDescription(), player1.getPrivateObjective().getDescription());
+        //assertEquals(player.getPrivateObjective().getShade(), player1.getPrivateObjective().getShade());
         assertNotEquals(player.getPrivateObjective(), player1.getPrivateObjective());
         assertEquals(player.getWindowPattern().getDifficulty(), player1.getWindowPattern().getDifficulty());
         assertNotEquals(player.getWindowPattern(), player1.getWindowPattern());

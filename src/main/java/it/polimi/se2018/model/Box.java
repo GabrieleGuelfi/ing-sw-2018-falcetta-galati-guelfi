@@ -12,7 +12,7 @@ public class Box {
     }
 
     public Box(int n) {
-        if(n<1 || n>6) throw new IllegalArgumentException("Invalid value restriction!");
+        if(n<0 || n>6) throw new IllegalArgumentException("Invalid value restriction!");
         valueRestriction = n;
         colourRestriction = Colour.WHITE;
     }
