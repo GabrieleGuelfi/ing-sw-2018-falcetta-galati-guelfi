@@ -2,6 +2,8 @@ package it.polimi.se2018.controller;
 
 
 import it.polimi.se2018.controller.tool.Tool;
+import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.MessageDie;
 import it.polimi.se2018.events.MoveDie;
 import it.polimi.se2018.events.ViewUpdate;
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
@@ -20,7 +22,7 @@ import java.util.List;
 
 // This means that when the View uses notify( ), the Controller will handle
 // it using "update(ViewUpdate v)
-public class Controller implements Observer<ViewUpdate> {
+public class Controller implements Observer {
 
     private Match match;
 
@@ -38,7 +40,7 @@ public class Controller implements Observer<ViewUpdate> {
 
 
         for(Player player: match.getActivePlayers()) {
-            givePrivateObjective(player);
+            givePrivateObjective(player, player.getNickname());
         }
 
         for(Player player: match.getActivePlayers()) {
@@ -59,8 +61,9 @@ public class Controller implements Observer<ViewUpdate> {
 
     }
 
-    private void givePrivateObjective(Player player) {
-
+    private void givePrivateObjective(Player player, String s) {
+        System.out.println("Scrivo a... " + s);
+        View.getView().chooseValue(player, "Ciao!");
     }
 
     private void giveFavorTokens(Player player) { //probably useless, we can make this in giveWindowPattern
@@ -210,9 +213,13 @@ public class Controller implements Observer<ViewUpdate> {
 
     }
 
-    @Override
-    public void update(ViewUpdate v) {
+    public void update(Message message) {
+        System.out.println(message.getString());
         // Here the controller should take the news from the view and handle them.
+    }
+
+    public void update(MessageDie message) {
+        System.out.println("UPDATE PER MESSAGEDIE");
     }
 
     /* @Override

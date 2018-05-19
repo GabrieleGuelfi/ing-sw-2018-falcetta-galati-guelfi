@@ -1,113 +1,113 @@
 package it.polimi.se2018.view;
 
 import it.polimi.se2018.controller.Controller;
-import it.polimi.se2018.controller.tool.Tool;
-import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.ModelUpdate;
-import it.polimi.se2018.events.ViewUpdate;
+import it.polimi.se2018.events.*;
 import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
-import it.polimi.se2018.model.dicecollection.DiceCollection;
-import it.polimi.se2018.model.publicobjective.PublicObjective;
-import it.polimi.se2018.network.SagradaServer;
-import it.polimi.se2018.utils.Observable;
-import it.polimi.se2018.utils.Observer;
+
+import it.polimi.se2018.model.dicecollection.DraftPool;
+import it.polimi.se2018.network.socket.server.SagradaServer;
+import it.polimi.se2018.network.socket.server.VirtualClient;
+import it.polimi.se2018.utils.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-
+import static it.polimi.se2018.events.TypeMessage.*;
 
 /**
- * Class View is the representation of the Model.
- * Handle the comunication with Controller through class MessageNewTurn and with Model through ModelUpdate.
- * View is a Singleton.
  * @author Federico Galati
  *
  *
  */
-
-// Whenever the View gets modified, it has to call notify(new ViewUpdate) in order to
-// let the Controller know that something has changed.
-
-public class View extends Observable<ViewUpdate> implements Observer<ModelUpdate> {
+public class View extends Observable {
 
 
     private static Controller controller;
-    private static Match match;
     private static View view = null;
-    private static SagradaServer sagradaServer;
+    private SagradaServer sagradaServer;
 
-    private ArrayList<Player> player;
-    private DiceCollection draftPool;
-    private ArrayList<Tool> tool;
-    private ArrayList<PublicObjective> publicObjective;
+    public static View createView(Controller c, SagradaServer s) {
 
-    public static View createView(Controller c, Match m, SagradaServer s){
-
-        if (view != null){
+        if (view != null) {
             return view;
-        }
-        else{
-              view = new View(c, m, s);
-              return view;
+        } else {
+            view = new View(c,s);
+            return view;
         }
     }
 
-    public static View getView(){
+    public static View getView() {
 
         return view;
 
     }
 
-    private View(Controller c, Match m, SagradaServer s){
+    private View(Controller c, SagradaServer s) {
         //REMEMBER TO ADD COPY ON TOOL AND OBJECTIVE.
 
         controller = c;
-        match = m;
-        sagradaServer = s;
-
-        for(Player playerMatch : match.getPlayers()) {
-
-            this.player.add(playerMatch.copy()); //Copy of all players.
-        }
-
-        //ADD ALL OBSERVER
-        // this.addObserver(controller);
+        this.sagradaServer = s;
+        this.register(controller);
 
     }
 
-    //UPDATE WHEN CONTROLLER NOTIFY NEW PLAYER_TURN
+    /*public void chooseDieDraftPool(Player player){
+        VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
+        virtualClient.notify(new Message(player));
+    }
 
-    private void update(ModelUpdate sms, Player playerUpdated){
-        Iterator<Player> playerIterator = player.iterator();
-        //if (player.isEmpty())
-        do{
-            Player p = playerIterator.next();
-            if(p.equals(playerUpdated)) {
-                p = playerUpdated.copy();
-                player.add(p);
-                playerIterator.remove();
-                break;
-            }
-        }while(playerIterator.hasNext());
+    public void chooseDieWindowPattern(Player player){
+        VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
+        virtualClient.notify(new Message(player));
+    }
 
+    public void changeValue(Player player){
+        VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
+        virtualClient.notify(new Message(player));
+    }
+
+    public void moveDieFromWindowPattern(Player player){
+        VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
+        virtualClient.notify(new Message(player));
+    }
+
+    public void moveDieFromDraftPool(Player player){
+        VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
+        virtualClient.notify(new Message(player));
+    }
+
+    public void moveDieFromTrackRound(Player player){
+        VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
+        virtualClient.notify(new Message(player));
+    }
+    */
+    public void chooseValue(Player player, String s){
+        VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
+        //System.out.println("Virtualclient trovato! glielo mando...");
+        virtualClient.notify(new Message(s));
+    }
+    /*
+    public void chooseMove(Player player){
+        VirtualClient virtualClient = sagradaServer.searchVirtualClient(player);
+        virtualClient.notify(new Message(player));
+    }
+
+    public void updateModel(Player player){
 
     }
 
-    public ArrayList<Player> getPlayer(){return this.player;};
-
-    public void update(Observable observable, Object o) {
-        if(o instanceof Message){
-           // switch(((Message) o).getTypeMessage())
-        }
-
+    public void updateModel(DraftPool draftPool){
 
     }
+*/
 
-    @Override
-    public void update(ModelUpdate m) {
-        // Here View receives an update from MODEL. View should updates herself using
-        // the objects in this message.
+
+
+
+    // CHIAMATA DAL VIRTUALCLIENT
+    public void notifyController(Message message){
+        message.notifyThis(this);
     }
+
 }
+
