@@ -90,6 +90,8 @@ public class TestPlayer {
         Player player = new Player("foo");
         PrivateObjective po = new PrivateObjective("foo", Colour.BLUE);
         player.setPrivateObjective(po);
+        assertEquals(Colour.BLUE, po.getShade());
+        assertEquals("foo", po.getDescription());
         assertEquals(po, player.getPrivateObjective());
     }
 

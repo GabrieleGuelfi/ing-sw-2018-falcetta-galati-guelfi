@@ -4,7 +4,7 @@ public class PrivateObjective {
 
     private Colour shade;
 
-    protected String description;
+    private String description;
 
     public PrivateObjective(String description, Colour shade) {
         this.description = description;

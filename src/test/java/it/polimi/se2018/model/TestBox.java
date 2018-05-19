@@ -14,6 +14,42 @@ public class TestBox {
     }
 
     @Test
+    public void testConstructorNumberPositive() {
+        Box box = new Box(5);
+        assertEquals(5, box.getValueRestriction());
+        assertEquals(Colour.WHITE, box.getColourRestriction());
+    }
+
+    @Test
+    public void testConstructorColourPositive() {
+        Box box = new Box(Colour.YELLOW);
+        assertEquals(0, box.getValueRestriction());
+        assertEquals(Colour.YELLOW, box.getColourRestriction());
+    }
+
+    @Test
+    public void testConstructorNumberNegativeValueInf() {
+        try {
+            Box box = new Box(-3);
+        }
+        catch(IllegalArgumentException e) {
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void testConstructorNumberNegativeValueSup() {
+        try {
+            Box box = new Box(11);
+        }
+        catch(IllegalArgumentException e) {
+            return;
+        }
+        fail();
+    }
+
+    @Test
     public void testConstructorNegativeValueInf() {
         try {
             Box box = new Box(-1, Colour.BLUE);
@@ -23,6 +59,7 @@ public class TestBox {
         }
         fail();
     }
+
     @Test
     public void testConstructorNegativeValueSup() {
         try {

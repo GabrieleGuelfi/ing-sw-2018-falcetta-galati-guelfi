@@ -19,12 +19,9 @@ public class Box {
 
     // Maybe this can be removed.
     public Box(int n, Colour c){
-
         if(n<0 || n>6) throw new IllegalArgumentException("Invalid value restriction!");
         valueRestriction = n;
-
         colourRestriction = c;
-
     }
 
     public int getValueRestriction(){ return valueRestriction;}
@@ -43,7 +40,6 @@ public class Box {
      * @return Copy of this Object.
      */
     public Box copy(){
-
         Box b = new Box(this.valueRestriction, this.colourRestriction);
         if(this.die!=null) b.die = this.die.copy();
         return b;

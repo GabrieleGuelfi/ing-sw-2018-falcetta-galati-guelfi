@@ -1,7 +1,8 @@
-package it.polimi.se2018.model;
+package it.polimi.se2018.model.dicecollection;
 
-import it.polimi.se2018.model.dicecollection.Bag;
-import it.polimi.se2018.model.dicecollection.DraftPool;
+import it.polimi.se2018.model.Colour;
+import it.polimi.se2018.model.Die;
+
 import org.junit.Test;
 
 import java.security.InvalidParameterException;
@@ -34,7 +35,7 @@ public class TestDraftPool {
 
         for(i=0; i<9; i++) {
             die = draftPool.removeDie(0);
-            if (die.getColour()==Colour.BLUE) blueDice++;
+            if (die.getColour()== Colour.BLUE) blueDice++;
             if (die.getColour()==Colour.GREEN) greenDice++;
             if (die.getColour()==Colour.YELLOW) yellowDice++;
             if (die.getColour()==Colour.RED) redDice++;

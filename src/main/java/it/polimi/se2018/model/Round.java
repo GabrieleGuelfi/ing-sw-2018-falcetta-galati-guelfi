@@ -46,13 +46,14 @@ public class Round {
 
 
     public void nextTurn(List<Player> players) {
-        if (numTurn < players.size())
-            if (players.indexOf(playerTurn) < players.size()-1) {
-                playerTurn = players.get(players.indexOf(playerTurn)+1);
-            }
-            else {
+        if (numTurn == players.size()*2) throw new IllegalStateException("No other turn for this round!");
+        if (numTurn < players.size()) {
+            if (players.indexOf(playerTurn) < players.size() - 1) {
+                playerTurn = players.get(players.indexOf(playerTurn) + 1);
+            } else {
                 playerTurn = players.get(0);
             }
+        }
         else if (numTurn > players.size()) {
             if (players.indexOf(playerTurn) == 0) {
                 playerTurn = players.get(players.size()-1);
@@ -61,8 +62,7 @@ public class Round {
                 playerTurn = players.get(players.indexOf(playerTurn)-1);
             }
         }
-        if (numTurn < 2*players.size())
-            numTurn++;
+        numTurn++;
     }
 
     public DraftPool getDraftPool() {

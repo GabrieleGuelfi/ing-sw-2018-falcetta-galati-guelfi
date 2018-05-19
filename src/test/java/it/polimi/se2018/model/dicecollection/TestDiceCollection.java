@@ -1,6 +1,8 @@
-package it.polimi.se2018.model;
+package it.polimi.se2018.model.dicecollection;
 
-import it.polimi.se2018.model.dicecollection.DiceCollection;
+import it.polimi.se2018.model.Colour;
+import it.polimi.se2018.model.Die;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
