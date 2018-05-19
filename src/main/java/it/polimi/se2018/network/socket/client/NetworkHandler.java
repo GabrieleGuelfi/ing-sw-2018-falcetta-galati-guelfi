@@ -1,11 +1,11 @@
 package it.polimi.se2018.network.socket.client;
 
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.MessageDie;
-import it.polimi.se2018.model.Die;
 import it.polimi.se2018.network.socket.server.ServerInterface;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class NetworkHandler extends Thread implements ServerInterface {
@@ -18,12 +18,8 @@ public class NetworkHandler extends Thread implements ServerInterface {
     public NetworkHandler(String host, int port, ClientInterface client) {
 
         try {
-
             this.socket = new Socket(host, port);
-            this.inputStream = new ObjectInputStream(socket.getInputStream());
             this.client = client;
-            this.outputStream = new ObjectOutputStream(socket.getOutputStream());
-
             this.start();
         }
         catch(IOException e) {
@@ -37,22 +33,21 @@ public class NetworkHandler extends Thread implements ServerInterface {
         // This thread will wait for messages from the server, and send them to client interface.
         while(!this.socket.isClosed()) {
             try {
+                this.inputStream = new ObjectInputStream(socket.getInputStream());
                 Message message = (Message) inputStream.readObject();
                 if(message == null) {
                     this.stopConnection();
                 }
                 else {
-                    System.out.println("Messaggio ricevuto!");
                     client.notify(message);
                 }
             }
             catch(NullPointerException e) {
 
             }
-            catch(IOException e) {
+            catch(IOException | ClassNotFoundException e) {
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                stopConnection();
             }
         }
     }
@@ -60,6 +55,7 @@ public class NetworkHandler extends Thread implements ServerInterface {
     public synchronized void send (Message message ) {
 
         try {
+            this.outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(message);
             outputStream.flush();
         } catch (IOException e) {

@@ -6,13 +6,9 @@ import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.MessageDie;
 import it.polimi.se2018.events.MoveDie;
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
-import it.polimi.se2018.model.Box;
-import it.polimi.se2018.model.Colour;
-import it.polimi.se2018.model.Match;
-import it.polimi.se2018.model.Player;
+import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
-import it.polimi.se2018.model.WindowPattern;
 import it.polimi.se2018.utils.Observer;
 import it.polimi.se2018.view.View;
 import org.json.simple.JSONArray;
@@ -27,9 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
-// This means that when the View uses notify( ), the Controller will handle
-// it using "update(ViewUpdate v)
 public class Controller implements Observer {
 
     private Match match;
@@ -39,7 +32,6 @@ public class Controller implements Observer {
     }
 
     public void startGame(List<Player> players, View view) {
-
         List<PublicObjective> objectives = new ArrayList<>(); // Here we should have the real Public Objectives...
 
         List<Tool> tools = new ArrayList<>();
@@ -140,8 +132,8 @@ public class Controller implements Observer {
     }
 
     private void givePrivateObjective(Player player, String s) {
-        System.out.println("Scrivo a... " + s);
-        View.getView().chooseValue(player, "Ciao!");
+        System.out.println("Writing to...... " + s);
+        View.getView().chooseValue(player, "Hi! I am the supreme Controller...");
     }
 
     private void giveFavorTokens(Player player) { //probably useless, we can make this in giveWindowPattern

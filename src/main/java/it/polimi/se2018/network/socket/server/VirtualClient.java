@@ -1,19 +1,13 @@
 package it.polimi.se2018.network.socket.server;
 
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.MessageDie;
-import it.polimi.se2018.events.MoveDie;
 import it.polimi.se2018.model.Player;
 import it.polimi.se2018.network.socket.client.ClientInterface;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
-import it.polimi.se2018.utils.Observable;
-
-import static it.polimi.se2018.view.View.getView;
 
 public class VirtualClient extends Thread implements ClientInterface{
     private Socket clientConnection;
@@ -43,6 +37,7 @@ public class VirtualClient extends Thread implements ClientInterface{
 
             while(loop && !this.clientConnection.isClosed()){
                 Message message = (Message) inputStream.readObject();
+                message.setVirtualClient(this);
                 sagradaServer.getImplementation().send(message);
             }
 
