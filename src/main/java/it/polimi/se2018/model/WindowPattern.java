@@ -1,12 +1,10 @@
 package it.polimi.se2018.model;
 
-import it.polimi.se2018.exceptions.OutOfWindowPattern;
-
 public class WindowPattern {
 
     public static final int MAX_ROW = 4;
     public static final int MAX_COL = 5;
-    protected Box[][] grid;
+     Box[][] grid;
     private int difficulty;
     private int emptyBox;
     private String name;
@@ -53,8 +51,8 @@ public class WindowPattern {
 
     public void setBox(Box b, int row, int column){ grid[row][column] = b; } //costruttore..?
 
-    public Box getBox (int row, int column) throws OutOfWindowPattern {
-        if (row < 0 || row >= MAX_ROW || column < 0 || column >= MAX_COL) throw new OutOfWindowPattern();
+    public Box getBox (int row, int column) {
+        if (row < 0 || row >= MAX_ROW || column < 0 || column >= MAX_COL) throw new IllegalArgumentException("Out of Window Pattern");
         return grid[row][column];
     }
 

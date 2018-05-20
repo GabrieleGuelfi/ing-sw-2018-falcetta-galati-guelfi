@@ -1,6 +1,5 @@
 package it.polimi.se2018.model.publicobjective;
 
-import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.WindowPattern;
 
@@ -10,7 +9,7 @@ import java.util.ArrayList;
  * public objective that check how many column with different colour or value's are placed in a row of the window pattern
  * @author Gabriele Guelfi
  */
-public class DiffColumn extends PublicObjective{
+public class DiffColumn extends PublicObjective {
 
     private ArrayList<Integer> shades;
     private ArrayList<Colour> colours;
@@ -22,7 +21,7 @@ public class DiffColumn extends PublicObjective{
      * @param vp how much points give the objective
      * @param isColour establish if calculate the different colour or shade
      */
-    public DiffColumn(String description, int vp, boolean isColour) {
+    DiffColumn(String description, int vp, boolean isColour) {
         super(description, vp);
         this.isColour = isColour;
     }
@@ -35,9 +34,10 @@ public class DiffColumn extends PublicObjective{
     @Override
     public int calcScore(WindowPattern windowPattern) {
 
-        boolean same = false;
+        boolean same;
 
         for (int j=0; j<WindowPattern.MAX_COL; j++) {
+            same = false;
             if (isColour)
                 colours = new ArrayList<>();
             else
@@ -60,7 +60,6 @@ public class DiffColumn extends PublicObjective{
                         }
                     }
                 }
-                catch (OutOfWindowPattern e) {}
                 catch (NullPointerException e) {
                     same = true;
                 }

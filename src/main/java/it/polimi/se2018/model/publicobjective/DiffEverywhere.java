@@ -1,6 +1,5 @@
 package it.polimi.se2018.model.publicobjective;
 
-import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.WindowPattern;
 
@@ -8,7 +7,7 @@ import it.polimi.se2018.model.WindowPattern;
  * public objective that check how many dice with different colour or value's are placed in the whole window pattern
  * @author Gabriele Guelfi
  */
-public class DiffEverywhere extends PublicObjective{
+public class DiffEverywhere extends PublicObjective {
 
     private boolean isColour;
 
@@ -18,7 +17,7 @@ public class DiffEverywhere extends PublicObjective{
      * @param vp how much points give the objective
      * @param isColour establish if calculate the different colour or shade
      */
-    public DiffEverywhere(String description, int vp, boolean isColour) {
+    DiffEverywhere(String description, int vp, boolean isColour) {
         super(description, vp);
         this.isColour = isColour;
     }
@@ -67,7 +66,7 @@ public class DiffEverywhere extends PublicObjective{
                         else if (windowPattern.getBox(i, j).getDie().getValue() == 6)
                             count6++;
                     }
-                } catch (OutOfWindowPattern | NullPointerException e) {}
+                } catch (NullPointerException e) {}
             }
         }
         if (isColour)

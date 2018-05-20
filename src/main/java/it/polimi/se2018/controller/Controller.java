@@ -5,7 +5,6 @@ import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.MessageDie;
 import it.polimi.se2018.events.MoveDie;
-import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
@@ -187,7 +186,7 @@ public class Controller implements Observer {
                     try {
                         if (windowPattern.getBox(i, j).getDie() != null)
                             return true;
-                    } catch (OutOfWindowPattern e) {
+                    } catch (IllegalArgumentException e) {
                     }
                 }
             }
@@ -206,23 +205,23 @@ public class Controller implements Observer {
         try {
             if (windowPattern.getBox(m.getRow(), m.getColumn()).getColourRestriction() != m.getDie().getColour() && windowPattern.getBox(m.getRow(), m.getColumn()).getColourRestriction() != Colour.WHITE)
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e){}
+        } catch (IllegalArgumentException | NullPointerException e){}
         try {
             if (windowPattern.getBox(m.getRow() - 2, m.getColumn() - 1).getDie().getColour() == m.getDie().getColour())
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow() - 1, m.getColumn() - 2).getDie().getColour() == m.getDie().getColour())
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow() - 1, m.getColumn()).getDie().getColour() == m.getDie().getColour())
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow(), m.getColumn() - 1).getDie().getColour() == m.getDie().getColour())
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         return true;
     }
 
@@ -237,23 +236,23 @@ public class Controller implements Observer {
         try {
             if (windowPattern.getBox(m.getRow(), m.getColumn()).getValueRestriction() != m.getDie().getValue() && windowPattern.getBox(m.getRow(), m.getColumn()).getValueRestriction() != -1) //-1 equals to no restriction
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow() - 2, m.getColumn() - 1).getDie().getValue() == m.getDie().getValue()) //if null?
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow() - 1, m.getColumn() - 2).getDie().getValue() == m.getDie().getValue())
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow() - 1, m.getColumn()).getDie().getValue() == m.getDie().getValue())
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow(), m.getColumn() - 1).getDie().getValue() == m.getDie().getValue())
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         return true;
     }
 
@@ -272,7 +271,7 @@ public class Controller implements Observer {
                 try {
                     if (windowPattern.getBox(i, j).getDie().getColour() == player.getPrivateObjective().getShade())
                         player.addPoints(windowPattern.getBox(i, j).getDie().getValue());
-                } catch (OutOfWindowPattern | NullPointerException e) {}
+                } catch (IllegalArgumentException | NullPointerException e) {}
             }
         }
 
