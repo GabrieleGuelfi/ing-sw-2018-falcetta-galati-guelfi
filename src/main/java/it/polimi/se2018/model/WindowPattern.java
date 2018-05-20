@@ -27,18 +27,33 @@ public class WindowPattern {
 
     }
 
+    /**
+     * @return name of this window pattern
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return difficulty of this window pattern
+     */
     public int getDifficulty() {
         return (difficulty);
     }
 
+    /**
+     * @return empty box of this window pattern
+     */
     public int getEmptyBox(){
         return emptyBox;
     }
 
+    /**
+     * put a die in the row and column of this window pattern
+     * @param d placed die
+     * @param row row in which you want to put the die
+     * @param column column in which you want to put the die
+     */
     public void putDice(Die d, int row, int column){
 
         grid[row][column].setDie(d); //exception?
@@ -46,11 +61,24 @@ public class WindowPattern {
 
     }
 
+    /**
+     * decrease by one the number of empty box
+     */
     private void decreaseEmptyBox(){ emptyBox = emptyBox - 1;}
 
-
+    /**
+     * put a box in row and column
+     * @param b box you want to put
+     * @param row in which you want to put the box
+     * @param column column in which you want to put the box
+     */
     public void setBox(Box b, int row, int column){ grid[row][column] = b; } //costruttore..?
 
+    /**
+     * @param row row of searched Box
+     * @param column column of the searched Box
+     * @return a box of the window pattern
+     */
     public Box getBox (int row, int column) {
         if (row < 0 || row >= MAX_ROW || column < 0 || column >= MAX_COL) throw new IllegalArgumentException("Out of Window Pattern");
         return grid[row][column];

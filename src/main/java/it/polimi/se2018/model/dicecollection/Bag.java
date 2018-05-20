@@ -7,7 +7,6 @@ import it.polimi.se2018.model.Die;
  * It implements the "Bag" of a game, aka the group of 90 dice (at the beginning).
  * @author Alessandro Falcetta
  */
-
 public class Bag extends DiceCollection {
 
     private static final int SAME_COLOUR_DICE = 18;

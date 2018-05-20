@@ -9,8 +9,6 @@ import it.polimi.se2018.utils.*;
 
 /**
  * @author Federico Galati
- *
- *
  */
 public class View extends Observable {
 

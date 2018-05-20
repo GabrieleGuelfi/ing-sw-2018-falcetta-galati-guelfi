@@ -56,6 +56,10 @@ public class Controller implements Observer {
 
     }
 
+    /**
+     * send four window pattern to player, who choose one of them
+     * @param player is the player to send window pattern
+     */
     private void giveWindowPatterns(Player player){
 
         List<WindowPattern> patterns = new ArrayList<>();
@@ -108,6 +112,11 @@ public class Controller implements Observer {
 
     }
 
+    /**
+     * create a window pattern from a json Object
+     * @param grid is the grid from json file
+     * @param w1 is the window pattern to be created
+     */
     private void createWindowPattern (JSONArray grid, WindowPattern w1) {
         for (int k=0; k<WindowPattern.MAX_ROW; k++) {
             JSONArray row = (JSONArray)grid.get(k);
