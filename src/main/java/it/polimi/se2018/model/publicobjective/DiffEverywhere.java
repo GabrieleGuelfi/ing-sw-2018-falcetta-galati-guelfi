@@ -3,6 +3,8 @@ package it.polimi.se2018.model.publicobjective;
 import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.WindowPattern;
 
+import java.util.*;
+
 /**
  * public objective that check how many dice with different colour or value's are placed in the whole window pattern
  * @author Gabriele Guelfi
@@ -30,47 +32,39 @@ public class DiffEverywhere extends PublicObjective {
     @Override
     public int calcScore(WindowPattern windowPattern) {
 
-        int count1=0;
-        int count2=0;
-        int count3=0;
-        int count4=0;
-        int count5=0;
-        int count6=0;
+        List<Integer> values = new ArrayList<>();
+        for (int i=0; i<6; i++)
+            values.add(0);
 
-        for (int i = 0; i<WindowPattern.MAX_ROW; i++){
+        Map<Colour, Integer> colours = new EnumMap<>(Colour.class);
+        for (Colour c: Colour.values()) {
+            if (c!=Colour.WHITE)
+                colours.put(c, 0);
+        }
+        
+        for (int i=0; i<WindowPattern.MAX_ROW; i++){
             for (int j=0; j<WindowPattern.MAX_COL; j++) {
                 try {
                     if (isColour) {
-                        if (windowPattern.getBox(i, j).getDie().getColour() == Colour.BLUE)
-                            count1++;
-                        else if (windowPattern.getBox(i, j).getDie().getColour() == Colour.GREEN)
-                            count2++;
-                        else if (windowPattern.getBox(i, j).getDie().getColour() == Colour.PURPLE)
-                            count3++;
-                        else if (windowPattern.getBox(i, j).getDie().getColour() == Colour.RED)
-                            count4++;
-                        else if (windowPattern.getBox(i, j).getDie().getColour() == Colour.YELLOW)
-                            count5++;
+                        colours.replace(windowPattern.getBox(i, j).getDie().getColour(), colours.get(windowPattern.getBox(i, j).getDie().getColour())+1);
                     }
                     else {
-                        if (windowPattern.getBox(i, j).getDie().getValue() == 1)
-                            count1++;
-                        else if (windowPattern.getBox(i, j).getDie().getValue() == 2)
-                            count2++;
-                        else if (windowPattern.getBox(i, j).getDie().getValue() == 3)
-                            count3++;
-                        else if (windowPattern.getBox(i, j).getDie().getValue() == 4)
-                            count4++;
-                        else if (windowPattern.getBox(i, j).getDie().getValue() == 5)
-                            count5++;
-                        else if (windowPattern.getBox(i, j).getDie().getValue() == 6)
-                            count6++;
+                        values.set(windowPattern.getBox(i, j).getDie().getValue()-1, values.get(windowPattern.getBox(i, j).getDie().getValue()-1)+1);
                     }
                 } catch (NullPointerException e) {}
             }
         }
-        if (isColour)
-            return vp *(Math.min(count1, Math.min(count2, Math.min(count3, Math.min(count4, count5)))));
-        return vp *(Math.min(count1, Math.min(count2, Math.min(count3, Math.min(count4, Math.min(count5, count6))))));
+
+        if (isColour) {
+            List<Integer> v = new ArrayList<>();
+            for (Colour c: Colour.values()) {
+                if (c!=Colour.WHITE)
+                    v.add(colours.get(c));
+            }
+            Collections.sort(v);
+            return v.get(0)*vp;
+        }
+        Collections.sort(values);
+        return values.get(0)*vp;
     }
 }
