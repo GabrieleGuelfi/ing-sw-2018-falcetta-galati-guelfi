@@ -58,7 +58,6 @@ public class DiceCollection {
             d.bag.add(x.copy());
         }
         return d;
-
     }
 
 }

@@ -115,14 +115,12 @@ public class Match extends Observable<ModelUpdate> {
      * Getter for tools
      * @return tools of the match
      */
-
     public List<Tool> getTools() { return this.tools;}
 
     /**
      * Getter for public objectives
      * @return public objectives of the match
      */
-
     public List<PublicObjective> getPublicObjectives() {
         return this.publicObjectives;
     }
@@ -139,7 +137,6 @@ public class Match extends Observable<ModelUpdate> {
      * Getter for round number
      * @return round number of the match
      */
-
     public int getNumRound() { return this.numRound;}
 
     /**
@@ -161,7 +158,6 @@ public class Match extends Observable<ModelUpdate> {
      * @param p player to be activated
      * @throws IllegalArgumentException if the player is already activated or not present in the match
      */
-
     public void activatePlayer(Player p) {
         if (!players.contains(p)) throw new IllegalArgumentException("This player is already active or not present!");
         int index;

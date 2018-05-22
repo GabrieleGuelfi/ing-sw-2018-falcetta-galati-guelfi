@@ -1,6 +1,5 @@
 package it.polimi.se2018.model.publicobjective;
 
-import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.WindowPattern;
 
@@ -22,7 +21,7 @@ public class DiffRow extends PublicObjective {
      * @param vp how much points give the objective
      * @param isColour establish if calculate the different colour or shade
      */
-    public DiffRow(String description, int vp, boolean isColour) {
+    DiffRow(String description, int vp, boolean isColour) {
         super(description, vp);
         this.isColour = isColour;
     }
@@ -34,13 +33,13 @@ public class DiffRow extends PublicObjective {
      */
     @Override
     public int calcScore(WindowPattern windowPattern) {
-        boolean same = false;
+        boolean same;
         for (int i=0; i<WindowPattern.MAX_ROW; i++) {
+            same = false;
             if (isColour)
                 colours = new ArrayList<>();
             else
                 shades = new ArrayList<>();
-
             for (int j = 0; j<WindowPattern.MAX_COL && !same; j++) {
                 try {
                     if (isColour) {
@@ -59,7 +58,6 @@ public class DiffRow extends PublicObjective {
                         }
                     }
                 }
-                catch (OutOfWindowPattern e) {}
                 catch (NullPointerException e) {
                     same = true;
                 }

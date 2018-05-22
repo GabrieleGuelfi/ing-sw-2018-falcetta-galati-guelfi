@@ -5,13 +5,12 @@ import it.polimi.se2018.model.Die;
 import java.security.InvalidParameterException;
 import java.util.Random;
 
+// Shouldn't the random part go in controller?
+
 /**
  * This class represents the "Draft pool", aka the group of 5-7-9 dice extracted from the bag in the begin of a round.
  * @author Alessandro Falcetta
  */
-
-// Shouldn't the random part go in controller?
-
 public class DraftPool extends DiceCollection {
 
     /**

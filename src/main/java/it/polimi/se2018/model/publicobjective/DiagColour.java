@@ -1,6 +1,5 @@
 package it.polimi.se2018.model.publicobjective;
 
-import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.WindowPattern;
 
 /**
@@ -13,7 +12,7 @@ public class DiagColour extends PublicObjective {
      * Class Constructor
      * @param description the short description of the objective
      */
-    public DiagColour (String description) {
+    DiagColour (String description) {
         super(description, 0);
     }
 
@@ -38,14 +37,14 @@ public class DiagColour extends PublicObjective {
                         points += 1;
                         checked[i+1][j-1] = 1;
                     }
-                } catch (OutOfWindowPattern | NullPointerException e) {}
+                } catch (NullPointerException e) {}
                 try {
                     if(windowPattern.getBox(i, j).getDie().getColour() == windowPattern.getBox(i+1, j+1).getDie().getColour()) {
                         found = true;
                         points += 1;
                         checked[i+1][j+1] = 1;
                     }
-                } catch (OutOfWindowPattern | NullPointerException e) {}
+                } catch (NullPointerException e) {}
                 if (found && checked[i][j] != 1)
                     points += 1;
             }

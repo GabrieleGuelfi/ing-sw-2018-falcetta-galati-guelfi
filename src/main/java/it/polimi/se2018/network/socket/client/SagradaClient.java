@@ -1,12 +1,8 @@
 package it.polimi.se2018.network.socket.client;
 
-import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.MessageDie;
-import it.polimi.se2018.model.Colour;
-import it.polimi.se2018.model.Die;
+import it.polimi.se2018.events.MessageNickname;
 import it.polimi.se2018.network.socket.server.ServerInterface;
-
-import java.util.Scanner;
+import it.polimi.se2018.view.ViewForClient;
 
 public class SagradaClient {
 
@@ -15,27 +11,13 @@ public class SagradaClient {
 
     public static void main(String[] args) {
 
-        System.out.println("Welcome in Sagrada");
+        ViewForClient viewForClient = new ViewForClient();
+
+        String nickname = viewForClient.getNickname();
 
         ServerInterface server = new NetworkHandler(HOST, PORT, new ClientImplementation());
+        System.out.println("Connected! Waiting for the game to start...");
+        server.send(new MessageNickname(nickname));
 
-        Scanner scanner = new Scanner(System.in);
-
-        boolean gameRunning = true;
-
-        while(gameRunning) {
-
-            System.out.println("Chose a number");
-            int n = scanner.nextInt();
-
-            Die newDie = new Die(Colour.YELLOW);
-            newDie.setValue(n);
-
-            Message message = new Message("Prova di un messaggio");
-            Message messagedie = new MessageDie(newDie);
-
-            server.send(message);
-            server.send(messagedie);
-        }
     }
 }

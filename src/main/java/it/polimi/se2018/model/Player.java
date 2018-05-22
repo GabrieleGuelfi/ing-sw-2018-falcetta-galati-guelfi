@@ -39,41 +39,69 @@ public class Player {
         this.usedTool = usedTool;
     }
 
+    /**
+     * @return the window pattern of this player
+     */
     public WindowPattern getWindowPattern() {
         return windowPattern;
     }
 
+    /**
+     * @param privateObjective set the private objective of this player
+     */
     public void setPrivateObjective(PrivateObjective privateObjective) {
         this.privateObjective = privateObjective;
     }
 
+    /**
+     * @param windowPattern set the window pattern chosen by player
+     */
     public void setWindowPattern(WindowPattern windowPattern) {
         if (windowPattern==null) throw new IllegalArgumentException("Invalid window pattern!");
         this.windowPattern = windowPattern;
         setFavorTokens(windowPattern.getDifficulty());
     }
 
+    /**
+     * @param favorTokens the amount of favor tokens given to this player
+     */
     private void setFavorTokens(int favorTokens) { //in UML is public, but is necessary?
         this.favorTokens = favorTokens;
     }
 
+    /**
+     * @return favor tokens of this player
+     */
     public int getFavorTokens() {
         return favorTokens;
     }
 
+    /**
+     * remove the amount of favor tkens used to use a tool
+     * @param usage favor tokens used
+     */
     public void removeFavorTokens(int usage) { //usage = number of favorTokens on the used Toll Card at that moment
         if(this.favorTokens-usage<0) throw new IllegalStateException("Insufficient favor tokens!");
         favorTokens = favorTokens - usage;
     }
 
+    /**
+     * @param points score to add to the points of this player
+     */
     public void addPoints(int points) {
         this.points = this.points + points;
     }
 
+    /**
+     * @return the score of this player
+     */
     public int getPoints() {
         return points;
     }
 
+    /**
+     * @return the Private Objective of this player
+     */
     public PrivateObjective getPrivateObjective() {
         return this.privateObjective;
     }
@@ -82,7 +110,6 @@ public class Player {
     //MISS THE COPY OF OBJECTIVE
 
     /**
-     *
      * @return Copy of this Object
      */
     public Player copy(){

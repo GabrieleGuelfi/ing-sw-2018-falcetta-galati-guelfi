@@ -5,14 +5,9 @@ import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.MessageDie;
 import it.polimi.se2018.events.MoveDie;
-import it.polimi.se2018.exceptions.OutOfWindowPattern;
-import it.polimi.se2018.model.Box;
-import it.polimi.se2018.model.Colour;
-import it.polimi.se2018.model.Match;
-import it.polimi.se2018.model.Player;
+import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
-import it.polimi.se2018.model.WindowPattern;
 import it.polimi.se2018.utils.Observer;
 import it.polimi.se2018.view.View;
 import org.json.simple.JSONArray;
@@ -27,9 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
-// This means that when the View uses notify( ), the Controller will handle
-// it using "update(ViewUpdate v)
 public class Controller implements Observer {
 
     private Match match;
@@ -39,7 +31,6 @@ public class Controller implements Observer {
     }
 
     public void startGame(List<Player> players, View view) {
-
         List<PublicObjective> objectives = new ArrayList<>(); // Here we should have the real Public Objectives...
 
         List<Tool> tools = new ArrayList<>();
@@ -65,6 +56,10 @@ public class Controller implements Observer {
 
     }
 
+    /**
+     * send four window pattern to player, who choose one of them
+     * @param player is the player to send window pattern
+     */
     private void giveWindowPatterns(Player player){
 
         List<WindowPattern> patterns = new ArrayList<>();
@@ -117,6 +112,11 @@ public class Controller implements Observer {
 
     }
 
+    /**
+     * create a window pattern from a json Object
+     * @param grid is the grid from json file
+     * @param w1 is the window pattern to be created
+     */
     private void createWindowPattern (JSONArray grid, WindowPattern w1) {
         for (int k=0; k<WindowPattern.MAX_ROW; k++) {
             JSONArray row = (JSONArray)grid.get(k);
@@ -140,8 +140,8 @@ public class Controller implements Observer {
     }
 
     private void givePrivateObjective(Player player, String s) {
-        System.out.println("Scrivo a... " + s);
-        View.getView().chooseValue(player, "Ciao!");
+        System.out.println("Writing to...... " + s);
+        View.getView().chooseValue(player, "Hi! I am the supreme Controller...");
     }
 
     private void giveFavorTokens(Player player) { //probably useless, we can make this in giveWindowPattern
@@ -195,7 +195,7 @@ public class Controller implements Observer {
                     try {
                         if (windowPattern.getBox(i, j).getDie() != null)
                             return true;
-                    } catch (OutOfWindowPattern e) {
+                    } catch (IllegalArgumentException e) {
                     }
                 }
             }
@@ -214,23 +214,23 @@ public class Controller implements Observer {
         try {
             if (windowPattern.getBox(m.getRow(), m.getColumn()).getColourRestriction() != m.getDie().getColour() && windowPattern.getBox(m.getRow(), m.getColumn()).getColourRestriction() != Colour.WHITE)
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e){}
+        } catch (IllegalArgumentException | NullPointerException e){}
         try {
             if (windowPattern.getBox(m.getRow() - 2, m.getColumn() - 1).getDie().getColour() == m.getDie().getColour())
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow() - 1, m.getColumn() - 2).getDie().getColour() == m.getDie().getColour())
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow() - 1, m.getColumn()).getDie().getColour() == m.getDie().getColour())
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow(), m.getColumn() - 1).getDie().getColour() == m.getDie().getColour())
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         return true;
     }
 
@@ -245,23 +245,23 @@ public class Controller implements Observer {
         try {
             if (windowPattern.getBox(m.getRow(), m.getColumn()).getValueRestriction() != m.getDie().getValue() && windowPattern.getBox(m.getRow(), m.getColumn()).getValueRestriction() != -1) //-1 equals to no restriction
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow() - 2, m.getColumn() - 1).getDie().getValue() == m.getDie().getValue()) //if null?
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow() - 1, m.getColumn() - 2).getDie().getValue() == m.getDie().getValue())
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow() - 1, m.getColumn()).getDie().getValue() == m.getDie().getValue())
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         try {
             if (windowPattern.getBox(m.getRow(), m.getColumn() - 1).getDie().getValue() == m.getDie().getValue())
                 return false;
-        } catch (OutOfWindowPattern | NullPointerException e) {}
+        } catch (IllegalArgumentException | NullPointerException e) {}
         return true;
     }
 
@@ -280,7 +280,7 @@ public class Controller implements Observer {
                 try {
                     if (windowPattern.getBox(i, j).getDie().getColour() == player.getPrivateObjective().getShade())
                         player.addPoints(windowPattern.getBox(i, j).getDie().getValue());
-                } catch (OutOfWindowPattern | NullPointerException e) {}
+                } catch (IllegalArgumentException | NullPointerException e) {}
             }
         }
 

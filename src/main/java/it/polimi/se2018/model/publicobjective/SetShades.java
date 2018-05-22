@@ -1,13 +1,12 @@
 package it.polimi.se2018.model.publicobjective;
 
-import it.polimi.se2018.exceptions.OutOfWindowPattern;
 import it.polimi.se2018.model.WindowPattern;
 
 /**
  * public objective that check how many couples of dice with value set and set+1 are placed in the windowPattern
  * @author Gabriele Guelfi
  */
-public class SetShades extends PublicObjective{
+public class SetShades extends PublicObjective {
 
     private int set;
 
@@ -17,7 +16,7 @@ public class SetShades extends PublicObjective{
      * @param vp how much points give the objective
      * @param set the min value of the couple of shade
      */
-    public SetShades (String description, int vp, int set) {
+    SetShades (String description, int vp, int set) {
         super(description, vp);
         this.set = set;
     }
@@ -40,7 +39,7 @@ public class SetShades extends PublicObjective{
                         numberSet1++;
                     if (windowPattern.getBox(i, j).getDie().getValue() == set + 1)
                         numberSet2++;
-                } catch (OutOfWindowPattern | NullPointerException e) {}
+                } catch (NullPointerException e) {}
             }
         }
         return vp *Math.min(numberSet1, numberSet2);

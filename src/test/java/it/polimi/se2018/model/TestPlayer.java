@@ -32,10 +32,11 @@ public class TestPlayer {
     @Test
     public void testSetWindowPatternPositive() {
         Player player = new Player("foo");
-        WindowPattern windowPattern = new WindowPattern(null,10);
+        WindowPattern windowPattern = new WindowPattern("bar",10);
         assertNull(player.getWindowPattern());
         player.setWindowPattern(windowPattern);
         assertEquals(windowPattern, player.getWindowPattern());
+        assertEquals("bar", player.getWindowPattern().getName());
         assertEquals(10, player.getWindowPattern().getDifficulty());
     }
 
@@ -90,6 +91,8 @@ public class TestPlayer {
         Player player = new Player("foo");
         PrivateObjective po = new PrivateObjective("foo", Colour.BLUE);
         player.setPrivateObjective(po);
+        assertEquals(Colour.BLUE, po.getShade());
+        assertEquals("foo", po.getDescription());
         assertEquals(po, player.getPrivateObjective());
     }
 
