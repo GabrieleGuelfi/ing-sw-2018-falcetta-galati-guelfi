@@ -25,7 +25,7 @@ public class DiagColour extends PublicObjective {
     public int calcScore(WindowPattern windowPattern) {
 
         int points=0;
-        int [][] checked = new int[3][5];
+        boolean [][] checked = new boolean[4][5];
         boolean found;
 
         for (int i=0; i<WindowPattern.MAX_ROW-1; i++) {
@@ -34,18 +34,22 @@ public class DiagColour extends PublicObjective {
                 try {
                     if(windowPattern.getBox(i, j).getDie().getColour() == windowPattern.getBox(i+1, j-1).getDie().getColour()) {
                         found = true;
-                        points += 1;
-                        checked[i+1][j-1] = 1;
+                        if (!checked[i+1][j-1]) {
+                            points += 1;
+                            checked[i+1][j-1] = true;
+                        }
                     }
-                } catch (NullPointerException e) {}
+                } catch (IllegalArgumentException | NullPointerException e) {}
                 try {
                     if(windowPattern.getBox(i, j).getDie().getColour() == windowPattern.getBox(i+1, j+1).getDie().getColour()) {
                         found = true;
-                        points += 1;
-                        checked[i+1][j+1] = 1;
+                        if (!checked[i+1][j+1]) {
+                            points += 1;
+                            checked[i+1][j+1] = true;
+                        }
                     }
-                } catch (NullPointerException e) {}
-                if (found && checked[i][j] != 1)
+                } catch (IllegalArgumentException | NullPointerException e) {}
+                if (found && !checked[i][j])
                     points += 1;
             }
         }
