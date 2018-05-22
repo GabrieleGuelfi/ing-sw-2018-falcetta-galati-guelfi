@@ -3,6 +3,7 @@ package it.polimi.se2018.network.socket.server;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.model.Player;
 import it.polimi.se2018.network.socket.client.ClientInterface;
+import it.polimi.se2018.view.VirtualView;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -13,19 +14,14 @@ public class VirtualClient extends Thread implements ClientInterface{
     private Socket clientConnection;
     private ObjectInputStream inputStream;
     private ObjectOutputStream outputStream;
-    private final SagradaServer sagradaServer;
-    private Player player;
+    private final VirtualView virtualView;
+    private String player;
 
     private boolean loop;
 
-    public VirtualClient(SagradaServer server, Socket socket){
-        this.sagradaServer = server;
+    public VirtualClient(VirtualView v, Socket socket){
+        this.virtualView = v;
         this.clientConnection = socket;
-    }
-
-
-    public void setPlayer(Player p) {
-        this.player = p;
     }
 
     @Override
@@ -37,8 +33,7 @@ public class VirtualClient extends Thread implements ClientInterface{
 
             while(loop && !this.clientConnection.isClosed()){
                 Message message = (Message) inputStream.readObject();
-                message.setVirtualClient(this);
-                sagradaServer.getImplementation().send(message);
+                this.virtualView.notifyObservers(message);
             }
 
             inputStream.close();
@@ -61,7 +56,6 @@ public class VirtualClient extends Thread implements ClientInterface{
     }
 
     public void notify(Message message){
-
         try{
             outputStream = new ObjectOutputStream(this.clientConnection.getOutputStream());
             outputStream.writeObject(message);
@@ -70,11 +64,13 @@ public class VirtualClient extends Thread implements ClientInterface{
         catch(IOException e){
             e.printStackTrace();
         }
-
     }
 
-    public Player getPlayer() {
+    public String getPlayer() {
         return player;
+    }
+    public void setPlayer(String p) {
+        this.player = p;
     }
 
 }

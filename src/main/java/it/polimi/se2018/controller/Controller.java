@@ -3,13 +3,10 @@ package it.polimi.se2018.controller;
 
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.MessageDie;
-import it.polimi.se2018.events.MoveDie;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.utils.Observer;
-import it.polimi.se2018.view.View;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

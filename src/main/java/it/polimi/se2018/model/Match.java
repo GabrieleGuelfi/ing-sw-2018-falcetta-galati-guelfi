@@ -1,7 +1,6 @@
 package it.polimi.se2018.model;
 
 import it.polimi.se2018.controller.tool.Tool;
-import it.polimi.se2018.events.ModelUpdate;
 import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.model.publicobjective.PublicObjective;

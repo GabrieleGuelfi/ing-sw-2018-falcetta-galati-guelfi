@@ -2,7 +2,7 @@ package it.polimi.se2018.events;
 
 import it.polimi.se2018.network.socket.server.SagradaServer;
 import it.polimi.se2018.network.socket.server.VirtualClient;
-import it.polimi.se2018.view.View;
+import it.polimi.se2018.utils.SagradaVisitor;
 
 import java.io.Serializable;
 
@@ -11,37 +11,18 @@ import java.io.Serializable;
  *
  */
 public class Message implements Serializable  {
-    String s;
-    VirtualClient vc;
-    SagradaServer server;
 
-    public Message(String string){
+    String nickname;
 
-        s = string;
+    public Message(String s){
+        this.nickname = s;
     }
 
-    public void setServer(SagradaServer s) {
-        this.server = s;
+    public void accept(SagradaVisitor v){
+        v.visit(this);
     }
 
-    public SagradaServer getServer() {
-        return this.server;
+    public String getNickname(){
+        return this.nickname;
     }
-
-    public void setVirtualClient(VirtualClient vc) {
-        this.vc = vc;
-    }
-
-    public VirtualClient getVirtualClient() {
-        return this.vc;
-    }
-
-    public String getString() {
-        return s;
-    }
-
-    public void notifyThis() {
-        View.getView().notifyObservers(this);
-    }
-
 }

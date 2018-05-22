@@ -1,6 +1,5 @@
 package it.polimi.se2018.network.socket.client;
 
-import it.polimi.se2018.events.MessageNickname;
 import it.polimi.se2018.network.socket.server.ServerInterface;
 import it.polimi.se2018.view.ViewForClient;
 
