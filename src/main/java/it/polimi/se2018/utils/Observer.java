@@ -5,9 +5,9 @@ import it.polimi.se2018.events.MessageDie;
 
 public interface Observer {
 
-    //void update(Message m);
+    void update(Message m);
 
-   // void update(MessageDie m);
+    void update(MessageDie m);
 
-    void update(Message message);
+
 }

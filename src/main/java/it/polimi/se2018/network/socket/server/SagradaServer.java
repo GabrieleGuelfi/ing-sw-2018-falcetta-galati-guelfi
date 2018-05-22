@@ -1,6 +1,8 @@
 package it.polimi.se2018.network.socket.server;
 
 import it.polimi.se2018.controller.Controller;
+import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.MessageNickname;
 import it.polimi.se2018.model.Player;
 import it.polimi.se2018.network.socket.client.ClientInterface;
 import it.polimi.se2018.view.View;
@@ -8,8 +10,11 @@ import it.polimi.se2018.view.View;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-public class SagradaServer {
+import static java.lang.System.out;
+
+public class SagradaServer extends Thread {
     private static int PORT = 1111;
     private static ServerInterface server;
     private ClientGatherer clientGatherer;
@@ -26,6 +31,12 @@ public class SagradaServer {
 
     }
 
+    public void setNickname(MessageNickname message) {
+        int index = clients.indexOf(message.getVirtualClient());
+        clients.get(index).setPlayer(new Player(message.getNickname()));
+        out.println("Nickname set for " + message.getNickname());
+    }
+
     protected synchronized void addClient( Socket clientConnection ) {
 
         VirtualClient cm = new VirtualClient(this, clientConnection);
@@ -33,22 +44,12 @@ public class SagradaServer {
         cm.start();
         try {
             if (this.clients.size() >= 4) this.clientGatherer.wait();
-            if (this.clients.size() == 2) {
-                Player player = new Player("foo");
-                Player player2 = new Player("bar");
-                clients.get(0).setPlayer(player);
-                clients.get(1).setPlayer(player2);
-                List<Player> players = new ArrayList<>();
-                players.add(player);
-                players.add(player2);
-                System.out.println("Partita iniziata!");
-                Controller controller = new Controller();
-                controller.startGame(players, View.createView(controller, this));
-            }
         }
         catch(InterruptedException e){
             e.printStackTrace();
         }
+        if (this.clients.size()==2) start();
+
 
     }
 
@@ -72,9 +73,27 @@ public class SagradaServer {
             }
         }
         catch(NullPointerException e) {
-            System.out.println("fail qua");
+            e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void run() {
+        try {
+            for(VirtualClient vc: clients) {
+                vc.notify(new Message("Match will start in 10 seconds..."));
+            }
+            TimeUnit.SECONDS.sleep(10);
+            List<Player> players = new ArrayList<>();
+            players.add(clients.get(0).getPlayer());
+            players.add(clients.get(1).getPlayer());
+            out.println("Match started!!");
+            Controller controller = new Controller();
+            controller.startGame(players, View.createView(controller, this));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

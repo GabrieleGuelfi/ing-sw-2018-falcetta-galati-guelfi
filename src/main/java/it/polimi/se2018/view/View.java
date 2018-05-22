@@ -9,8 +9,6 @@ import it.polimi.se2018.utils.*;
 
 /**
  * @author Federico Galati
- *
- *
  */
 public class View extends Observable {
 
@@ -99,7 +97,7 @@ public class View extends Observable {
 
     // CHIAMATA DAL VIRTUALCLIENT
     public void notifyController(Message message){
-        message.notifyThis(this);
+        message.notifyThis();
     }
 
 }

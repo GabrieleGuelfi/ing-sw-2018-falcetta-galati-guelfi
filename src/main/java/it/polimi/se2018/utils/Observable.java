@@ -6,7 +6,7 @@ import it.polimi.se2018.events.MessageDie;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Observable {
+public class Observable<T> {
 
     private final List<Observer> observers = new ArrayList<>();
 
@@ -22,7 +22,6 @@ public class Observable {
         }
     }
 
-    /*
     public void notifyObservers(Message m){
         synchronized (observers) {
             for(Observer observer : observers){
@@ -33,14 +32,6 @@ public class Observable {
 
     public void notifyObservers(MessageDie message){
         synchronized (observers) {
-            for(Observer observer : observers){
-                observer.update(message);
-            }
-        }
-    }
-*/
-    public void notifyObservers(Message message){
-        synchronized (observers){
             for(Observer observer : observers){
                 observer.update(message);
             }

@@ -54,7 +54,7 @@ public class Match extends Observable<ModelUpdate> {
         this.players = new ArrayList<>();
 
         //notify(new ModelUpdate(this)); // EXAMPLE: here Model throws a ModelUpdate.
-        // All the Observers will be notified with this message (ie: VirtualView will be notified!)
+        // All the Observers will be notified with this message (ie: View will be notified!)
         // We should use this.copy(), however.
     }
 
