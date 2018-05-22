@@ -1,0 +1,289 @@
+[
+  [
+    {
+      "name": "Kaleidoscopic Dream",
+      "difficulty": 4,
+      "grid": [
+        ["col", "YELLOW", "col", "BLUE", "num", 0, "num", 0, "num", 1],
+        ["col", "GREEN", "num", 0, "num", 5, "num", 0, "num", 4],
+        ["num", 3, "num", 0, "col", "RED", "num", 0, "col", "GREEN"],
+        ["num", 2, "num", 0, "num", 0, "col", "BLUE", "col", "YELLOW"]
+      ]
+    },
+
+    {
+      "name": "Firmitas",
+      "difficulty": 5,
+      "grid": [
+        ["col", "PURPLE", "num", 6, "num", 0, "num", 0, "num", 3],
+        ["num", 5, "col", "PURPLE", "num", 3, "num", 0, "num", 0],
+        ["num", 0, "num", 2, "col", "PURPLE", "num", 1, "num", 0],
+        ["num", 0, "num", 1, "num", 5, "col", "PURPLE", "num", 4]
+      ]
+    }
+  ],
+
+  [
+    {
+      "name": "Fractal Drops",
+      "difficulty": 3,
+      "grid": [
+        ["num", 0, "num", 4, "num", 0, "col", "YELLOW", "num", 6],
+        ["col", "RED", "num", 0, "num", 2, "num", 0, "num", 0],
+        ["num", 0, "num",  0, "col", "RED", "col", "PURPLE", "num", 1],
+        ["col", "BLUE", "col", "YELLOW", "num", 0, "num", 0, "num", 0]
+      ]
+    },
+
+    {
+      "name": "Ripples of Light",
+      "difficulty": 5,
+      "grid": [
+        ["num", 0, "num", 0, "num", 0, "col", "RED", "num", 5],
+        ["num", 0, "num", 0, "col", "PURPLE", "num", 4, "col", "BLUE"],
+        ["num", 0, "col", "BLUE", "num", 3, "col", "YELLOW", "num", 6],
+        ["col", "YELLOW", "num", 2, "col", "GREEN", "num", 1, "col", "RED"]
+      ]
+    }
+  ],
+
+  [
+    {
+      "name": "Lux Mundi",
+      "difficulty": 6,
+      "grid": [
+        ["num", 0, "num", 0, "num", 1, "num", 0, "num", 0],
+        ["num", 1, "col", "GREEN", "num", 3, "col", "BLUE", "num", 2],
+        ["col", "BLUE", "num", 5, "num", 4, "num", 6, "col", "GREEN"],
+        ["num", 0, "col", "BLUE", "num", 5, "col", "GREEN", "num", 0]
+      ]
+    },
+
+    {
+      "name": "Lux Astram",
+      "difficulty": 5,
+      "grid": [
+        ["num", 0, "num", 1, "col", "GREEN", "col", "PURPLE", "num", 4],
+        ["num", 6, "col", "PURPLE", "num", 2, "num", 5, "col", "GREEN"],
+        ["num", 1, "col", "GREEN", "num", 5, "num", 3, "col", "PURPLE"],
+        ["num", 0, "num", 0, "num", 0, "num", 0, "num", 0]
+      ]
+    }
+  ],
+
+  [
+    {
+      "name": "Gravitas",
+      "difficulty": 5,
+      "grid": [
+        ["num", 1, "num", 0, "num", 3, "col", "BLUE", "num", 0],
+        ["num", 0, "num", 2, "col", "BLUE", "num", 0, "num", 0],
+        ["num", 6, "col", "BLUE", "num", 0, "num", 4, "num", 0],
+        ["col", "BLUE", "num", 5, "num", 2, "num", 0, "num", 1]
+      ]
+    },
+
+    {
+      "name": "Water of Life",
+      "difficulty": 6,
+      "grid": [
+        ["num", 6, "col", "BLUE", "num", 0, "num", 0, "num", 1],
+        ["num", 0, "num", 5, "col", "BLUE", "num", 0, "num", 0],
+        ["num", 4, "col", "RED", "num", 2, "col", "BLUE", "num", 0],
+        ["col", "GREEN", "num", 6, "col", "YELLOW", "num", 3, "col", "PURPLE"]
+      ]
+    }
+  ],
+
+  [
+    {
+      "name": "Sun Catcher",
+      "difficulty": 3,
+      "grid": [
+        ["num", 0, "col", "BLUE", "num", 2, "num", 0, "col", "YELLOW"],
+        ["num", 0, "num", 4, "num", 0, "col", "RED", "num", 0],
+        ["num", 0, "num", 0, "num", 5, "col", "YELLOW", "num", 0],
+        ["col", "GREEN", "num", 3, "num", 0, "num", 0, "col", "PURPLE"]
+      ]
+    },
+
+    {
+      "name": "Shadow Thief",
+      "difficulty": 5,
+      "grid": [
+        ["num", 6, "col", "PURPLE", "num", 0, "num", 0, "num", 5],
+        ["num", 5, "num", 0, "col", "PURPLE", "num", 0, "num", 0],
+        ["col", "RED", "num", 6, "num", 0, "col", "PURPLE", "num", 0],
+        ["col", "YELLOW", "col", "RED", "num", 5, "num", 4, "num", 3]
+      ]
+    }
+  ],
+
+  [
+    {
+      "name": "Aurorae Magnificus",
+      "difficulty": 5,
+      "grid": [
+        ["num", 5, "col", "GREEN", "col", "BLUE", "col", "PURPLE", "num", 2],
+        ["col", "PURPLE", "num", 0, "num", 0, "num", 0, "col", "YELLOW"],
+        ["col", "YELLOW", "num", 0, "num", 6, "num", 0, "col", "PURPLE"],
+        ["num", 1, "num", 0, "num", 0, "col", "GREEN", "num", 4]
+      ]
+    },
+
+    {
+      "name": "Aurora Sagradis",
+      "difficulty": 4,
+      "grid": [
+        ["col", "RED", "num", 0, "col", "BLUE", "num", 0, "col", "YELLOW"],
+        ["num", 4, "col", "PURPLE", "num", 3, "col", "GREEN", "num", 2],
+        ["num", 0, "num", 1, "num", 0, "num", 5, "num", 0],
+        ["num", 0, "num", 0, "num", 6, "num", 0, "num", 0]
+      ]
+    }
+  ],
+
+  [
+    {
+      "name": "Symphony of Lights",
+      "difficulty": 6,
+      "grid": [
+        ["num", 2, "num", 0, "num", 5, "num", 0, "num", 1],
+        ["col", "YELLOW", "num", 6, "col", "PURPLE", "num", 2, "col", "RED"],
+        ["num", 0, "col", "BLUE", "num", 4, "col", "GREEN", "num", 0],
+        ["num", 0, "num", 3, "num", 0, "num", 5, "num", 0]
+      ]
+    },
+
+    {
+      "name": "Virtus",
+      "difficulty": 5,
+      "grid": [
+        ["num", 4, "num", 0, "num", 2, "num", 5, "col", "GREEN"],
+        ["num", 0, "num", 0, "num", 6, "col", "GREEN", "num", 2],
+        ["num", 0, "num", 3, "col", "GREEN", "num", 4, "num", 0],
+        ["num", 5, "col", "GREEN", "num", 1, "num", 0, "num", 0]
+      ]
+    }
+  ],
+
+  [
+    {
+      "name": "Firelight",
+      "difficulty": 5,
+      "grid": [
+        ["num", 3, "num", 4, "num", 1, "num", 5, "num", 0],
+        ["num", 0, "num", 6, "num", 2, "num", 0, "col", "YELLOW"],
+        ["num", 0, "num", 0, "num", 0, "col", "YELLOW", "col", "RED"],
+        ["num", 5, "num", 0, "col", "YELLOW", "col", "RED", "num", 6]
+      ]
+    },
+
+    {
+      "name": "Sun's Glory",
+      "difficulty": 6,
+      "grid": [
+        ["num", 1, "col", "PURPLE", "col", "YELLOW", "num", 0, "num", 4],
+        ["col", "PURPLE", "col", "YELLOW", "num", 0, "num", 0, "num", 6],
+        ["col", "YELLOW", "num", 0, "num", 0, "num", 5, "num", 3],
+        ["num", 0, "num", 5, "num", 4, "num", 2, "num", 1]
+      ]
+    }
+  ],
+
+  [
+    {
+      "name": "Battlo",
+      "difficulty": 5,
+      "grid": [
+        ["num", 0, "num", 0, "num", 6, "num", 0, "num", 0],
+        ["num", 0, "num", 5, "col", "BLUE", "num", 4, "num", 0],
+        ["num", 3, "col", "GREEN", "col", "YELLOW", "col", "PURPLE", "num", 2],
+        ["num", 1, "num", 4, "col", "RED", "num", 5, "num", 3]
+      ]
+    },
+
+    {
+      "name": "Bellesguard",
+      "difficulty": 3,
+      "grid": [
+        ["col", "BLUE", "num", 6, "num", 0, "num", 0, "col", "YELLOW"],
+        ["num", 0, "num", 3, "col", "BLUE", "num", 0, "num", 0],
+        ["num", 0, "num", 5, "num", 6, "num", 2, "num", 0],
+        ["num", 0, "num", 4, "num", 0, "num", 1, "col", "GREEN"]
+      ]
+    }
+  ],
+
+  [
+    {
+      "name": "Fulgor del Cielo",
+      "difficulty": 5,
+      "grid": [
+        ["num", 0, "col", "BLUE", "col", "RED", "num", 0, "num", 0],
+        ["num", 0, "num", 4, "num", 5, "num", 0, "col", "BLUE"],
+        ["col", "BLUE", "num", 2, "num", 0, "col", "RED", "num", 5],
+        ["num", 6, "col", "RED", "num", 3, "num", 1, "num", 0]
+      ]
+    },
+
+    {
+      "name": "Luz Celestial",
+      "difficulty": 3,
+      "grid": [
+        ["num", 0, "num", 0, "col", "RED", "num", 5, "num", 0],
+        ["col", "PURPLE", "num", 4, "num", 0, "col", "GREEN", "num", 3],
+        ["num", 6, "num", 0, "num", 0, "col", "BLUE", "num", 0],
+        ["num", 0, "col", "YELLOW", "num", 2, "num", 0, "num", 0]
+      ]
+    }
+  ],
+
+  [
+    {
+      "name": "Chromatic Splendor",
+      "difficulty": 4,
+      "grid": [
+        ["num", 0, "num", 0, "col", "GREEN", "num", 0, "num", 0],
+        ["num", 2, "col", "YELLOW", "num", 5, "col", "BLUE", "num", 1],
+        ["num", 0, "col", "RED", "num", 3, "col", "PURPLE", "num", 0],
+        ["num", 1, "num", 0, "num", 6, "num", 0, "num", 4]
+      ]
+    },
+
+    {
+      "name": "Coitas",
+      "difficulty": 5,
+      "grid": [
+        ["col", "YELLOW", "num", 0, "num", 2, "num", 0, "num", 6],
+        ["num", 0, "num", 4, "num", 0, "num", 5, "col", "YELLOW"],
+        ["num", 0, "num", 0, "num", 0, "col", "YELLOW", "num", 5],
+        ["num", 1, "num", 2, "col", "YELLOW", "num", 3, "num", 0]
+      ]
+    }
+  ],
+
+  [
+    {
+      "name": "Via Lux",
+      "difficulty": 4,
+      "grid": [
+        ["col", "YELLOW", "num", 0, "num", 6, "num", 0, "num", 0],
+        ["num", 0, "num", 1, "num", 5, "num", 0, "num", 2],
+        ["num", 3, "col", "YELLOW", "col", "RED", "col", "PURPLE", "num", 0],
+        ["num", 0, "num", 0, "num", 4, "num", 3, "col", "PURPLE"]
+      ]
+    },
+
+    {
+      "name": "Industria",
+      "difficulty": 5,
+      "grid": [
+        ["num", 1, "col", "RED", "num", 3, "num", 0, "num", 6],
+        ["num", 5, "num", 4, "col", "RED", "num", 2, "num", 0],
+        ["num", 0, "num", 0, "num", 5, "col",  "RED", "num", 1],
+        ["num", 0, "num", 0, "num", 0, "num", 3, "col", "RED"]
+      ]
+    }
+  ]
+]

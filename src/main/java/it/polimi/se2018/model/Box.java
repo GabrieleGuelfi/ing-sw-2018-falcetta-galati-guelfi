@@ -12,7 +12,7 @@ public class Box {
     }
 
     public Box(int n) {
-        if(n<1 || n>6) throw new IllegalArgumentException("Invalid value restriction!");
+        if(n<0 || n>6) throw new IllegalArgumentException("Invalid value restriction!");
         valueRestriction = n;
         colourRestriction = Colour.WHITE;
     }
@@ -32,7 +32,8 @@ public class Box {
     public Colour getColourRestriction() { return colourRestriction;}
 
     public void setDie(Die d){
-        die = d;
+        if (die == null) //else throw exception? verify this here or in another class(tool can move die in pattern)?
+            die = d;
     }
 
     public Die getDie(){ return die;}

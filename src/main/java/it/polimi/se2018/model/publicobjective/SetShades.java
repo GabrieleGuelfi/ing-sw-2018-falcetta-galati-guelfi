@@ -1,7 +1,7 @@
 package it.polimi.se2018.model.publicobjective;
 
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
-import it.polimi.se2018.model.windowpattern.WindowPattern;
+import it.polimi.se2018.model.WindowPattern;
 
 /**
  * public objective that check how many couples of dice with value set and set+1 are placed in the windowPattern

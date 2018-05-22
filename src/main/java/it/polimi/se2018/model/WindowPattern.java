@@ -1,9 +1,6 @@
-package it.polimi.se2018.model.windowpattern;
+package it.polimi.se2018.model;
 
 import it.polimi.se2018.exceptions.OutOfWindowPattern;
-import it.polimi.se2018.model.Box;
-import it.polimi.se2018.model.Colour;
-import it.polimi.se2018.model.Die;
 
 public class WindowPattern {
 
@@ -12,8 +9,9 @@ public class WindowPattern {
     protected Box[][] grid;
     private int difficulty;
     private int emptyBox;
+    private String name;
 
-    public WindowPattern(int difficulty){
+    public WindowPattern(String name, int difficulty){
         int i;
         int j;
 
@@ -25,19 +23,27 @@ public class WindowPattern {
             }
         }
         this.difficulty = difficulty;
+        this.name = name;
         //placedDie = new Die[16];
         emptyBox = 20;
 
     }
 
+    public String getName() {
+        return name;
+    }
 
-    public int getDifficulty() { return (difficulty); }
+    public int getDifficulty() {
+        return (difficulty);
+    }
 
-    public int getEmptyBox(){ return emptyBox;}
+    public int getEmptyBox(){
+        return emptyBox;
+    }
 
     public void putDice(Die d, int row, int column){
 
-        grid[row][column].setDie(d);
+        grid[row][column].setDie(d); //exception?
         decreaseEmptyBox();
 
     }
@@ -59,7 +65,7 @@ public class WindowPattern {
     public WindowPattern copy(){
         int i;
         int j;
-        WindowPattern w = new WindowPattern(this.difficulty);
+        WindowPattern w = new WindowPattern(this.name, this.difficulty);
         w.emptyBox = this.emptyBox;
         for(i = 0; i<4; i++){
             for(j = 0; j<5; j++){

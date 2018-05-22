@@ -43,7 +43,6 @@ public class DiceCollection {
      * Getter for size of the bag
      * @return size of the bag
      */
-
     public int size() {
         return bag.size();
     }
