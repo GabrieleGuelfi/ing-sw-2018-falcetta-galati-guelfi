@@ -1,14 +1,24 @@
 package it.polimi.se2018.network.socket.client;
 
 import it.polimi.se2018.events.Message;
+import it.polimi.se2018.network.socket.server.ServerInterface;
+import it.polimi.se2018.utils.Observable;
+import it.polimi.se2018.utils.Observer;
 
-public class ClientImplementation implements ClientInterface {
+public class ClientImplementation extends Observable implements ClientInterface, Observer {
 
-    // Methods exposed to server.
+    private ServerInterface server;
 
-    public void notify(Message message) {
-       // Here, notify() should pass the message to the view, which should treat it the right way.
-        System.out.println(message.getString());
+    public void addServer(ServerInterface server) {
+        this.server = server;
     }
 
+    public void notify(Message message) {
+        notifyObservers(message);
+    }
+
+    @Override
+    public void update(Message m) {
+        server.send(m);
+    }
 }

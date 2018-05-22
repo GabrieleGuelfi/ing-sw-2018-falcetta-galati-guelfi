@@ -18,7 +18,7 @@ import java.util.List;
 // Match, with all the new objects. This can be changed, if we decide to
 // update only the objects modified.
 
-public class Match extends Observable<ModelUpdate> {
+public class Match extends Observable {
 
     private Bag bag;
     private List<Player> players;
