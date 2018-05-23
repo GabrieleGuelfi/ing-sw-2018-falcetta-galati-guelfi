@@ -3,8 +3,6 @@ package it.polimi.se2018.view;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
-import it.polimi.se2018.utils.SagradaVisitor;
-import it.polimi.se2018.utils.VisitorClient;
 
 import java.util.Scanner;
 
@@ -66,7 +64,7 @@ public class ViewForClient extends Observable implements Observer {
 
     @Override
     public void update(Message m) {
-        m.accept(new VisitorClient());
+        m.accept(new VisitorView());
     }
 
 }

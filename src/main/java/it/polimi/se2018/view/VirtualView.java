@@ -7,11 +7,9 @@ import it.polimi.se2018.utils.*;
 
 public class VirtualView extends Observable implements Observer, ServerInterface{
 
-    private Controller controller;
     private SagradaServer sagradaServer;
 
-    public void VirtualView(Controller c, SagradaServer s){
-        this.controller = c;
+    public VirtualView( SagradaServer s){
         this.sagradaServer = s;
 
     }

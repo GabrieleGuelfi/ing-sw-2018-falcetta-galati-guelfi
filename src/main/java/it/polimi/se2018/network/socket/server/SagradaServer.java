@@ -2,43 +2,41 @@ package it.polimi.se2018.network.socket.server;
 
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.model.Player;
 import it.polimi.se2018.network.socket.client.ClientInterface;
 import it.polimi.se2018.view.VirtualView;
 
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static java.lang.System.out;
 
 public class SagradaServer {
-    private static int PORT = 1111;
+    private int PORT = 1111;
     private VirtualView virtualView;
     private Controller controller;
     private ClientGatherer clientGatherer;
+    private ServerTimer timer;
 
-    private ArrayList<VirtualClient> clients = new ArrayList<VirtualClient>();
+    private ArrayList<VirtualClient> clients = new ArrayList<>();
+    private Nickname nicknames = new Nickname();
 
     public SagradaServer() {
 
-        // Avvio il ClientGatherer, un nuovo thread che si occupa di gestire la connessione di nuovi client
+        this.controller = new Controller();
+        this.virtualView = new VirtualView(this);
         (this.clientGatherer = new ClientGatherer(this, PORT)).start();
 
     }
 
-    protected synchronized void addClient( Socket clientConnection ) {
+    protected synchronized void addClient( Socket clientConnection, String nick ) {
 
         VirtualClient cm = new VirtualClient(this.virtualView, clientConnection);
         clients.add(cm);
+        cm.setPlayer(nick);
         cm.start();
-        try {
-            if (this.clients.size() >= 4) this.clientGatherer.wait();
+        if((this.clients.size() == 2) && (this.timer == null)) {
+            this.timer = new ServerTimer(this, 10000);
+            this.timer.run();
         }
-        catch(InterruptedException e){
-            e.printStackTrace();
-        }
+        if(this.clients.size() == 4) this.clientGatherer.closeClientGatherer();
     }
 
     protected synchronized ArrayList<VirtualClient> getClients() {
@@ -47,7 +45,12 @@ public class SagradaServer {
 
     protected synchronized void removeClient(ClientInterface client) {
         this.clients.remove(client);
-        if(this.clients.size() < 4) clientGatherer.notify();
+        if(this.clients.size() < 4 ) this.clientGatherer = new ClientGatherer(this, this.PORT);
+        if(this.clients.size() == 1 ) {
+            if(this.timer != null) this.timer.stopTimer();
+            this.timer = new ServerTimer(this, 10000);
+            this.timer.run();
+        }
     }
 
     public VirtualClient searchVirtualClient(String player){
@@ -68,8 +71,27 @@ public class SagradaServer {
         }
     }
 
+    protected void startGame(){
+        if(this.clients.size() == 1) {
+            this.timer = new ServerTimer(this, 10000);
+            this.timer.run();
+        }
+        else {
+            this.clientGatherer.closeClientGatherer();
+            if(this.timer != null) this.timer.stopTimer();
+            this.controller.startGame(this.nicknames, this.virtualView);
+        }
+    }
+
+    protected Nickname getNicknames(){
+        return this.nicknames;
+    }
+
 
     public static void main(String[] args) {
+
         new SagradaServer();
+
+
     }
 }
