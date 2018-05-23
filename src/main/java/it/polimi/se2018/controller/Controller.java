@@ -4,9 +4,11 @@ package it.polimi.se2018.controller;
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.model.*;
-import it.polimi.se2018.model.dicecollection.Bag;
+import it.polimi.se2018.model.dicecollection.*;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.utils.Observer;
+import it.polimi.se2018.view.VirtualView;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -15,29 +17,45 @@ import org.json.simple.parser.ParseException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Controller implements Observer {
+public class Controller {
 
     private Match match;
+    private VirtualView virtualView;
 
     public Controller() {
         this.match = null;
     }
 
-    public void startGame(List<Player> players, View view) {
+    public void startGame(List<String> nickname, VirtualView view) {
+
         List<PublicObjective> objectives = new ArrayList<>(); // Here we should have the real Public Objectives...
-
         List<Tool> tools = new ArrayList<>();
-        // Create the match...
-        this.match = new Match(new Bag(), players, objectives, tools);
+        List<Player> players = new ArrayList<>();
+        Random generator = new Random();
+        List<Integer> rand = new ArrayList<>();
+        int index;
 
+        this.virtualView = view;
 
-        for(Player player: match.getActivePlayers()) {
-            givePrivateObjective(player, player.getNickname());
+        for (String p : nickname) {
+            Player player = new Player(p);
+            players.add(player);
         }
+
+        for (int i=0; i<3; i++) {
+            index = generator.nextInt(10)+1;
+            while (rand.contains(index))
+                index = generator.nextInt(10)+1;
+            rand.add(index);
+            objectives.add(PublicObjective.factory(index));
+        }
+
+        givePrivateObjective(players);
 
         for(Player player: match.getActivePlayers()) {
             giveWindowPatterns(player);
@@ -51,6 +69,8 @@ public class Controller implements Observer {
             //manageRound(i % match.getPlayers().size());
         }*/
 
+        // Create the match...
+        this.match = new Match(new Bag(), players, objectives, tools, view);
     }
 
     /**
@@ -136,15 +156,25 @@ public class Controller implements Observer {
         }
     }
 
-    private void givePrivateObjective(Player player, String s) {
-        System.out.println("Writing to...... " + s);
-        View.getView().chooseValue(player, "Hi! I am the supreme Controller...");
+    private void givePrivateObjective(List<Player> players) {
+        Random generator = new Random();
+        List<Integer> rand = new ArrayList<>();
+        Colour[] colours = Colour.values();
+
+        for (Player p : players) {
+            int index = generator.nextInt(colours.length);
+            while (rand.contains(index))
+                index = generator.nextInt(colours.length);
+            rand.add(index);
+            p.setPrivateObjective(new PrivateObjective(colours[index]));
+        }
     }
 
     private void giveFavorTokens(Player player) { //probably useless, we can make this in giveWindowPattern
 
     }
 
+    /*
     private void manageMoveDie(MoveDie m) {
         if (m.getPlayer().isPlacedDie()) { //maybe we can place this in manageRound
             //notify(view, "die already placed");
@@ -171,12 +201,15 @@ public class Controller implements Observer {
         }
         return;
     }
+    */
+
 
     /**
      * Verify if there is another Die near the position chosen by user
      * @param m move performed by user
      * @return false if there is another die near
      */
+    /*
     private boolean isNearDie(MoveDie m) {
 
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
@@ -199,12 +232,14 @@ public class Controller implements Observer {
         }
         return false;
     }
+    */
 
     /**
      * verify if there is another Die with the same colour near, or if there is colourRestriction in the Box
      * @param m move performed by user
      * @return false if Die break colour restriction
      */
+    /*
     private boolean verifyColor(MoveDie m) {
 
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
@@ -230,12 +265,14 @@ public class Controller implements Observer {
         } catch (IllegalArgumentException | NullPointerException e) {}
         return true;
     }
+    */
 
     /**
      * verify if there is another Die with the same number near, or if there is numberRestriction in the Box
      * @param m move performed by user
      * @return false if Die break number restriction
      */
+    /*
     private boolean verifyNumber( MoveDie m) {
 
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
@@ -261,6 +298,7 @@ public class Controller implements Observer {
         } catch (IllegalArgumentException | NullPointerException e) {}
         return true;
     }
+    */
 
     /**
      * calculate the score of a player, based on his private objective and the three public ones
@@ -288,14 +326,18 @@ public class Controller implements Observer {
 
     }
 
+    /*
     public void update(Message message) {
         System.out.println(message.getString());
         // Here the controller should take the news from the view and handle them.
     }
+    */
 
+    /*
     public void update(MessageDie message) {
         System.out.println("UPDATE PER MESSAGEDIE");
     }
+    */
 
     /* @Override
     public void update(MoveDie m) {

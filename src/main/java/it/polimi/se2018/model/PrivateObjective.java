@@ -7,7 +7,6 @@ package it.polimi.se2018.model;
 public class PrivateObjective {
 
     private Colour shade;
-
     private String description;
 
     /**
@@ -15,9 +14,9 @@ public class PrivateObjective {
      * @param description of the private objective
      * @param shade which colour of die give pints
      */
-    public PrivateObjective(String description, Colour shade) {
-        this.description = description;
+    public PrivateObjective(Colour shade) {
         this.shade = shade;
+        this.description = "Shades of " + shade + ": Private\nSum of values on "+shade+" dice";
     }
 
     /**
@@ -33,4 +32,5 @@ public class PrivateObjective {
     public Colour getShade() {
         return shade;
     }
+
 }

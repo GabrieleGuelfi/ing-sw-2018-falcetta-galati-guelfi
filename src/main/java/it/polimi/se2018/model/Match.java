@@ -5,6 +5,7 @@ import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.utils.Observable;
+import it.polimi.se2018.view.VirtualView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class Match extends Observable {
      * @param objectives Set of public objectives
      * @param tools Set of tools
      */
-    public Match(Bag bag, List<Player> players, List<PublicObjective> objectives, List<Tool> tools) {
+    public Match(Bag bag, List<Player> players, List<PublicObjective> objectives, List<Tool> tools, VirtualView view) {
         if ((bag==null) || (players==null) || (objectives==null) || (tools==null)) {
             throw new IllegalArgumentException("Parameters can't be null!");
             // Is it necessary to check the size and content of all parameters?
@@ -52,7 +53,10 @@ public class Match extends Observable {
         this.roundTrack = new ArrayList<>();
         this.players = new ArrayList<>();
 
-        //notify(new ModelUpdate(this)); // EXAMPLE: here Model throws a ModelUpdate.
+        register(view);
+        //notifyObservers(new MessageTool()); // EXAMPLE: here Model throws a ModelUpdate.
+        //notifyObservers(new MessagePublicObjective());
+        //notifyObservers(new MessageTool());
         // All the Observers will be notified with this message (ie: View will be notified!)
         // We should use this.copy(), however.
     }
