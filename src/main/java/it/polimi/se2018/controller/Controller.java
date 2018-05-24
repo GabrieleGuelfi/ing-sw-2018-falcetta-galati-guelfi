@@ -4,29 +4,6 @@ package it.polimi.se2018.controller;
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.model.*;
-import it.polimi.se2018.model.dicecollection.Bag;
-import it.polimi.se2018.model.publicobjective.PublicObjective;
-import it.polimi.se2018.utils.Observer;
-import it.polimi.se2018.view.VirtualView;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-public class Controller implements Observer {
-    package it.polimi.se2018.controller;
-
-
-import it.polimi.se2018.controller.tool.Tool;
-import it.polimi.se2018.events.Message;
-import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.*;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.utils.Observer;
