@@ -7,6 +7,7 @@ import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.utils.Observer;
+import it.polimi.se2018.view.VirtualView;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -20,67 +21,109 @@ import java.util.List;
 import java.util.Random;
 
 public class Controller implements Observer {
-
-    private Match match;
-
-    public Controller() {
-        this.match = null;
-    }
-
-    public void startGame(List<Player> players, View view) {
-        List<PublicObjective> objectives = new ArrayList<>(); // Here we should have the real Public Objectives...
-
-        List<Tool> tools = new ArrayList<>();
-        // Create the match...
-        this.match = new Match(new Bag(), players, objectives, tools);
+    package it.polimi.se2018.controller;
 
 
-        for(Player player: match.getActivePlayers()) {
-            givePrivateObjective(player, player.getNickname());
+import it.polimi.se2018.controller.tool.Tool;
+import it.polimi.se2018.events.Message;
+import it.polimi.se2018.model.*;
+import it.polimi.se2018.model.dicecollection.*;
+import it.polimi.se2018.model.publicobjective.PublicObjective;
+import it.polimi.se2018.utils.Observer;
+import it.polimi.se2018.view.VirtualView;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+    public class Controller {
+
+        private Match match;
+        private VirtualView virtualView;
+
+        public Controller() {
+            this.match = null;
         }
 
-        for(Player player: match.getActivePlayers()) {
-            giveWindowPatterns(player);
-            giveFavorTokens(player);
-        }
+        public void startGame(List<String> nickname, VirtualView view) {
 
-        // TOOLS PART!
+            List<PublicObjective> objectives = new ArrayList<>(); // Here we should have the real Public Objectives...
+            List<Tool> tools = new ArrayList<>();
+            List<Player> players = new ArrayList<>();
+            Random generator = new Random();
+            List<Integer> rand = new ArrayList<>();
+            int index;
+
+            this.virtualView = view;
+
+            for (String p : nickname) {
+                Player player = new Player(p);
+                players.add(player);
+            }
+
+            for (int i=0; i<3; i++) {
+                index = generator.nextInt(10)+1;
+                while (rand.contains(index))
+                    index = generator.nextInt(10)+1;
+                rand.add(index);
+                objectives.add(PublicObjective.factory(index));
+            }
+
+            givePrivateObjective(players);
+
+            for(Player player: match.getActivePlayers()) {
+                giveWindowPatterns(player);
+                giveFavorTokens(player);
+            }
+
+            // TOOLS PART!
 
         /*for (int i = 0; i < 10; i++) {
             match.nextNumRound();
             //manageRound(i % match.getPlayers().size());
         }*/
 
-    }
+            // Create the match...
+            this.match = new Match(new Bag(), players, objectives, tools, view);
+        }
 
-    /**
-     * send four window pattern to player, who choose one of them
-     * @param player is the player to send window pattern
-     */
-    private void giveWindowPatterns(Player player){
+        /**
+         * send four window pattern to player, who choose one of them
+         * @param player is the player to send window pattern
+         */
+        private void giveWindowPatterns(Player player){
 
-        List<WindowPattern> patterns = new ArrayList<>();
-        JSONParser parser = new JSONParser();
-        List<Integer> rand = new ArrayList<>();
-        Integer index;
-        try {
-            Object obj = parser.parse(new FileReader("./src/main/java/windowpattern/windowpattern"));
-            JSONArray schemes = (JSONArray) obj;
-            Random generator = new Random();
-            for (int i=0; i<2; i++) {
-                index = generator.nextInt(12);
-                while (rand.contains(index))
+            List<WindowPattern> patterns = new ArrayList<>();
+            JSONParser parser = new JSONParser();
+            List<Integer> rand = new ArrayList<>();
+            Integer index;
+            try {
+                Object obj = parser.parse(new FileReader("./src/main/java/windowpattern/windowpattern"));
+                JSONArray schemes = (JSONArray) obj;
+                Random generator = new Random();
+                for (int i=0; i<2; i++) {
                     index = generator.nextInt(12);
-                rand.add(index);
-                JSONArray schema = (JSONArray) schemes.get(index);
-                for (int j = 0; j < 2; j++) {
-                    JSONObject schema1 = (JSONObject) schema.get(j);
-                    WindowPattern w = new WindowPattern((String) schema1.get("name"), (int) (long) schema1.get("difficulty"));
-                    JSONArray grid = (JSONArray) schema1.get("grid");
-                    createWindowPattern(grid, w);
-                    patterns.add(w);
+                    while (rand.contains(index))
+                        index = generator.nextInt(12);
+                    rand.add(index);
+                    JSONArray schema = (JSONArray) schemes.get(index);
+                    for (int j = 0; j < 2; j++) {
+                        JSONObject schema1 = (JSONObject) schema.get(j);
+                        WindowPattern w = new WindowPattern((String) schema1.get("name"), (int) (long) schema1.get("difficulty"));
+                        JSONArray grid = (JSONArray) schema1.get("grid");
+                        createWindowPattern(grid, w);
+                        patterns.add(w);
+                    }
                 }
-            }
             /*
             for (int i=0; i<patterns.size(); i++) {
                 System.out.println("\nName: "+patterns.get(i).getName()+"\nDifficulty: "+patterns.get(i).getDifficulty() );
@@ -95,56 +138,66 @@ public class Controller implements Observer {
                 }
             }
             */
-            //send(patterns)
-        }
-        catch (FileNotFoundException e) {
-            System.out.println("file not found");
-        }
-        catch (IOException e) {
-            System.out.println("ioexception");
-        }
-        catch (ParseException e) {
-            System.out.println("parseException");
+                //send(patterns)
+            }
+            catch (FileNotFoundException e) {
+                System.out.println("file not found");
+            }
+            catch (IOException e) {
+                System.out.println("ioexception");
+            }
+            catch (ParseException e) {
+                System.out.println("parseException");
+            }
+
         }
 
-    }
-
-    /**
-     * create a window pattern from a json Object
-     * @param grid is the grid from json file
-     * @param w1 is the window pattern to be created
-     */
-    private void createWindowPattern (JSONArray grid, WindowPattern w1) {
-        for (int k=0; k<WindowPattern.MAX_ROW; k++) {
-            JSONArray row = (JSONArray)grid.get(k);
-            boolean isNumber = true;
-            int j=1;
-            for (int i=0; i<10; i++){
-                if (i%2==0) {
-                    isNumber = "num".equals(row.get(i));
-                }
-                else {
-                    if (isNumber) {
-                        w1.setBox(new Box((int)(long)row.get(i)), k, i-j);
+        /**
+         * create a window pattern from a json Object
+         * @param grid is the grid from json file
+         * @param w1 is the window pattern to be created
+         */
+        private void createWindowPattern (JSONArray grid, WindowPattern w1) {
+            for (int k=0; k<WindowPattern.MAX_ROW; k++) {
+                JSONArray row = (JSONArray)grid.get(k);
+                boolean isNumber = true;
+                int j=1;
+                for (int i=0; i<10; i++){
+                    if (i%2==0) {
+                        isNumber = "num".equals(row.get(i));
                     }
                     else {
-                        w1.setBox(new Box(Colour.valueOf((String)row.get(i))), k, i-j);
+                        if (isNumber) {
+                            w1.setBox(new Box((int)(long)row.get(i)), k, i-j);
+                        }
+                        else {
+                            w1.setBox(new Box(Colour.valueOf((String)row.get(i))), k, i-j);
+                        }
+                        j++;
                     }
-                    j++;
                 }
             }
         }
-    }
 
-    private void givePrivateObjective(Player player, String s) {
-        System.out.println("Writing to...... " + s);
-        View.getView().chooseValue(player, "Hi! I am the supreme Controller...");
-    }
+        private void givePrivateObjective(List<Player> players) {
+            Random generator = new Random();
+            List<Integer> rand = new ArrayList<>();
+            Colour[] colours = Colour.values();
 
-    private void giveFavorTokens(Player player) { //probably useless, we can make this in giveWindowPattern
+            for (Player p : players) {
+                int index = generator.nextInt(colours.length);
+                while (rand.contains(index))
+                    index = generator.nextInt(colours.length);
+                rand.add(index);
+                p.setPrivateObjective(new PrivateObjective(colours[index]));
+            }
+        }
 
-    }
+        private void giveFavorTokens(Player player) { //probably useless, we can make this in giveWindowPattern
 
+        }
+
+    /*
     private void manageMoveDie(MoveDie m) {
         if (m.getPlayer().isPlacedDie()) { //maybe we can place this in manageRound
             //notify(view, "die already placed");
@@ -171,18 +224,19 @@ public class Controller implements Observer {
         }
         return;
     }
+    */
 
-    /**
-     * Verify if there is another Die near the position chosen by user
-     * @param m move performed by user
-     * @return false if there is another die near
-     */
+
+        /**
+         * Verify if there is another Die near the position chosen by user
+         * @param m move performed by user
+         * @return false if there is another die near
+         */
+    /*
     private boolean isNearDie(MoveDie m) {
-
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
         int row = m.getRow();
         int column = m.getColumn();
-
         if (windowPattern.getEmptyBox() == 20) {
             return (row == 1 || row == WindowPattern.MAX_ROW || column == 1 || column == WindowPattern.MAX_COL);
         }
@@ -199,14 +253,15 @@ public class Controller implements Observer {
         }
         return false;
     }
+    */
 
-    /**
-     * verify if there is another Die with the same colour near, or if there is colourRestriction in the Box
-     * @param m move performed by user
-     * @return false if Die break colour restriction
-     */
+        /**
+         * verify if there is another Die with the same colour near, or if there is colourRestriction in the Box
+         * @param m move performed by user
+         * @return false if Die break colour restriction
+         */
+    /*
     private boolean verifyColor(MoveDie m) {
-
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
         try {
             if (windowPattern.getBox(m.getRow(), m.getColumn()).getColourRestriction() != m.getDie().getColour() && windowPattern.getBox(m.getRow(), m.getColumn()).getColourRestriction() != Colour.WHITE)
@@ -230,14 +285,15 @@ public class Controller implements Observer {
         } catch (IllegalArgumentException | NullPointerException e) {}
         return true;
     }
+    */
 
-    /**
-     * verify if there is another Die with the same number near, or if there is numberRestriction in the Box
-     * @param m move performed by user
-     * @return false if Die break number restriction
-     */
+        /**
+         * verify if there is another Die with the same number near, or if there is numberRestriction in the Box
+         * @param m move performed by user
+         * @return false if Die break number restriction
+         */
+    /*
     private boolean verifyNumber( MoveDie m) {
-
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
         try {
             if (windowPattern.getBox(m.getRow(), m.getColumn()).getValueRestriction() != m.getDie().getValue() && windowPattern.getBox(m.getRow(), m.getColumn()).getValueRestriction() != -1) //-1 equals to no restriction
@@ -261,45 +317,49 @@ public class Controller implements Observer {
         } catch (IllegalArgumentException | NullPointerException e) {}
         return true;
     }
+    */
 
-    /**
-     * calculate the score of a player, based on his private objective and the three public ones
-     * @param player player whose score is calculated
-     * @param p public objective of the match
-     */
-    private void calcResults(Player player, List<PublicObjective> p) {
+        /**
+         * calculate the score of a player, based on his private objective and the three public ones
+         * @param player player whose score is calculated
+         * @param p public objective of the match
+         */
+        private void calcResults(Player player, List<PublicObjective> p) {
 
-        WindowPattern windowPattern = player.getWindowPattern();
+            WindowPattern windowPattern = player.getWindowPattern();
 
-        //privateObjective
-        for(int i=0; i<WindowPattern.MAX_ROW; i++) {
-            for (int j=0; j<WindowPattern.MAX_COL; j++) {
-                try {
-                    if (windowPattern.getBox(i, j).getDie().getColour() == player.getPrivateObjective().getShade())
-                        player.addPoints(windowPattern.getBox(i, j).getDie().getValue());
-                } catch (IllegalArgumentException | NullPointerException e) {}
+            //privateObjective
+            for(int i=0; i<WindowPattern.MAX_ROW; i++) {
+                for (int j=0; j<WindowPattern.MAX_COL; j++) {
+                    try {
+                        if (windowPattern.getBox(i, j).getDie().getColour() == player.getPrivateObjective().getShade())
+                            player.addPoints(windowPattern.getBox(i, j).getDie().getValue());
+                    } catch (IllegalArgumentException | NullPointerException e) {}
+                }
             }
+
+            //publicObjectives
+            for (PublicObjective publicObjective : p) {
+                player.addPoints(publicObjective.calcScore(player.getWindowPattern()));
+            }
+
         }
 
-        //publicObjectives
-        for (PublicObjective publicObjective : p) {
-            player.addPoints(publicObjective.calcScore(player.getWindowPattern()));
-        }
-
-    }
-
+    /*
     public void update(Message message) {
         System.out.println(message.getString());
         // Here the controller should take the news from the view and handle them.
     }
+    */
 
+    /*
     public void update(MessageDie message) {
         System.out.println("UPDATE PER MESSAGEDIE");
     }
+    */
 
     /* @Override
     public void update(MoveDie m) {
-
         if (m.getPlayer() != match.getRound().getPlayerTurn()) {
             //notifyObservers(new Message(TypeMessage.ERROR_TURN, ((MoveDie) o).getPlayer()));
             return;
@@ -319,7 +379,6 @@ public class Controller implements Observer {
         else {
             //notifyObservers(new Message(TypeMessage.CHOOSE_MOVE, match.getRound().getPlayerTurn()));
         }
-
         if (match.getRound().getNumTurn() == 2*match.getActivePlayers().size()) {
             try {
                 match.setRound();
@@ -332,9 +391,10 @@ public class Controller implements Observer {
             }
         }
     }
-
     @Override
     public void update(Message message) {
         System.out.println("prova observer");
     } */
+    }
+
 }

@@ -26,17 +26,17 @@ public class SagradaServer {
 
     }
 
-    protected synchronized void addClient( Socket clientConnection, String nick ) {
+    protected synchronized void addClient(Socket clientConnection, String nick) {
 
         VirtualClient cm = new VirtualClient(this.virtualView, clientConnection);
         clients.add(cm);
         cm.setPlayer(nick);
         cm.start();
-        if((this.clients.size() == 2) && (this.timer == null)) {
+        if ((this.clients.size() == 2) && (this.timer == null)) {
             this.timer = new ServerTimer(this, 10000);
             this.timer.run();
         }
-        if(this.clients.size() == 4) this.clientGatherer.closeClientGatherer();
+        if (this.clients.size() == 4) this.clientGatherer.closeClientGatherer();
     }
 
     protected synchronized ArrayList<VirtualClient> getClients() {
@@ -45,53 +45,47 @@ public class SagradaServer {
 
     protected synchronized void removeClient(ClientInterface client) {
         this.clients.remove(client);
-        if(this.clients.size() < 4 ) this.clientGatherer = new ClientGatherer(this, this.PORT);
-        if(this.clients.size() == 1 ) {
-            if(this.timer != null) this.timer.stopTimer();
+        if (this.clients.size() < 4) this.clientGatherer = new ClientGatherer(this, this.PORT);
+        if (this.clients.size() == 1) {
+            if (this.timer != null) this.timer.stopTimer();
             this.timer = new ServerTimer(this, 10000);
             this.timer.run();
         }
     }
 
-    public VirtualClient searchVirtualClient(String player){
+    public VirtualClient searchVirtualClient(String player) {
         try {
-            for(VirtualClient v : this.clients){
-                if(v.getPlayer().equals(player)) return v;
+            for (VirtualClient v : this.clients) {
+                if (v.getPlayer().equals(player)) return v;
             }
-        }
-        catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public void broadcast(Message message){
-        for(VirtualClient v: this.clients){
+    public void broadcast(Message message) {
+        for (VirtualClient v : this.clients) {
             v.notify(message);
         }
     }
 
-    protected void startGame(){
-        if(this.clients.size() == 1) {
+    protected void startGame() {
+        if (this.clients.size() == 1) {
             this.timer = new ServerTimer(this, 10000);
             this.timer.run();
-        }
-        else {
+        } else {
             this.clientGatherer.closeClientGatherer();
-            if(this.timer != null) this.timer.stopTimer();
-            this.controller.startGame(this.nicknames, this.virtualView);
+            if (this.timer != null) this.timer.stopTimer();
+            System.out.println("FUNZIONA");
         }
     }
 
-    protected Nickname getNicknames(){
-        return this.nicknames;
+    public Nickname getNicknames() {
+        return nicknames;
     }
 
-
-    public static void main(String[] args) {
-
+    public static void main(String[] args){
         new SagradaServer();
-
-
     }
 }

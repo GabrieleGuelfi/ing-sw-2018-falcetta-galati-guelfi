@@ -24,18 +24,17 @@ public class VerifyClientAccess extends Thread {
         try {
             ObjectInputStream in = new ObjectInputStream(this.clientConnection.getInputStream());
 
-            ObjectOutputStream out = new ObjectOutputStream(this.clientConnection.getOutputStream());
-            out.writeObject(new Message());
             while(loop){
                 try {
                     Message message = (Message) in.readObject();
                     boolean access = this.sagradaServer.getNicknames().verifyNickname(message.getNickname());
                     if(access){
                         this.sagradaServer.addClient(this.clientConnection, message.getNickname());
+                        System.out.println("NewClient Verified");
                         this.loop = false;
                     }
                     else{
-                        out = new ObjectOutputStream(this.clientConnection.getOutputStream());
+                        ObjectOutputStream out = new ObjectOutputStream(this.clientConnection.getOutputStream());
                         out.writeObject(new MessageError());
                     }
                 }
