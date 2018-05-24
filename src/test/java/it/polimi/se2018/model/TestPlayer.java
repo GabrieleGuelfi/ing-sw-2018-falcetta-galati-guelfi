@@ -89,7 +89,7 @@ public class TestPlayer {
     @Test
     public void testGetPrivateObjective() {
         Player player = new Player("foo");
-        PrivateObjective po = new PrivateObjective("foo", Colour.BLUE);
+        PrivateObjective po = new PrivateObjective(Colour.BLUE);
         player.setPrivateObjective(po);
         assertEquals(Colour.BLUE, po.getShade());
         assertEquals("foo", po.getDescription());
@@ -101,7 +101,7 @@ public class TestPlayer {
     public void testCopy() {
         Player player = new Player("foo");
 
-        PrivateObjective po = new PrivateObjective("foo", Colour.BLUE);
+        PrivateObjective po = new PrivateObjective(Colour.BLUE);
         WindowPattern wp = new WindowPattern(null,10);
 
         player.setPrivateObjective(po);

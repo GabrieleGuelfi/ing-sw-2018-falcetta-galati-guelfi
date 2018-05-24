@@ -22,85 +22,85 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-    public class Controller {
+public class Controller {
 
-        private Match match;
-        private VirtualView virtualView;
+    private Match match;
+    private VirtualView virtualView;
 
-        public Controller() {
-            this.match = null;
+    public Controller() {
+        this.match = null;
+    }
+
+    public void startGame(List<String> nickname, VirtualView view) {
+
+        List<PublicObjective> objectives = new ArrayList<>(); // Here we should have the real Public Objectives...
+        List<Tool> tools = new ArrayList<>();
+        List<Player> players = new ArrayList<>();
+        Random generator = new Random();
+        List<Integer> rand = new ArrayList<>();
+        int index;
+
+        this.virtualView = view;
+
+        for (String p : nickname) {
+            Player player = new Player(p);
+            players.add(player);
         }
 
-        public void startGame(List<String> nickname, VirtualView view) {
-
-            List<PublicObjective> objectives = new ArrayList<>(); // Here we should have the real Public Objectives...
-            List<Tool> tools = new ArrayList<>();
-            List<Player> players = new ArrayList<>();
-            Random generator = new Random();
-            List<Integer> rand = new ArrayList<>();
-            int index;
-
-            this.virtualView = view;
-
-            for (String p : nickname) {
-                Player player = new Player(p);
-                players.add(player);
-            }
-
-            for (int i=0; i<3; i++) {
+        for (int i=0; i<3; i++) {
+            index = generator.nextInt(10)+1;
+            while (rand.contains(index))
                 index = generator.nextInt(10)+1;
-                while (rand.contains(index))
-                    index = generator.nextInt(10)+1;
-                rand.add(index);
-                objectives.add(PublicObjective.factory(index));
-            }
+            rand.add(index);
+            objectives.add(PublicObjective.factory(index));
+        }
 
-            givePrivateObjective(players);
+        givePrivateObjective(players);
 
-            for(Player player: match.getActivePlayers()) {
-                giveWindowPatterns(player);
-                giveFavorTokens(player);
-            }
+        for(Player player: match.getActivePlayers()) {
+            giveWindowPatterns(player);
+            giveFavorTokens(player);
+        }
 
-            // TOOLS PART!
+        // TOOLS PART!
 
         /*for (int i = 0; i < 10; i++) {
             match.nextNumRound();
             //manageRound(i % match.getPlayers().size());
         }*/
 
-            // Create the match...
-            this.match = new Match(new Bag(), players, objectives, tools, view);
-        }
+        // Create the match...
+        this.match = new Match(new Bag(), players, objectives, tools, view);
+    }
 
-        /**
-         * send four window pattern to player, who choose one of them
-         * @param player is the player to send window pattern
-         */
-        private void giveWindowPatterns(Player player){
+    /**
+     * send four window pattern to player, who choose one of them
+     * @param player is the player to send window pattern
+     */
+    private void giveWindowPatterns(Player player){
 
-            List<WindowPattern> patterns = new ArrayList<>();
-            JSONParser parser = new JSONParser();
-            List<Integer> rand = new ArrayList<>();
-            Integer index;
-            try {
-                Object obj = parser.parse(new FileReader("./src/main/java/windowpattern/windowpattern"));
-                JSONArray schemes = (JSONArray) obj;
-                Random generator = new Random();
-                for (int i=0; i<2; i++) {
+        List<WindowPattern> patterns = new ArrayList<>();
+        JSONParser parser = new JSONParser();
+        List<Integer> rand = new ArrayList<>();
+        Integer index;
+        try {
+            Object obj = parser.parse(new FileReader("./src/main/java/windowpattern/windowpattern"));
+            JSONArray schemes = (JSONArray) obj;
+            Random generator = new Random();
+            for (int i=0; i<2; i++) {
+                index = generator.nextInt(12);
+                while (rand.contains(index))
                     index = generator.nextInt(12);
-                    while (rand.contains(index))
-                        index = generator.nextInt(12);
-                    rand.add(index);
-                    JSONArray schema = (JSONArray) schemes.get(index);
-                    for (int j = 0; j < 2; j++) {
-                        JSONObject schema1 = (JSONObject) schema.get(j);
-                        WindowPattern w = new WindowPattern((String) schema1.get("name"), (int) (long) schema1.get("difficulty"));
-                        JSONArray grid = (JSONArray) schema1.get("grid");
-                        createWindowPattern(grid, w);
-                        patterns.add(w);
-                    }
+                rand.add(index);
+                JSONArray schema = (JSONArray) schemes.get(index);
+                for (int j = 0; j < 2; j++) {
+                    JSONObject schema1 = (JSONObject) schema.get(j);
+                    WindowPattern w = new WindowPattern((String) schema1.get("name"), (int) (long) schema1.get("difficulty"));
+                    JSONArray grid = (JSONArray) schema1.get("grid");
+                    createWindowPattern(grid, w);
+                    patterns.add(w);
                 }
+            }
             /*
             for (int i=0; i<patterns.size(); i++) {
                 System.out.println("\nName: "+patterns.get(i).getName()+"\nDifficulty: "+patterns.get(i).getDifficulty() );
@@ -115,64 +115,64 @@ import java.util.Random;
                 }
             }
             */
-                //send(patterns)
-            }
-            catch (FileNotFoundException e) {
-                System.out.println("file not found");
-            }
-            catch (IOException e) {
-                System.out.println("ioexception");
-            }
-            catch (ParseException e) {
-                System.out.println("parseException");
-            }
-
+            //send(patterns)
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("file not found");
+        }
+        catch (IOException e) {
+            System.out.println("ioexception");
+        }
+        catch (ParseException e) {
+            System.out.println("parseException");
         }
 
-        /**
-         * create a window pattern from a json Object
-         * @param grid is the grid from json file
-         * @param w1 is the window pattern to be created
-         */
-        private void createWindowPattern (JSONArray grid, WindowPattern w1) {
-            for (int k=0; k<WindowPattern.MAX_ROW; k++) {
-                JSONArray row = (JSONArray)grid.get(k);
-                boolean isNumber = true;
-                int j=1;
-                for (int i=0; i<10; i++){
-                    if (i%2==0) {
-                        isNumber = "num".equals(row.get(i));
+    }
+
+    /**
+     * create a window pattern from a json Object
+     * @param grid is the grid from json file
+     * @param w1 is the window pattern to be created
+     */
+    private void createWindowPattern (JSONArray grid, WindowPattern w1) {
+        for (int k=0; k<WindowPattern.MAX_ROW; k++) {
+            JSONArray row = (JSONArray)grid.get(k);
+            boolean isNumber = true;
+            int j=1;
+            for (int i=0; i<10; i++){
+                if (i%2==0) {
+                    isNumber = "num".equals(row.get(i));
+                }
+                else {
+                    if (isNumber) {
+                        w1.setBox(new Box((int)(long)row.get(i)), k, i-j);
                     }
                     else {
-                        if (isNumber) {
-                            w1.setBox(new Box((int)(long)row.get(i)), k, i-j);
-                        }
-                        else {
-                            w1.setBox(new Box(Colour.valueOf((String)row.get(i))), k, i-j);
-                        }
-                        j++;
+                        w1.setBox(new Box(Colour.valueOf((String)row.get(i))), k, i-j);
                     }
+                    j++;
                 }
             }
         }
+    }
 
-        private void givePrivateObjective(List<Player> players) {
-            Random generator = new Random();
-            List<Integer> rand = new ArrayList<>();
-            Colour[] colours = Colour.values();
+    private void givePrivateObjective(List<Player> players) {
+        Random generator = new Random();
+        List<Integer> rand = new ArrayList<>();
+        Colour[] colours = Colour.values();
 
-            for (Player p : players) {
-                int index = generator.nextInt(colours.length);
-                while (rand.contains(index))
-                    index = generator.nextInt(colours.length);
-                rand.add(index);
-                p.setPrivateObjective(new PrivateObjective(colours[index]));
-            }
+        for (Player p : players) {
+            int index = generator.nextInt(colours.length);
+            while (rand.contains(index))
+                index = generator.nextInt(colours.length);
+            rand.add(index);
+            p.setPrivateObjective(new PrivateObjective(colours[index]));
         }
+    }
 
-        private void giveFavorTokens(Player player) { //probably useless, we can make this in giveWindowPattern
+    private void giveFavorTokens(Player player) { //probably useless, we can make this in giveWindowPattern
 
-        }
+    }
 
     /*
     private void manageMoveDie(MoveDie m) {
@@ -204,16 +204,18 @@ import java.util.Random;
     */
 
 
-        /**
-         * Verify if there is another Die near the position chosen by user
-         * @param m move performed by user
-         * @return false if there is another die near
-         */
+    /**
+     * Verify if there is another Die near the position chosen by user
+     * @param m move performed by user
+     * @return false if there is another die near
+     */
     /*
     private boolean isNearDie(MoveDie m) {
+
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
         int row = m.getRow();
         int column = m.getColumn();
+
         if (windowPattern.getEmptyBox() == 20) {
             return (row == 1 || row == WindowPattern.MAX_ROW || column == 1 || column == WindowPattern.MAX_COL);
         }
@@ -232,13 +234,14 @@ import java.util.Random;
     }
     */
 
-        /**
-         * verify if there is another Die with the same colour near, or if there is colourRestriction in the Box
-         * @param m move performed by user
-         * @return false if Die break colour restriction
-         */
+    /**
+     * verify if there is another Die with the same colour near, or if there is colourRestriction in the Box
+     * @param m move performed by user
+     * @return false if Die break colour restriction
+     */
     /*
     private boolean verifyColor(MoveDie m) {
+
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
         try {
             if (windowPattern.getBox(m.getRow(), m.getColumn()).getColourRestriction() != m.getDie().getColour() && windowPattern.getBox(m.getRow(), m.getColumn()).getColourRestriction() != Colour.WHITE)
@@ -264,13 +267,14 @@ import java.util.Random;
     }
     */
 
-        /**
-         * verify if there is another Die with the same number near, or if there is numberRestriction in the Box
-         * @param m move performed by user
-         * @return false if Die break number restriction
-         */
+    /**
+     * verify if there is another Die with the same number near, or if there is numberRestriction in the Box
+     * @param m move performed by user
+     * @return false if Die break number restriction
+     */
     /*
     private boolean verifyNumber( MoveDie m) {
+
         WindowPattern windowPattern = m.getPlayer().getWindowPattern();
         try {
             if (windowPattern.getBox(m.getRow(), m.getColumn()).getValueRestriction() != m.getDie().getValue() && windowPattern.getBox(m.getRow(), m.getColumn()).getValueRestriction() != -1) //-1 equals to no restriction
@@ -296,31 +300,31 @@ import java.util.Random;
     }
     */
 
-        /**
-         * calculate the score of a player, based on his private objective and the three public ones
-         * @param player player whose score is calculated
-         * @param p public objective of the match
-         */
-        private void calcResults(Player player, List<PublicObjective> p) {
+    /**
+     * calculate the score of a player, based on his private objective and the three public ones
+     * @param player player whose score is calculated
+     * @param p public objective of the match
+     */
+    private void calcResults(Player player, List<PublicObjective> p) {
 
-            WindowPattern windowPattern = player.getWindowPattern();
+        WindowPattern windowPattern = player.getWindowPattern();
 
-            //privateObjective
-            for(int i=0; i<WindowPattern.MAX_ROW; i++) {
-                for (int j=0; j<WindowPattern.MAX_COL; j++) {
-                    try {
-                        if (windowPattern.getBox(i, j).getDie().getColour() == player.getPrivateObjective().getShade())
-                            player.addPoints(windowPattern.getBox(i, j).getDie().getValue());
-                    } catch (IllegalArgumentException | NullPointerException e) {}
-                }
+        //privateObjective
+        for(int i=0; i<WindowPattern.MAX_ROW; i++) {
+            for (int j=0; j<WindowPattern.MAX_COL; j++) {
+                try {
+                    if (windowPattern.getBox(i, j).getDie().getColour() == player.getPrivateObjective().getShade())
+                        player.addPoints(windowPattern.getBox(i, j).getDie().getValue());
+                } catch (IllegalArgumentException | NullPointerException e) {}
             }
-
-            //publicObjectives
-            for (PublicObjective publicObjective : p) {
-                player.addPoints(publicObjective.calcScore(player.getWindowPattern()));
-            }
-
         }
+
+        //publicObjectives
+        for (PublicObjective publicObjective : p) {
+            player.addPoints(publicObjective.calcScore(player.getWindowPattern()));
+        }
+
+    }
 
     /*
     public void update(Message message) {
@@ -337,6 +341,7 @@ import java.util.Random;
 
     /* @Override
     public void update(MoveDie m) {
+
         if (m.getPlayer() != match.getRound().getPlayerTurn()) {
             //notifyObservers(new Message(TypeMessage.ERROR_TURN, ((MoveDie) o).getPlayer()));
             return;
@@ -356,6 +361,7 @@ import java.util.Random;
         else {
             //notifyObservers(new Message(TypeMessage.CHOOSE_MOVE, match.getRound().getPlayerTurn()));
         }
+
         if (match.getRound().getNumTurn() == 2*match.getActivePlayers().size()) {
             try {
                 match.setRound();
@@ -368,10 +374,9 @@ import java.util.Random;
             }
         }
     }
+
     @Override
     public void update(Message message) {
         System.out.println("prova observer");
     } */
-    }
-
 }
