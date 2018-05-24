@@ -6,15 +6,16 @@ public class ServerTimer extends Thread {
     private int time;
     private boolean loop = true;
 
-    protected ServerTimer(SagradaServer server, int t) {
+    ServerTimer(SagradaServer server, int t) {
         this.sagradaServer = server;
+        this.time = t;
     }
 
     @Override
     public void run() {
         try {
             Thread.sleep(time);
-            if(loop == true) {
+            if(loop) {
                 this.sagradaServer.startGame();
             }
         }catch(InterruptedException e){

@@ -37,7 +37,9 @@ public class ClientGatherer extends Thread{
 
                 newClientConnection = serverSocket.accept();
                 System.out.println("A new client connected.");
-                this.verifyClientAccess.add(new VerifyClientAccess(this.sagradaServer, newClientConnection));
+                VerifyClientAccess v = new VerifyClientAccess(this.sagradaServer, newClientConnection);
+                v.start();
+                this.verifyClientAccess.add(v);
 
             } catch (IOException e) {
                 e.printStackTrace();

@@ -20,13 +20,13 @@ public class SagradaClient {
 
         String nickname;
 
-        /*nickname = viewForClient.getNickname();
+        nickname = viewForClient.getNickname();
 
         ServerInterface server = new NetworkHandler(HOST, PORT, client);
         System.out.println("Connected! Waiting for the game to start...");
         server.send(new Message(nickname));
 
-        client.addServer(server);*/
+        client.addServer(server);
 
         viewForClient.askMove(true, true);
         viewForClient.askMove(true, false);

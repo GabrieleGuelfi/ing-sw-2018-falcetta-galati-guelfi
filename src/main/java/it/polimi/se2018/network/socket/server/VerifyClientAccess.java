@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.MessageError;
 
 public class VerifyClientAccess extends Thread {
@@ -29,12 +28,13 @@ public class VerifyClientAccess extends Thread {
                     Message message = (Message) in.readObject();
                     boolean access = this.sagradaServer.getNicknames().verifyNickname(message.getNickname());
                     if(access){
-                        this.sagradaServer.addClient(this.clientConnection, message.getNickname());
                         System.out.println("NewClient Verified");
+                        this.sagradaServer.addClient(this.clientConnection, message.getNickname());
                         this.loop = false;
                     }
                     else{
                         ObjectOutputStream out = new ObjectOutputStream(this.clientConnection.getOutputStream());
+                        System.out.println("Request reject");
                         out.writeObject(new MessageError());
                     }
                 }
