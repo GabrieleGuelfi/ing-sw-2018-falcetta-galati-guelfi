@@ -2,15 +2,25 @@ package it.polimi.se2018.events;
 
 import it.polimi.se2018.utils.SagradaVisitor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MessagePublicObj extends Message {
 
-    String description;
-    int points;
+    private List<String> descriptions;
+    private List<Integer> points;
 
-    public MessagePublicObj(String nickname, String description, int points) {
-        super(nickname);
-        this.description = description;
+    public MessagePublicObj(List<String> descriptions, List<Integer> points) {
+        this.descriptions = descriptions;
         this.points = points;
+    }
+
+    public List<String> getDescriptions() {
+        return descriptions;
+    }
+
+    public List<Integer> getPoints() {
+        return points;
     }
 
     @Override

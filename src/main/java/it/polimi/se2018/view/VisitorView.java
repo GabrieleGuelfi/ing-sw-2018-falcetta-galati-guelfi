@@ -18,4 +18,12 @@ public class VisitorView implements SagradaVisitor {
         viewForClient.nicknameConfirmation(message);
     }
 
+    public void visit(MessagePrivObj message) {
+        ViewForClient.createViewForClient().showPrivateObjective(message.getColour());
+    }
+
+    public void visit(MessagePublicObj message) {
+        ViewForClient.createViewForClient().showPublicObjective(message.getDescriptions(), message.getPoints());
+    }
+
 }

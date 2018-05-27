@@ -5,6 +5,7 @@ import it.polimi.se2018.events.MessageNickname;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
 
+import java.util.List;
 import java.util.Scanner;
 
 import static java.lang.System.*;
@@ -49,8 +50,11 @@ public class ViewForClient extends Observable implements Observer {
         out.println("Your private objective is of colour: " + colour);
     }
 
-    public void showPublicObjective() {
+    public void showPublicObjective(List<String> descriptions, List<Integer> points) {
         out.println("Public objectives: ");
+        for(int i=0; i<descriptions.size(); i++) {
+            out.println(i+1 + ") " + descriptions.get(i) + " VP: " + points.get(i));
+        }
     }
 
     public void askMove(boolean canMoveDie, boolean canUseTool) {

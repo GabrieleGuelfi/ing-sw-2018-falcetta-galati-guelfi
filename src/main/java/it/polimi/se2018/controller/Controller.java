@@ -2,9 +2,7 @@ package it.polimi.se2018.controller;
 
 
 import it.polimi.se2018.controller.tool.Tool;
-import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.MessageError;
-import it.polimi.se2018.events.MessageNickname;
+import it.polimi.se2018.events.*;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.*;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
@@ -50,9 +48,9 @@ public class Controller extends VisitorController implements Observer {
 
         givePrivateObjective(players);
 
-        for(Player player: match.getActivePlayers()) {
+        /*for(Player player: match.getActivePlayers()) {
             Utils.chooseWP(player.getNickname(), virtualView);
-        }
+        } */
 
         // TOOLS PART!
 
@@ -78,6 +76,7 @@ public class Controller extends VisitorController implements Observer {
                 index = generator.nextInt(colours.length);
             rand.add(index);
             p.setPrivateObjective(new PrivateObjective(colours[index]));
+            virtualView.send(new MessagePrivObj(p.getNickname(), colours[index].toString()));
         }
     }
 
@@ -298,6 +297,16 @@ public class Controller extends VisitorController implements Observer {
 
     @Override
     public void visit(MessageNickname message) {
+
+    }
+
+    @Override
+    public void visit(MessagePrivObj message) {
+
+    }
+
+    @Override
+    public void visit(MessagePublicObj message) {
 
     }
 }

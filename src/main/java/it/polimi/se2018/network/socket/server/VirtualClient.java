@@ -52,7 +52,7 @@ public class VirtualClient extends Thread implements ClientInterface{
             ObjectOutputStream outputStream = new ObjectOutputStream(this.clientConnection.getOutputStream());
             outputStream.writeObject(message);
             outputStream.flush();
-            System.out.println("Message send to" + message.getNickname());
+            System.out.println("Message send to " + message.getNickname());
         }
         catch(IOException e){
             e.printStackTrace();
