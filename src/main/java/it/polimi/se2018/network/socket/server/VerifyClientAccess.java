@@ -8,16 +8,17 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import it.polimi.se2018.events.MessageError;
 
-public class VerifyClientAccess extends Thread {
+public class VerifyClientAccess extends Thread{
     private SagradaServer sagradaServer;
     private Socket clientConnection;
-    boolean loop = true;
+    private boolean loop = true;
 
-    public VerifyClientAccess(SagradaServer server, Socket client){
+    VerifyClientAccess(SagradaServer server, Socket client){
         this.sagradaServer = server;
         this.clientConnection = client;
     }
 
+    @Override
     public void run(){
 
         try {
@@ -28,14 +29,15 @@ public class VerifyClientAccess extends Thread {
                     Message message = (Message) in.readObject();
                     boolean access = this.sagradaServer.getNicknames().verifyNickname(message.getNickname());
                     if(access){
-                        System.out.println("NewClient Verified");
+                        System.out.println("NewClient Verified:" + message.getNickname());
                         this.sagradaServer.addClient(this.clientConnection, message.getNickname());
                         this.loop = false;
                     }
                     else{
                         ObjectOutputStream out = new ObjectOutputStream(this.clientConnection.getOutputStream());
-                        System.out.println("Request reject");
+                        System.out.println("Request reject.");
                         out.writeObject(new MessageError());
+                        out.close();
                     }
                 }
                 catch(ClassNotFoundException e){
@@ -49,13 +51,16 @@ public class VerifyClientAccess extends Thread {
     }
 
     public void closeThread(){
-        try {
-            ObjectOutputStream out = new ObjectOutputStream(this.clientConnection.getOutputStream());
+        try
+            (ObjectOutputStream out = new ObjectOutputStream(this.clientConnection.getOutputStream()))
+        {
             out.writeObject(new MessageError());
         }
         catch(IOException e){
             e.printStackTrace();
         }
-        this.loop = false;
+        finally {
+            this.loop = false;
+        }
     }
 }

@@ -1,6 +1,6 @@
 package it.polimi.se2018.network.socket.server;
 
-public class ServerTimer extends Thread {
+public class ServerTimer extends Thread{
 
     private SagradaServer sagradaServer;
     private int time;
@@ -14,12 +14,16 @@ public class ServerTimer extends Thread {
     @Override
     public void run() {
         try {
-            Thread.sleep(time);
+            for(int i = time; i > 0; i--){
+                System.out.println(time + "seconds remains");
+                Thread.sleep(1000);
+            }
             if(loop) {
                 this.sagradaServer.startGame();
             }
         }catch(InterruptedException e){
             e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
 
     }

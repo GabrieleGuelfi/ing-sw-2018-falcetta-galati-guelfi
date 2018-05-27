@@ -4,13 +4,15 @@ import java.util.ArrayList;
 
 public class Nickname {
     private ArrayList<String> nicknames;
+    private boolean gameStarted = false;
 
     Nickname(){
         this.nicknames = new ArrayList<>();
     }
 
-    public boolean verifyNickname(String s){
-        if(this.nicknames.size() < 4){
+    public synchronized boolean verifyNickname(String s){
+
+        if(this.nicknames.size() < 4 && !gameStarted){
             if(!this.nicknames.isEmpty()){
                 for(String string: this.nicknames){
                     if(string.equals(s)) return false;
@@ -27,7 +29,9 @@ public class Nickname {
         }
     }
 
-    public ArrayList<String> getNicknames() {
+    protected ArrayList<String> getNicknames() {
         return nicknames;
     }
+
+    protected void setGameStarted(){this.gameStarted = true;}
 }

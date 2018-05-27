@@ -5,8 +5,12 @@ import it.polimi.se2018.events.Message;
 import it.polimi.se2018.network.socket.client.ClientInterface;
 import it.polimi.se2018.view.VirtualView;
 
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.rmi.Naming;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class SagradaServer {
     private int PORT = 1111;
@@ -14,49 +18,56 @@ public class SagradaServer {
     private Controller controller;
     private ClientGatherer clientGatherer;
     private ServerTimer timer;
+    private final int time;
 
-    private ArrayList<VirtualClient> clients = new ArrayList<>();
+    private ArrayList<CoupleClientNickname> clients = new ArrayList<>();
     private Nickname nicknames = new Nickname();
 
     public SagradaServer() {
 
+        Scanner stdin = new Scanner(System.in);
+        System.out.println("Set time for lobby timer.");
+        this.time = stdin.nextInt();
         this.controller = new Controller();
         this.virtualView = new VirtualView(this);
-        (this.clientGatherer = new ClientGatherer(this, PORT)).start();
-
+        this.clientGatherer = new ClientGatherer(this, PORT);
+        this.clientGatherer.start();
     }
 
     protected synchronized void addClient(Socket clientConnection, String nick) {
 
         VirtualClient cm = new VirtualClient(this.virtualView, clientConnection);
-        clients.add(cm);
-        cm.setPlayer(nick);
+        clients.add(new CoupleClientNickname(cm, nick));
         cm.start();
         if ((this.clients.size() == 2) && (this.timer == null)) {
-            this.timer = new ServerTimer(this, 10000);
-            this.timer.run();
+            this.timer = new ServerTimer(this, this.time);
+            this.timer.start();
         }
         if (this.clients.size() == 4) this.clientGatherer.closeClientGatherer();
     }
 
-    protected synchronized ArrayList<VirtualClient> getClients() {
+    protected synchronized void addClient(String nick){}
+
+    protected synchronized ArrayList<CoupleClientNickname> getClients() {
         return this.clients;
     }
 
     protected synchronized void removeClient(ClientInterface client) {
-        this.clients.remove(client);
+        for(CoupleClientNickname c: this.clients) {
+            if(c.getVirtualClient().equals(client)) this.clients.remove(c);
+        }
         if (this.clients.size() < 4) this.clientGatherer = new ClientGatherer(this, this.PORT);
         if (this.clients.size() == 1) {
             if (this.timer != null) this.timer.stopTimer();
-            this.timer = new ServerTimer(this, 10000);
-            this.timer.run();
+            this.timer = new ServerTimer(this, this.time);
+            this.timer.start();
         }
     }
 
-    public VirtualClient searchVirtualClient(String player) {
+    public ClientInterface searchVirtualClient(String player) {
         try {
-            for (VirtualClient v : this.clients) {
-                if (v.getPlayer().equals(player)) return v;
+            for (CoupleClientNickname c : this.clients) {
+                if (c.getNickname().equals(player)) return c.getVirtualClient();
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -65,25 +76,28 @@ public class SagradaServer {
     }
 
     public void broadcast(Message message) {
-        for (VirtualClient v : this.clients) {
-            v.notify(message);
+        for (CoupleClientNickname c : this.clients) {
+            c.getVirtualClient().notify(message);
         }
     }
 
     protected void startGame() {
         if (this.clients.size() == 1) {
-            this.timer = new ServerTimer(this, 10000);
-            this.timer.run();
+            this.timer = new ServerTimer(this, this.time);
+            this.timer.start();
         } else {
             this.clientGatherer.closeClientGatherer();
             if (this.timer != null) this.timer.stopTimer();
-            System.out.println("FUNZIONA");
+            this.nicknames.setGameStarted();
+            System.out.println("START GAME");
         }
     }
 
     public Nickname getNicknames() {
         return nicknames;
     }
+
+    protected VirtualView getVirtualView(){return this.virtualView;}
 
     public static void main(String[] args){
         new SagradaServer();
