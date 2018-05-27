@@ -4,6 +4,7 @@ package it.polimi.se2018.controller;
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.MessageError;
+import it.polimi.se2018.events.MessageNickname;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.*;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
@@ -293,5 +294,10 @@ public class Controller extends VisitorController implements Observer {
     @Override
     public void visit(MessageError messageError) {
         super.visit(messageError);
+    }
+
+    @Override
+    public void visit(MessageNickname message) {
+
     }
 }

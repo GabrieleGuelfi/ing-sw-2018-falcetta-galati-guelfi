@@ -12,11 +12,12 @@ import static java.lang.System.*;
 public class ViewForClient extends Observable implements Observer {
 
     private static ViewForClient viewForClient;
-    private static Scanner scanner;
+    private Scanner scanner;
 
     public static ViewForClient createViewForClient() {
         if (viewForClient==null) {
-            return new ViewForClient();
+            viewForClient = new ViewForClient();
+            return viewForClient;
         }
         else {
             return viewForClient;
@@ -34,7 +35,7 @@ public class ViewForClient extends Observable implements Observer {
     }
 
     public void nicknameConfirmation(MessageNickname nicknameMessage) {
-        if (!nicknameMessage.getBoolean()) {
+        if (nicknameMessage.getBoolean()) {
             out.println("All settled! Wait for the game to begin...");
         }
         else {
