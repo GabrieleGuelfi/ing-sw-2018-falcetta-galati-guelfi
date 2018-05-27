@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static java.lang.System.*;
+
 public class Controller extends VisitorController implements Observer {
 
     private Match match;
@@ -48,9 +50,9 @@ public class Controller extends VisitorController implements Observer {
 
         givePrivateObjective(players);
 
-        /*for(Player player: match.getActivePlayers()) {
-            Utils.chooseWP(player.getNickname(), virtualView);
-        } */
+        for(String player: nickname) {
+            handleJSON.chooseWP(player, virtualView);
+        }
 
         // TOOLS PART!
 
@@ -308,5 +310,22 @@ public class Controller extends VisitorController implements Observer {
     @Override
     public void visit(MessagePublicObj message) {
 
+    }
+
+    @Override
+    public void visit(MessageChoosWP message) {
+
+        Player player = null;
+        for (Player p: match.getPlayers()) {
+            if (p.getNickname().equals(message.getNickname))
+                player = p;
+        }
+        try {
+            player.setWindowPattern(handleJSON.createWindowPattern(message.getFirstIndex, message.getSecondIndex));
+        }
+        catch(NullPointerException e) {
+            out.println("nickname non valido");
+        }
+        //show window pattern;
     }
 }
