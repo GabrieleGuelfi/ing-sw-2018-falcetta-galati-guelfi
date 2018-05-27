@@ -13,4 +13,9 @@ public class VisitorView implements SagradaVisitor {
         System.out.println("This is a message error!");
     }
 
+    public void visit(MessageNickname message) {
+        ViewForClient viewForClient = ViewForClient.createViewForClient();
+        viewForClient.nicknameConfirmation(message);
+    }
+
 }

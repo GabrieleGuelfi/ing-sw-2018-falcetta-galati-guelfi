@@ -12,7 +12,7 @@ public class SagradaClient {
 
     public static void main(String[] args) {
 
-        ViewForClient viewForClient = new ViewForClient();
+        ViewForClient viewForClient = ViewForClient.createViewForClient();
         ClientImplementation client = new ClientImplementation();
 
         viewForClient.register(client);
@@ -23,14 +23,8 @@ public class SagradaClient {
         nickname = viewForClient.getNickname();
 
         ServerInterface server = new NetworkHandler(HOST, PORT, client);
-        System.out.println("Connected! Waiting for the game to start...");
         server.send(new Message(nickname));
 
         client.addServer(server);
-
-        //viewForClient.askMove(true, true);
-        //viewForClient.askMove(true, false);
-        //viewForClient.askMove(false, true);
-
     }
 }

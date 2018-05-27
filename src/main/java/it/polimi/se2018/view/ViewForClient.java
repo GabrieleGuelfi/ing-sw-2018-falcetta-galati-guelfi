@@ -1,6 +1,7 @@
 package it.polimi.se2018.view;
 
 import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.MessageNickname;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
 
@@ -10,9 +11,19 @@ import static java.lang.System.*;
 
 public class ViewForClient extends Observable implements Observer {
 
-    private Scanner scanner;
+    private static ViewForClient viewForClient;
+    private static Scanner scanner;
 
-    public ViewForClient() {
+    public static ViewForClient createViewForClient() {
+        if (viewForClient==null) {
+            return new ViewForClient();
+        }
+        else {
+            return viewForClient;
+        }
+    }
+
+    private ViewForClient() {
         scanner = new Scanner(System.in);
         out.println("Welcome in Sagrada!");
     }
@@ -22,8 +33,15 @@ public class ViewForClient extends Observable implements Observer {
         return scanner.nextLine();
     }
 
-    public void wrongNickname() {
-        out.println("This nickname is already used: try again.");
+    public void nicknameConfirmation(MessageNickname nicknameMessage) {
+        if (!nicknameMessage.getBoolean()) {
+            out.println("All settled! Wait for the game to begin...");
+        }
+        else {
+            out.println("Nickname already used: please, choose another one");
+            String nickname = getNickname();
+            notifyObservers(new Message(nickname));
+        }
     }
 
     public void showPrivateObjective(String colour) {
