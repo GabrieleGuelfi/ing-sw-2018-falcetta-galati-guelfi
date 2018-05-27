@@ -1,20 +1,18 @@
 package it.polimi.se2018.network.socket.server;
 
-import com.sun.corba.se.pept.encoding.InputObject;
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.MessageError;
-import it.polimi.se2018.events.MessageErrorCloseVirtualClient;
-import it.polimi.se2018.model.Player;
+import it.polimi.se2018.events.MessageErrorVirtualClientClosed;
 import it.polimi.se2018.network.socket.client.ClientInterface;
+import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.view.VirtualView;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.logging.Logger;
+import static java.lang.System.*;
 
-public class VirtualClient extends Thread implements ClientInterface{
+public class VirtualClient extends Observable implements ClientInterface, Runnable{
     private Socket clientConnection;
     private final VirtualView virtualView;
     private boolean loop;
@@ -34,7 +32,7 @@ public class VirtualClient extends Thread implements ClientInterface{
 
             while(loop && !this.clientConnection.isClosed()){
                 Message message = (Message) inputStream.readObject();
-                System.out.println("New Message from " + message.getNickname());
+                out.println("New Message from " + message.getNickname());
                 this.virtualView.notifyObservers(message);
 
                 }
@@ -42,7 +40,8 @@ public class VirtualClient extends Thread implements ClientInterface{
         }
         catch(IOException | ClassNotFoundException e){
             e.printStackTrace();
-            this.virtualView.notifyObservers(new MessageError());
+            this.notifyObservers(new MessageErrorVirtualClientClosed(this));
+            out.println("MessageErrorVirtualClientClosed send");
         }
 
     }
@@ -53,11 +52,11 @@ public class VirtualClient extends Thread implements ClientInterface{
             ObjectOutputStream outputStream = new ObjectOutputStream(this.clientConnection.getOutputStream());
             outputStream.writeObject(message);
             outputStream.flush();
-            System.out.println("Message send to" + message.getNickname());
+            out.println("Message send to" + message.getNickname());
         }
         catch(IOException e){
             e.printStackTrace();
-            this.virtualView.notifyObservers(new MessageErrorCloseVirtualClient(this));
+            this.virtualView.notifyObservers(new Message());
             this.loop = false;
             Thread.currentThread().interrupt();
         }

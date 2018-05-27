@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import it.polimi.se2018.events.MessageError;
 import it.polimi.se2018.events.MessageNickname;
+import static java.lang.System.*;
 
 public class VerifyClientAccess extends Thread{
     private SagradaServer sagradaServer;
@@ -30,16 +30,16 @@ public class VerifyClientAccess extends Thread{
                     Message message = (Message) in.readObject();
                     boolean access = this.sagradaServer.getNicknames().verifyNickname(message.getNickname());
                     if(access){
-                        System.out.println("NewClient Verified:" + message.getNickname());
+                        out.println("NewClient Verified:" + message.getNickname());
                         ObjectOutputStream out = new ObjectOutputStream(this.clientConnection.getOutputStream());
                         out.writeObject(new MessageNickname(true));
                         this.sagradaServer.addClient(this.clientConnection, message.getNickname());
                         this.loop = false;
                     }
                     else{
-                        ObjectOutputStream out = new ObjectOutputStream(this.clientConnection.getOutputStream());
-                        System.out.println("Request reject.");
-                        out.writeObject(new MessageNickname(false));
+                        ObjectOutputStream outputStream = new ObjectOutputStream(this.clientConnection.getOutputStream());
+                        out.println("Request reject.");
+                        outputStream.writeObject(new MessageNickname(false));
                     }
                 }
                 catch(ClassNotFoundException e){

@@ -1,4 +1,17 @@
 package it.polimi.se2018.network.socket.server;
 
-public class HandleVirtualClientClosed {
+import it.polimi.se2018.events.Message;
+import it.polimi.se2018.utils.Observer;
+
+public class HandleVirtualClientClosed implements Observer {
+
+    private SagradaServer sagradaServer;
+
+    HandleVirtualClientClosed(SagradaServer server){
+        this.sagradaServer = server;
+    }
+
+    public synchronized void update(Message message){
+        message.accept(new VisitorServer(this.sagradaServer));
+    }
 }

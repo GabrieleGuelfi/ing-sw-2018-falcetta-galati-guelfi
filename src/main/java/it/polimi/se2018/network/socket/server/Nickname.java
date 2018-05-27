@@ -2,13 +2,11 @@ package it.polimi.se2018.network.socket.server;
 
 import java.util.ArrayList;
 
-public class Nickname {
+public class Nickname{
     private ArrayList<String> nicknames;
     private boolean gameStarted = false;
 
-    Nickname(){
-        this.nicknames = new ArrayList<>();
-    }
+    Nickname(){ this.nicknames = new ArrayList<>();}
 
     public synchronized boolean verifyNickname(String s){
 
@@ -34,4 +32,12 @@ public class Nickname {
     }
 
     protected void setGameStarted(){this.gameStarted = true;}
+
+    protected void notifyClientClosed(String client){
+        if(!gameStarted) {
+            for(String s : this.nicknames) {
+                if(s.equals(client)) this.nicknames.remove(s);
+            }
+        }
+    }
 }

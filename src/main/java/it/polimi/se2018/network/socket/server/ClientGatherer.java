@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import static java.lang.System.*;
+
 
 public class ClientGatherer extends Thread{
     private final SagradaServer sagradaServer;
@@ -27,7 +29,7 @@ public class ClientGatherer extends Thread{
     @Override
     public void run(){
 
-        System.out.println("Waiting for clients.\n");
+        out.println("Waiting for clients.\n");
 
         while((sagradaServer.getClients().size() <= 4) && loop)  {
 
@@ -36,7 +38,7 @@ public class ClientGatherer extends Thread{
             try {
 
                 newClientConnection = serverSocket.accept();
-                System.out.println("A new client connected.");
+                out.println("A new client connected.");
                 VerifyClientAccess v = new VerifyClientAccess(this.sagradaServer, newClientConnection);
                 v.start();
                 this.verifyClientAccess.add(v);
