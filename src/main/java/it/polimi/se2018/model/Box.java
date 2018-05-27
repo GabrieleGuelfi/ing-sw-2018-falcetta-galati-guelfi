@@ -45,6 +45,10 @@ public class Box {
      */
     public Colour getColourRestriction() { return colourRestriction;}
 
+    public boolean hasAValueRestriction() {
+        return (this.colourRestriction==Colour.WHITE);
+    }
+
     /**
      * place a die in this box
      * @param d is the die to place in this box

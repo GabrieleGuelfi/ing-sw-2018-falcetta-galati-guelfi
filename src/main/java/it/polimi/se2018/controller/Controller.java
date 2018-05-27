@@ -7,6 +7,7 @@ import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.*;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.utils.Observer;
+import it.polimi.se2018.utils.SagradaVisitor;
 import it.polimi.se2018.view.VirtualView;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.Random;
 
 import static java.lang.System.*;
 
-public class Controller extends VisitorController implements Observer {
+public class Controller implements SagradaVisitor, Observer {
 
     private Match match;
     private VirtualView virtualView;
@@ -34,6 +35,8 @@ public class Controller extends VisitorController implements Observer {
         int index;
 
         this.virtualView = view;
+
+        view.register(this);
 
         for (String p : nickname) {
             Player player = new Player(p);
@@ -293,8 +296,12 @@ public class Controller extends VisitorController implements Observer {
 
 
     @Override
+    public void visit(Message message) {
+
+    }
+
+    @Override
     public void visit(MessageError messageError) {
-        super.visit(messageError);
     }
 
     @Override
@@ -313,19 +320,18 @@ public class Controller extends VisitorController implements Observer {
     }
 
     @Override
-    public void visit(MessageChoosWP message) {
+    public void visit(MessageChooseWP message) {
 
         Player player = null;
         for (Player p: match.getPlayers()) {
-            if (p.getNickname().equals(message.getNickname))
+            if (p.getNickname().equals(message.getNickname()))
                 player = p;
         }
         try {
-            player.setWindowPattern(handleJSON.createWindowPattern(message.getFirstIndex, message.getSecondIndex));
+            player.setWindowPattern(handleJSON.createWindowPattern(message.getFirstIndex(), message.getSecondIndex()));
         }
         catch(NullPointerException e) {
             out.println("nickname non valido");
         }
-        //show window pattern;
     }
 }

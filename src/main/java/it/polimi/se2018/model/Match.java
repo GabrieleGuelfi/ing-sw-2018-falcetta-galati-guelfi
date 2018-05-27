@@ -46,7 +46,8 @@ public class Match extends Observable {
         }
         this.bag = bag;
         this.bag.populateBag();
-        this.players = players;
+        this.players = new ArrayList<>();
+        //this.players = players;
         this.activePlayers = players;
         this.publicObjectives = objectives;
         this.tools = tools;
@@ -63,7 +64,7 @@ public class Match extends Observable {
             publicObjDescriptions.add(p.getDescription());
             publicObjPoints.add(p.getVp());
         }
-        notifyObservers(new MessagePublicObj(publicObjDescriptions, publicObjPoints));
+        if(publicObjDescriptions.size()>0) notifyObservers(new MessagePublicObj(publicObjDescriptions, publicObjPoints));
         //notifyObservers(new MessageTool());
         //notifyObservers(new MessageRound());
         // All the Observers will be notified with this message (ie: View will be notified!)

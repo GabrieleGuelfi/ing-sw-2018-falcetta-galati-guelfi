@@ -6,8 +6,6 @@ import it.polimi.se2018.utils.SagradaVisitor;
 
 public abstract class VisitorController implements SagradaVisitor {
 
-    public void visit(Message message){}
     public void visit(MessageError messageError){}
 
-    public void visit(MessageChoosWP message) {}
 }

@@ -26,4 +26,8 @@ public class VisitorView implements SagradaVisitor {
         ViewForClient.createViewForClient().showPublicObjective(message.getDescriptions(), message.getPoints());
     }
 
+    public void visit(MessageChooseWP message) {
+        ViewForClient.createViewForClient().askWindowPattern(message.getFirstIndex(), message.getSecondIndex());
+    }
+
 }

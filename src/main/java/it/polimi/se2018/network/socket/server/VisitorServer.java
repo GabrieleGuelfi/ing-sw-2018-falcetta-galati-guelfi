@@ -17,4 +17,24 @@ public class VisitorServer implements SagradaVisitor{
     }
     public void visit(Message message){}
     public void visit(MessageError messageError){}
+
+    @Override
+    public void visit(MessageNickname message) {
+
+    }
+
+    @Override
+    public void visit(MessagePrivObj message) {
+
+    }
+
+    @Override
+    public void visit(MessagePublicObj message) {
+
+    }
+
+    @Override
+    public void visit(MessageChooseWP message) {
+
+    }
 }

@@ -21,6 +21,7 @@ public class SagradaClient {
         String nickname;
 
         nickname = viewForClient.getNickname();
+        viewForClient.setNickname(nickname);
 
         ServerInterface server = new NetworkHandler(HOST, PORT, client);
         server.send(new Message(nickname));
