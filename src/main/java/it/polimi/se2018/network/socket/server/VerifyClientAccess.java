@@ -30,11 +30,9 @@ public class VerifyClientAccess extends Thread{
                     Message message = (Message) in.readObject();
                     boolean access = this.sagradaServer.getNicknames().verifyNickname(message.getNickname());
                     if(access){
-                        System.out.println("NewClient Verified: " + message.getNickname());
+                        System.out.println("NewClient Verified:" + message.getNickname());
                         ObjectOutputStream out = new ObjectOutputStream(this.clientConnection.getOutputStream());
                         out.writeObject(new MessageNickname(true));
-                        //out.close();
-                        in.close();
                         this.sagradaServer.addClient(this.clientConnection, message.getNickname());
                         this.loop = false;
                     }
@@ -42,7 +40,6 @@ public class VerifyClientAccess extends Thread{
                         ObjectOutputStream out = new ObjectOutputStream(this.clientConnection.getOutputStream());
                         System.out.println("Request reject.");
                         out.writeObject(new MessageNickname(false));
-                        //out.close();
                     }
                 }
                 catch(ClassNotFoundException e){
@@ -57,6 +54,5 @@ public class VerifyClientAccess extends Thread{
 
     public void closeThread(){
             this.loop = false;
-
     }
 }
