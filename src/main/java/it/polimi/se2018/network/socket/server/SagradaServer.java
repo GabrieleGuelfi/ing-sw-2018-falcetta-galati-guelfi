@@ -89,6 +89,7 @@ public class SagradaServer {
             if (this.timer != null) this.timer.stopTimer();
             this.nicknames.setGameStarted();
             System.out.println("START GAME");
+            this.controller.startGame(this.nicknames.getNicknames(), this.virtualView);
         }
     }
 

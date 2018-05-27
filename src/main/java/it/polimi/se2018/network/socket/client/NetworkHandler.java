@@ -3,6 +3,7 @@ package it.polimi.se2018.network.socket.client;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.network.socket.server.ServerInterface;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -42,7 +43,7 @@ public class NetworkHandler extends Thread implements ServerInterface {
                     client.notify(message);
                 }
             }
-            catch(NullPointerException e) {
+            catch(NullPointerException | EOFException e) {
 
             }
             catch(IOException | ClassNotFoundException e) {

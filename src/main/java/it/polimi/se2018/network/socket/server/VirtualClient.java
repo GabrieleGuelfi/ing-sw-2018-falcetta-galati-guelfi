@@ -27,9 +27,9 @@ public class VirtualClient extends Thread implements ClientInterface{
     @Override
     public void run(){
         try
-                ( ObjectInputStream inputStream = new ObjectInputStream(this.clientConnection.getInputStream()))
-        {
 
+        {
+            ObjectInputStream inputStream = new ObjectInputStream(this.clientConnection.getInputStream());
             loop = true;
 
             while(loop && !this.clientConnection.isClosed()){
@@ -38,6 +38,7 @@ public class VirtualClient extends Thread implements ClientInterface{
                 this.virtualView.notifyObservers(message);
 
                 }
+             inputStream.close();
         }
         catch(IOException | ClassNotFoundException e){
             e.printStackTrace();
