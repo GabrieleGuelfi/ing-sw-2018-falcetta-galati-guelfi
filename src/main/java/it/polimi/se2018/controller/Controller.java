@@ -3,26 +3,18 @@ package it.polimi.se2018.controller;
 
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.MessageError;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.*;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.utils.Observer;
 import it.polimi.se2018.view.VirtualView;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Controller {
+public class Controller extends VisitorController implements Observer {
 
     private Match match;
     private VirtualView virtualView;
@@ -33,9 +25,9 @@ public class Controller {
 
     public void startGame(List<String> nickname, VirtualView view) {
 
-        List<PublicObjective> objectives = new ArrayList<>(); // Here we should have the real Public Objectives...
-        List<Tool> tools = new ArrayList<>();
         List<Player> players = new ArrayList<>();
+        List<PublicObjective> objectives = new ArrayList<>();
+        List<Tool> tools = new ArrayList<>();
         Random generator = new Random();
         List<Integer> rand = new ArrayList<>();
         int index;
@@ -58,8 +50,7 @@ public class Controller {
         givePrivateObjective(players);
 
         for(Player player: match.getActivePlayers()) {
-            giveWindowPatterns(player);
-            giveFavorTokens(player);
+            Utils.chooseWP(player.getNickname(), virtualView);
         }
 
         // TOOLS PART!
@@ -73,88 +64,7 @@ public class Controller {
         this.match = new Match(new Bag(), players, objectives, tools, view);
     }
 
-    /**
-     * send four window pattern to player, who choose one of them
-     * @param player is the player to send window pattern
-     */
-    private void giveWindowPatterns(Player player){
 
-        List<WindowPattern> patterns = new ArrayList<>();
-        JSONParser parser = new JSONParser();
-        List<Integer> rand = new ArrayList<>();
-        Integer index;
-        try {
-            Object obj = parser.parse(new FileReader("./src/main/java/windowpattern/windowpattern"));
-            JSONArray schemes = (JSONArray) obj;
-            Random generator = new Random();
-            for (int i=0; i<2; i++) {
-                index = generator.nextInt(12);
-                while (rand.contains(index))
-                    index = generator.nextInt(12);
-                rand.add(index);
-                JSONArray schema = (JSONArray) schemes.get(index);
-                for (int j = 0; j < 2; j++) {
-                    JSONObject schema1 = (JSONObject) schema.get(j);
-                    WindowPattern w = new WindowPattern((String) schema1.get("name"), (int) (long) schema1.get("difficulty"));
-                    JSONArray grid = (JSONArray) schema1.get("grid");
-                    createWindowPattern(grid, w);
-                    patterns.add(w);
-                }
-            }
-            /*
-            for (int i=0; i<patterns.size(); i++) {
-                System.out.println("\nName: "+patterns.get(i).getName()+"\nDifficulty: "+patterns.get(i).getDifficulty() );
-                for (int k = 0; k < WindowPattern.MAX_ROW; k++) {
-                    System.out.println("\nrow: " + k);
-                    for (int z = 0; z < WindowPattern.MAX_COL; z++) {
-                        try {
-                            System.out.println(patterns.get(i).getBox(k, z).getColourRestriction() + " " + patterns.get(i).getBox(k, z).getValueRestriction());
-                        } catch (OutOfWindowPattern e) {
-                        }
-                    }
-                }
-            }
-            */
-            //send(patterns)
-        }
-        catch (FileNotFoundException e) {
-            System.out.println("file not found");
-        }
-        catch (IOException e) {
-            System.out.println("ioexception");
-        }
-        catch (ParseException e) {
-            System.out.println("parseException");
-        }
-
-    }
-
-    /**
-     * create a window pattern from a json Object
-     * @param grid is the grid from json file
-     * @param w1 is the window pattern to be created
-     */
-    private void createWindowPattern (JSONArray grid, WindowPattern w1) {
-        for (int k=0; k<WindowPattern.MAX_ROW; k++) {
-            JSONArray row = (JSONArray)grid.get(k);
-            boolean isNumber = true;
-            int j=1;
-            for (int i=0; i<10; i++){
-                if (i%2==0) {
-                    isNumber = "num".equals(row.get(i));
-                }
-                else {
-                    if (isNumber) {
-                        w1.setBox(new Box((int)(long)row.get(i)), k, i-j);
-                    }
-                    else {
-                        w1.setBox(new Box(Colour.valueOf((String)row.get(i))), k, i-j);
-                    }
-                    j++;
-                }
-            }
-        }
-    }
 
     private void givePrivateObjective(List<Player> players) {
         Random generator = new Random();
@@ -170,9 +80,7 @@ public class Controller {
         }
     }
 
-    private void giveFavorTokens(Player player) { //probably useless, we can make this in giveWindowPattern
 
-    }
 
     /*
     private void manageMoveDie(MoveDie m) {
@@ -374,9 +282,16 @@ public class Controller {
             }
         }
     }
+    */
 
     @Override
     public void update(Message message) {
-        System.out.println("prova observer");
-    } */
+        message.accept(this);
+    }
+
+
+    @Override
+    public void visit(MessageError messageError) {
+        super.visit(messageError);
+    }
 }

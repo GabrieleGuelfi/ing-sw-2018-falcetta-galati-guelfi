@@ -4,6 +4,6 @@ import it.polimi.se2018.events.*;
 
 public interface SagradaVisitor {
 
-    public void visit(Message message);
-    public void visit(MessageError message);
+    void visit(Message message);
+    void visit(MessageError message);
 }
