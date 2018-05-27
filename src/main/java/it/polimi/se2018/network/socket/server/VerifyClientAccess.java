@@ -23,10 +23,9 @@ public class VerifyClientAccess extends Thread{
     public void run(){
 
         try {
-            ObjectInputStream in = new ObjectInputStream(this.clientConnection.getInputStream());
-
             while(loop){
                 try {
+                    ObjectInputStream in = new ObjectInputStream(this.clientConnection.getInputStream());
                     Message message = (Message) in.readObject();
                     boolean access = this.sagradaServer.getNicknames().verifyNickname(message.getNickname());
                     if(access){

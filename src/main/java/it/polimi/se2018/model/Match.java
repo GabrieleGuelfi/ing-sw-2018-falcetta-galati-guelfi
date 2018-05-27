@@ -1,6 +1,7 @@
 package it.polimi.se2018.model;
 
 import it.polimi.se2018.controller.tool.Tool;
+import it.polimi.se2018.events.MessagePublicObj;
 import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
@@ -56,7 +57,13 @@ public class Match extends Observable {
 
         register(view);
         //notifyObservers(new MessageTool()); // EXAMPLE: here Model throws a ModelUpdate.
-        //notifyObservers(new MessagePublicObjective());
+        List<String> publicObjDescriptions = new ArrayList<>();
+        List<Integer> publicObjPoints = new ArrayList<>();
+        for(PublicObjective p: objectives) {
+            publicObjDescriptions.add(p.getDescription());
+            publicObjPoints.add(p.getVp());
+        }
+        notifyObservers(new MessagePublicObj(publicObjDescriptions, publicObjPoints));
         //notifyObservers(new MessageTool());
         //notifyObservers(new MessageRound());
         // All the Observers will be notified with this message (ie: View will be notified!)

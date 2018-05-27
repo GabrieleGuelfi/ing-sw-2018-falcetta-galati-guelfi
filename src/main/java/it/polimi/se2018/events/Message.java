@@ -18,7 +18,7 @@ public class Message implements Serializable  {
         this.nickname = s;
     }
 
-    public Message(){this.nickname = null;}
+    public Message(){this.nickname = "everybody";}
 
     public void accept(SagradaVisitor v){
         v.visit(this);

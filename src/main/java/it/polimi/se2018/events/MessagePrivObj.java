@@ -4,11 +4,15 @@ import it.polimi.se2018.utils.SagradaVisitor;
 
 public class MessagePrivObj extends Message {
 
-    String description;
+    String colour;
 
-    public MessagePrivObj(String nickname, String description) {
+    public MessagePrivObj(String nickname, String colour) {
         super(nickname);
-        this.description = description;
+        this.colour = colour;
+    }
+
+    public String getColour() {
+        return this.colour;
     }
 
     @Override
