@@ -15,7 +15,7 @@ public class ServerTimer extends Thread{
     public void run() {
         try {
             for(int i = time; i > 0; i--){
-                System.out.println(time + "seconds remains");
+                System.out.println(i + "seconds remains");
                 Thread.sleep(1000);
             }
             if(loop) {

@@ -28,6 +28,7 @@ public class SagradaServer {
         Scanner stdin = new Scanner(System.in);
         System.out.println("Set time for lobby timer.");
         this.time = stdin.nextInt();
+        stdin.close();
         this.controller = new Controller();
         this.virtualView = new VirtualView(this);
         this.clientGatherer = new ClientGatherer(this, PORT);
@@ -45,8 +46,6 @@ public class SagradaServer {
         }
         if (this.clients.size() == 4) this.clientGatherer.closeClientGatherer();
     }
-
-    protected synchronized void addClient(String nick){}
 
     protected synchronized ArrayList<CoupleClientNickname> getClients() {
         return this.clients;

@@ -27,7 +27,7 @@ public class VirtualClient extends Thread implements ClientInterface{
     @Override
     public void run(){
         try
-                (           ObjectInputStream inputStream = new ObjectInputStream(this.clientConnection.getInputStream());)
+                ( ObjectInputStream inputStream = new ObjectInputStream(this.clientConnection.getInputStream()))
         {
 
             loop = true;
