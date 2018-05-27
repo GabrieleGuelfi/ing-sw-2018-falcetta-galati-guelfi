@@ -28,9 +28,9 @@ public class SagradaClient {
 
         client.addServer(server);
 
-        viewForClient.askMove(true, true);
-        viewForClient.askMove(true, false);
-        viewForClient.askMove(false, true);
+        //viewForClient.askMove(true, true);
+        //viewForClient.askMove(true, false);
+        //viewForClient.askMove(false, true);
 
     }
 }

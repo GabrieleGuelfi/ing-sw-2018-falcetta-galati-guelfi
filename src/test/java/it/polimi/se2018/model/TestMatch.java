@@ -20,7 +20,7 @@ public class TestMatch {
         ArrayList<PublicObjective> objectives = new ArrayList<>();
         ArrayList<Tool> tools = new ArrayList<>();
 
-        Match match = new Match(bag, players, objectives, tools);
+        Match match = new Match(bag, players, objectives, tools, null);
 
         assertEquals(1, match.getNumRound());
         assertEquals(bag, match.getBag());
@@ -42,7 +42,7 @@ public class TestMatch {
         ArrayList<Tool> tools = new ArrayList<>();
 
         try {
-            Match match = new Match(bag, players, objectives, tools);
+            Match match = new Match(bag, players, objectives, tools, null);
         }
         catch(IllegalArgumentException e)  {
             return;
@@ -60,7 +60,7 @@ public class TestMatch {
         ArrayList<Tool> tools = new ArrayList<>();
 
         try {
-            Match match = new Match(bag, players, objectives, tools);
+            Match match = new Match(bag, players, objectives, tools, null);
         }
         catch(IllegalArgumentException e)  {
             return;
@@ -78,7 +78,7 @@ public class TestMatch {
         ArrayList<Tool> tools = new ArrayList<>();
 
         try {
-            Match match = new Match(bag, players, objectives, tools);
+            Match match = new Match(bag, players, objectives, tools, null);
         }
         catch(IllegalArgumentException e)  {
             return;
@@ -96,7 +96,7 @@ public class TestMatch {
         ArrayList<Tool> tools = null;
 
         try {
-            Match match = new Match(bag, players, objectives, tools);
+            Match match = new Match(bag, players, objectives, tools, null);
         }
         catch(IllegalArgumentException e)  {
             return;
@@ -116,7 +116,7 @@ public class TestMatch {
         Player player = new Player("foo");
         players.add(player);
 
-        Match match = new Match(bag, players, objectives, tools);
+        Match match = new Match(bag, players, objectives, tools, null);
 
         assertTrue(match.getActivePlayers().contains(player));
         assertTrue(match.getPlayers().isEmpty());
@@ -137,7 +137,7 @@ public class TestMatch {
 
         Player player = new Player("foo");
 
-        Match match = new Match(bag, players, objectives, tools);
+        Match match = new Match(bag, players, objectives, tools, null);
 
         assertFalse(match.getActivePlayers().contains(player));
         assertTrue(match.getPlayers().isEmpty());
@@ -160,7 +160,7 @@ public class TestMatch {
         ArrayList<Tool> tools = new ArrayList<>();
         Player player = new Player("foo");
         players.add(player);
-        Match match = new Match(bag, players, objectives, tools);
+        Match match = new Match(bag, players, objectives, tools, null);
 
         assertTrue(match.getActivePlayers().contains(player));
         assertTrue(match.getPlayers().isEmpty());
@@ -186,7 +186,7 @@ public class TestMatch {
 
         Player player = new Player("foo");
 
-        Match match = new Match(bag, players, objectives, tools);
+        Match match = new Match(bag, players, objectives, tools, null);
 
         assertFalse(match.getActivePlayers().contains(player));
         assertTrue(match.getPlayers().isEmpty());
@@ -208,7 +208,7 @@ public class TestMatch {
         ArrayList<PublicObjective> objectives = new ArrayList<>();
         ArrayList<Tool> tools = new ArrayList<>();
 
-        Match match = new Match(bag, players, objectives, tools);
+        Match match = new Match(bag, players, objectives, tools, null);
 
         for(int i=0; i<9; i++) {
             match.nextNumRound();
@@ -232,7 +232,7 @@ public class TestMatch {
         ArrayList<PublicObjective> objectives = new ArrayList<>();
         ArrayList<Tool> tools = new ArrayList<>();
 
-        Match match = new Match(bag, players, objectives, tools);
+        Match match = new Match(bag, players, objectives, tools, null);
 
         Player p = new Player("foo");
 

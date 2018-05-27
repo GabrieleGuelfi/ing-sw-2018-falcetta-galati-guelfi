@@ -10,15 +10,14 @@ import it.polimi.se2018.view.VirtualView;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Alessandro Falcetta
- */
-
 // This means that, when Match ( = Model ) is modified
 // notify(ModelUpdate) is called. This message contains a copy of the new
 // Match, with all the new objects. This can be changed, if we decide to
 // update only the objects modified.
 
+/**
+ * @author Alessandro Falcetta
+ */
 public class Match extends Observable {
 
     private Bag bag;
@@ -45,18 +44,21 @@ public class Match extends Observable {
             // Is it necessary to check the size and content of all parameters?
         }
         this.bag = bag;
-        bag.populateBag();
+        this.bag.populateBag();
+        this.players = players;
         this.activePlayers = players;
         this.publicObjectives = objectives;
         this.tools = tools;
-        this.numRound = 1; // Human convention?
         this.roundTrack = new ArrayList<>();
-        this.players = new ArrayList<>();
+        this.numRound = 1; // Human convention?
+        firstPlayerRound = players.get(0);
+        this.round = new Round(new DraftPool(this.bag, this.players.size()+1), firstPlayerRound);
 
         register(view);
         //notifyObservers(new MessageTool()); // EXAMPLE: here Model throws a ModelUpdate.
         //notifyObservers(new MessagePublicObjective());
         //notifyObservers(new MessageTool());
+        //notifyObservers(new MessageRound());
         // All the Observers will be notified with this message (ie: View will be notified!)
         // We should use this.copy(), however.
     }
