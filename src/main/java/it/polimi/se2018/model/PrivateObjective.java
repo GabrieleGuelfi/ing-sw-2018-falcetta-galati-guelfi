@@ -11,7 +11,6 @@ public class PrivateObjective {
 
     /**
      * constructor of the class
-     * @param description of the private objective
      * @param shade which colour of die give pints
      */
     public PrivateObjective(Colour shade) {

@@ -1,4 +1,4 @@
-package it.polimi.se2018.controller;
+package it.polimi.se2018.utils;
 
 import it.polimi.se2018.events.MessageChooseWP;
 import it.polimi.se2018.model.Box;
@@ -17,17 +17,32 @@ import java.util.*;
 
 import static java.lang.System.*;
 
-public class handleJSON {
+public final class HandleJSON {
 
     private static List<Integer> rand = new ArrayList<>();
-    private static Map<String, Integer> windowPattern= new HashMap<>();
+    private static Map<String, List<Integer>> windowPattern = new HashMap<>();
+
+    private HandleJSON() {
+        throw new IllegalStateException("utility class");
+    }
 
     /**
      * create a window pattern from a json Object
      * @param grid is the grid from json file
      * @param w1 is the window pattern to be created
      */
-    public static WindowPattern createWindowPattern (int firstIndex, int secondIndex) {
+    public static WindowPattern createWindowPattern (String nickname, int firstIndex, int secondIndex) {
+
+        if (nickname!=null && !windowPattern.containsKey(nickname)) {
+            out.println(windowPattern);
+            out.println("nickname non valido in json "+nickname);
+            return null;
+
+        }
+        else if (nickname!=null && windowPattern.get(nickname).get(0)!=firstIndex && windowPattern.get(nickname).get(1)!=firstIndex) {
+            out.println("windowPattern non valida");
+            return null;
+        }
 
         JSONParser parser = new JSONParser();
 
@@ -71,18 +86,20 @@ public class handleJSON {
         return null;
     }
 
-    static void chooseWP(String nickname, VirtualView view) {
+    public static void chooseWP(String nickname, VirtualView view) {
 
         Integer index;
         Random generator = new Random();
+        List<Integer> choice = new ArrayList<>();
 
         for (int i = 0; i < 2; i++) {
             index = generator.nextInt(12);
             while (rand.contains(index))
                 index = generator.nextInt(12);
             rand.add(index);
-            windowPattern.put(nickname, index);
+            choice.add(index);
         }
+        windowPattern.put(nickname, choice);
         view.send(new MessageChooseWP(nickname, rand.get(rand.size()-2), rand.get(rand.size()-1)));
     }
 }

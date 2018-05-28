@@ -46,8 +46,7 @@ public class Match extends Observable {
         }
         this.bag = bag;
         this.bag.populateBag();
-        this.players = new ArrayList<>();
-        //this.players = players;
+        this.players = players;
         this.activePlayers = players;
         this.publicObjectives = objectives;
         this.tools = tools;
