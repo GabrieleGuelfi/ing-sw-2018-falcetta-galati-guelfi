@@ -70,21 +70,17 @@ public class ViewForClient extends Observable implements Observer {
     void askWindowPattern(int firstCard, int secondCard) {
 
         int choice;
+        List<WindowPattern> windowPatterns = new ArrayList<>();
 
         out.println("You have to choose the window pattern between these four: ");
-        WindowPattern wp1 = HandleJSON.createWindowPattern(null, firstCard, 0);
-        WindowPattern wp2 = HandleJSON.createWindowPattern(null, firstCard, 1);
-        WindowPattern wp3 = HandleJSON.createWindowPattern(null, secondCard, 0);
-        WindowPattern wp4 = HandleJSON.createWindowPattern(null, secondCard, 1);
-        out.println("1) " + wp1.getName());
-        printWindowPattern(wp1);
-        out.println("2) " + wp2.getName());
-        printWindowPattern(wp2);
-        out.println("3) " + wp3.getName());
-        printWindowPattern(wp3);
-        out.println("4) " + wp4.getName());
-        printWindowPattern(wp4);
-
+        windowPatterns.add(HandleJSON.createWindowPattern(null, firstCard, 0));
+        windowPatterns.add(HandleJSON.createWindowPattern(null, firstCard, 1));
+        windowPatterns.add(HandleJSON.createWindowPattern(null, secondCard, 0));
+        windowPatterns.add(HandleJSON.createWindowPattern(null, secondCard, 1));
+        for (WindowPattern wp: windowPatterns) {
+            out.println(windowPatterns.indexOf(wp)+1 + ") " + wp.getName());
+            printWindowPattern(wp);
+        }
         out.println("Write the number of the window pattern you want to use.");
         choice = scanner.nextInt();
         while(choice<1 || choice>4) {
