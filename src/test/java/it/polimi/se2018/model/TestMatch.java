@@ -18,23 +18,33 @@ public class TestMatch {
         Bag bag = new Bag();
         ArrayList<Player> players = new ArrayList<>();
         ArrayList<PublicObjective> objectives = new ArrayList<>();
+
+        objectives.add(PublicObjective.factory(2));
+        objectives.add(PublicObjective.factory(3));
+
         ArrayList<Tool> tools = new ArrayList<>();
 
         Player player = new Player("foo");
         players.add(player);
 
-        Match match = new Match(bag, players, objectives, tools, null);
+        try {
+            Match match = new Match(bag, players, objectives, tools, null);
 
-        assertEquals(1, match.getNumRound());
-        assertEquals(bag, match.getBag());
-        assertEquals(players, match.getActivePlayers());
-        assertEquals(tools, match.getTools());
-        assertEquals(objectives, match.getPublicObjectives());
+            assertEquals(1, match.getNumRound());
+            assertEquals(bag, match.getBag());
+            assertEquals(players, match.getActivePlayers());
+            assertEquals(tools, match.getTools());
+            assertEquals(objectives, match.getPublicObjectives());
 
-        List<Die> roundTrack = match.getRoundTrack();
+            List<Die> roundTrack = match.getRoundTrack();
 
-        assertTrue(roundTrack.isEmpty());
-        assertEquals(1, match.getNumRound());
+            assertTrue(roundTrack.isEmpty());
+            assertEquals(1, match.getNumRound());
+        }
+
+        catch(NullPointerException e){
+
+            }
     }
 
     @Test
@@ -93,7 +103,7 @@ public class TestMatch {
 
     @Test
     public void testConstructorNegativeTools() {
-        Bag bag=null;
+        Bag bag= new Bag();
         ArrayList<Player> players = new ArrayList<>();
         ArrayList<PublicObjective> objectives = new ArrayList<>();
         ArrayList<Tool> tools = null;

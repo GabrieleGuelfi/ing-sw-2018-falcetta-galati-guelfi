@@ -9,6 +9,7 @@ import it.polimi.se2018.model.WindowPattern;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,6 +23,7 @@ public class ViewForClient extends Observable implements Observer {
     private static ViewForClient viewForClient;
     private Scanner scanner;
     private String nickname;
+    private WindowPattern windowPattern;
 
     public static ViewForClient createViewForClient() {
         if (viewForClient==null) {
@@ -33,45 +35,39 @@ public class ViewForClient extends Observable implements Observer {
         }
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
     private ViewForClient() {
         scanner = new Scanner(System.in);
         out.println("Welcome in Sagrada!");
     }
 
-    public String getNickname() {
+    public void askNickname() {
         out.println("Please, choose your nickname");
-        return scanner.nextLine();
+        this.nickname = scanner.nextLine();
+        notifyObservers(new Message(nickname));
     }
 
-    public void nicknameConfirmation(MessageNickname nicknameMessage) {
+    void nicknameConfirmation(MessageNickname nicknameMessage) {
         if (nicknameMessage.getBoolean()) {
             out.println("All settled! Wait for the game to begin...");
-
         }
         else {
-            out.println("Nickname already used: please, choose another one");
-            String nickname = getNickname();
-            setNickname(nickname);
-            notifyObservers(new Message(nickname));
+            out.println("Nickname already used: choose another one");
+            askNickname();
         }
     }
 
-    public void showPrivateObjective(String colour) {
+    void showPrivateObjective(String colour) {
         out.println("Your private objective is of colour: " + colour);
     }
 
-    public void showPublicObjective(List<String> descriptions, List<Integer> points) {
+    void showPublicObjective(List<String> descriptions, List<Integer> points) {
         out.println("Public objectives: ");
         for(int i=0; i<descriptions.size(); i++) {
             out.println(i+1 + ") " + descriptions.get(i) + " VP: " + points.get(i));
         }
     }
 
-    public void askWindowPattern(int firstCard, int secondCard) {
+    void askWindowPattern(int firstCard, int secondCard) {
 
         int choice;
 
@@ -96,15 +92,14 @@ public class ViewForClient extends Observable implements Observer {
             choice = scanner.nextInt();
         }
 
-        switch (choice) {
-            case 1: notifyObservers(new MessageChooseWP(nickname, firstCard, 0)); break;
-            case 2: notifyObservers(new MessageChooseWP(nickname, firstCard, 1)); break;
-            case 3: notifyObservers(new MessageChooseWP(nickname, secondCard, 0)); break;
-            case 4: notifyObservers(new MessageChooseWP(nickname, secondCard, 1)); break;
+        if (choice<3) {
+            notifyObservers(new MessageChooseWP(nickname, firstCard, choice-1));
+        } else {
+            notifyObservers(new MessageChooseWP(nickname, secondCard, (choice-1)%2));
         }
     }
 
-    public void printWindowPattern(WindowPattern wp) {
+    private void printWindowPattern(WindowPattern wp) {
         for (int i=0; i<MAX_ROW; i++) {
             out.println();
             for (int j=0; j<MAX_COL; j++) {

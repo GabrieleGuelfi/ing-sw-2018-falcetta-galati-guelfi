@@ -18,14 +18,12 @@ public class SagradaClient {
         viewForClient.register(client);
         client.register(viewForClient);
 
-        String nickname;
-
-        nickname = viewForClient.getNickname();
-        viewForClient.setNickname(nickname);
-
         ServerInterface server = new NetworkHandler(HOST, PORT, client);
-        server.send(new Message(nickname));
 
         client.addServer(server);
+
+        viewForClient.askNickname();
+
+
     }
 }
