@@ -1,5 +1,7 @@
 package it.polimi.se2018.view;
 
+import it.polimi.se2018.model.Die;
+import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.MessageChooseWP;
@@ -48,20 +50,20 @@ public class ViewForClient extends Observable implements Observer {
 
     void nicknameConfirmation(MessageNickname nicknameMessage) {
         if (nicknameMessage.getBoolean()) {
-            out.println("All settled! Wait for the game to begin...");
+            out.println("\nAll settled! Wait for the game to begin...");
         }
         else {
-            out.println("Nickname already used: choose another one");
+            out.println("\nNickname already used: choose another one");
             askNickname();
         }
     }
 
     void showPrivateObjective(String colour) {
-        out.println("Your private objective is of colour: " + colour);
+        out.println("\nYour private objective is of colour: " + colour);
     }
 
     void showPublicObjective(List<String> descriptions, List<Integer> points) {
-        out.println("Public objectives: ");
+        out.println("\nPublic objectives: ");
         for(int i=0; i<descriptions.size(); i++) {
             out.println(i+1 + ") " + descriptions.get(i) + " VP: " + points.get(i));
         }
@@ -72,13 +74,13 @@ public class ViewForClient extends Observable implements Observer {
         int choice;
         List<WindowPattern> windowPatterns = new ArrayList<>();
 
-        out.println("You have to choose the window pattern between these four: ");
+        out.println("\nYou have to choose the window pattern between these four: ");
         windowPatterns.add(HandleJSON.createWindowPattern(null, firstCard, 0));
         windowPatterns.add(HandleJSON.createWindowPattern(null, firstCard, 1));
         windowPatterns.add(HandleJSON.createWindowPattern(null, secondCard, 0));
         windowPatterns.add(HandleJSON.createWindowPattern(null, secondCard, 1));
         for (WindowPattern wp: windowPatterns) {
-            out.println(windowPatterns.indexOf(wp)+1 + ") " + wp.getName());
+            out.print(windowPatterns.indexOf(wp)+1 + ") ");
             printWindowPattern(wp);
         }
         out.println("Write the number of the window pattern you want to use.");
@@ -95,7 +97,19 @@ public class ViewForClient extends Observable implements Observer {
         }
     }
 
+    void windowPatternUpdated(String player, WindowPattern wp) {
+        if (!player.equals(this.nickname)) {
+            out.println("Player " + player + " windows pattern is now:");
+            printWindowPattern(wp);
+        }
+        else {
+            out.println("Your window pattern is now: ");
+            printWindowPattern(wp);
+        }
+    }
+
     private void printWindowPattern(WindowPattern wp) {
+        out.println(wp.getName() + "\nDifficulty: " + wp.getDifficulty());
         for (int i=0; i<MAX_ROW; i++) {
             out.println();
             for (int j=0; j<MAX_COL; j++) {
@@ -111,22 +125,30 @@ public class ViewForClient extends Observable implements Observer {
         out.println();
     }
 
-    public void askMove(boolean canMoveDie, boolean canUseTool) {
+    void manageTurn(String playerTurn, boolean hasUsedDie, boolean hasUsedTool) {
+        if(playerTurn.equals(this.nickname)) {
+            askMove(hasUsedDie, hasUsedTool);
+        } else {
+            out.println("\n" + playerTurn + " is now playing...");
+        }
+    }
+
+    public void askMove(boolean hasMovedDie, boolean hasUsedTool) {
         out.println("Please, select your move: ");
         int i=1;
-        if (canMoveDie) {
+        if (!hasMovedDie) {
             out.println(i + ") Move a die");
             i++;
         }
-        if (canUseTool) {
+        if (!hasUsedTool) {
             out.println(i + ") Use a tool");
             i++;
         }
         out.println(i + ") Do nothing");
         int choice = scanner.nextInt();
-        if (choice==1 && canMoveDie) moveDie();
-        if ((choice==1 && !canMoveDie)||(choice==2 && canMoveDie && canUseTool)) useTool();
-        if (choice==2 && (!canMoveDie||!canUseTool)); //notifyObservers(new MessageDoNothing());
+        if (choice==1 && !hasMovedDie) moveDie();
+        if ((choice==1 && hasMovedDie)||(choice==2 && !hasMovedDie && !hasUsedTool)) useTool();
+        if (choice==2 && (hasMovedDie ||hasUsedTool)); //notifyObservers(new MessageDoNothing());
 
     }
 
@@ -138,6 +160,15 @@ public class ViewForClient extends Observable implements Observer {
         out.println("Please, select the tool you want to use");
 
     }
+
+    void printDraftPool(DraftPool dp) {
+        out.println("Draftpool is now: ");
+        for(Die d: dp.getBag()) {
+            out.print("[" + Colour.getFirstLetter(d.getColour()) + d.getValue() + "] ");
+        }
+        out.println();
+    }
+
 
     @Override
     public void update(Message m) {

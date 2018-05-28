@@ -1,9 +1,11 @@
 package it.polimi.se2018.model;
 
+import java.io.Serializable;
+
 /**
  * is a Boc of a window pattern, with colour or value restriction
  */
-public class Box {
+public class Box implements Serializable {
 
     private int valueRestriction;
     private Colour colourRestriction;

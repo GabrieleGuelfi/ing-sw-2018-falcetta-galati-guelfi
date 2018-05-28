@@ -2,6 +2,7 @@ package it.polimi.se2018.model.dicecollection;
 
 import it.polimi.se2018.model.Die;
 
+import java.io.Serializable;
 import java.security.InvalidParameterException;
 import java.util.Random;
 
@@ -11,7 +12,7 @@ import java.util.Random;
  * This class represents the "Draft pool", aka the group of 5-7-9 dice extracted from the bag in the begin of a round.
  * @author Alessandro Falcetta
  */
-public class DraftPool extends DiceCollection {
+public class DraftPool extends DiceCollection implements Serializable {
 
     /**
      * Basic constructor, used by copy()
@@ -45,6 +46,7 @@ public class DraftPool extends DiceCollection {
         Random generator = new Random();
         for(int i =0; i<(2*playersNumber+1); i++) {
             Die die = bag.removeDie(generator.nextInt(bag.size()));
+            die.setRandomValue();
             addDie(die);
         }
     }

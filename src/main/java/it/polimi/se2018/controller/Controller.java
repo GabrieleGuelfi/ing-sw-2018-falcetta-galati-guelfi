@@ -61,6 +61,17 @@ public class Controller implements SagradaVisitor, Observer {
             HandleJSON.chooseWP(player, virtualView);
         }
 
+        for(Player p: players) {
+            while(p.getWindowPattern()==null) {
+
+            }
+        }
+
+        Player firstPlayer = match.getRound().getPlayerTurn();
+        this.match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool().copy()));
+        this.match.notifyObservers(new MessageTurnChanged(firstPlayer.getNickname(), firstPlayer.isPlacedDie(), firstPlayer.isUsedTool()));
+
+
         // TOOLS PART!
 
         /*for (int i = 0; i < 10; i++) {
@@ -332,9 +343,25 @@ public class Controller implements SagradaVisitor, Observer {
         }
         if (player!=null) {
             player.setWindowPattern(HandleJSON.createWindowPattern(player.getNickname(), message.getFirstIndex(), message.getSecondIndex()));
+            match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
         }
         else {
             out.println("nickname non valido");
         }
+    }
+
+    @Override
+    public void visit(MessageWPChanged message) {
+
+    }
+
+    @Override
+    public void visit(MessageTurnChanged message) {
+
+    }
+
+    @Override
+    public void visit(MessageDPChanged message) {
+
     }
 }
