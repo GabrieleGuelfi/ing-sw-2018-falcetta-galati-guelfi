@@ -1,6 +1,6 @@
 package it.polimi.se2018.view;
 
-import it.polimi.se2018.controller.handleJSON;
+import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.MessageChooseWP;
 import it.polimi.se2018.events.MessageNickname;
@@ -72,10 +72,10 @@ public class ViewForClient extends Observable implements Observer {
         int choice;
 
         out.println("You have to choose the window pattern between these four: ");
-        WindowPattern wp1 = handleJSON.createWindowPattern(firstCard, 0);
-        WindowPattern wp2 = handleJSON.createWindowPattern(firstCard, 1);
-        WindowPattern wp3 = handleJSON.createWindowPattern(secondCard, 0);
-        WindowPattern wp4 = handleJSON.createWindowPattern(secondCard, 1);
+        WindowPattern wp1 = HandleJSON.createWindowPattern(null, firstCard, 0);
+        WindowPattern wp2 = HandleJSON.createWindowPattern(null, firstCard, 1);
+        WindowPattern wp3 = HandleJSON.createWindowPattern(null, secondCard, 0);
+        WindowPattern wp4 = HandleJSON.createWindowPattern(null, secondCard, 1);
         out.println("1) " + wp1.getName());
         printWindowPattern(wp1);
         out.println("2) " + wp2.getName());

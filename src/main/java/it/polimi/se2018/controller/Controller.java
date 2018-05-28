@@ -6,6 +6,7 @@ import it.polimi.se2018.events.*;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.*;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
+import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.utils.Observer;
 import it.polimi.se2018.utils.SagradaVisitor;
 import it.polimi.se2018.view.VirtualView;
@@ -53,8 +54,11 @@ public class Controller implements SagradaVisitor, Observer {
 
         givePrivateObjective(players);
 
+        // Create the match...
+        this.match = new Match(new Bag(), players, objectives, tools, view);
+
         for(String player: nickname) {
-            handleJSON.chooseWP(player, virtualView);
+            HandleJSON.chooseWP(player, virtualView);
         }
 
         // TOOLS PART!
@@ -64,8 +68,7 @@ public class Controller implements SagradaVisitor, Observer {
             //manageRound(i % match.getPlayers().size());
         }*/
 
-        // Create the match...
-        this.match = new Match(new Bag(), players, objectives, tools, view);
+
     }
 
 
@@ -77,7 +80,7 @@ public class Controller implements SagradaVisitor, Observer {
 
         for (Player p : players) {
             int index = generator.nextInt(colours.length);
-            while (rand.contains(index))
+            while (rand.contains(index) || colours[index].equals(Colour.WHITE))
                 index = generator.nextInt(colours.length);
             rand.add(index);
             p.setPrivateObjective(new PrivateObjective(colours[index]));
@@ -327,10 +330,10 @@ public class Controller implements SagradaVisitor, Observer {
             if (p.getNickname().equals(message.getNickname()))
                 player = p;
         }
-        try {
-            player.setWindowPattern(handleJSON.createWindowPattern(message.getFirstIndex(), message.getSecondIndex()));
+        if (player!=null) {
+            player.setWindowPattern(HandleJSON.createWindowPattern(player.getNickname(), message.getFirstIndex(), message.getSecondIndex()));
         }
-        catch(NullPointerException e) {
+        else {
             out.println("nickname non valido");
         }
     }
