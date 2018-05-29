@@ -2,6 +2,7 @@ package it.polimi.se2018.model.dicecollection;
 
 import it.polimi.se2018.model.Die;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -11,7 +12,7 @@ import java.util.*;
  *
  */
 
-public class DiceCollection {
+public class DiceCollection implements Serializable {
 
     protected ArrayList<Die> bag;
 
@@ -51,6 +52,11 @@ public class DiceCollection {
      * Copy method
      * @return a DiceCollection with all the dice contained in this, but in a different object.
      */
+
+    public List<Die> getBag() {
+        return bag;
+    }
+
     public DiceCollection copy(){
         DiceCollection d = new DiceCollection();
         for(Die x : this.bag){

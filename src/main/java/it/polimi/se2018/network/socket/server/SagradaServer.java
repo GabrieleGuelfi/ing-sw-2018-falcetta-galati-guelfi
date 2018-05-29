@@ -2,6 +2,7 @@ package it.polimi.se2018.network.socket.server;
 
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.Message;
+import it.polimi.se2018.network.rmi.HandleRemoteServer;
 import it.polimi.se2018.network.socket.client.ClientInterface;
 import it.polimi.se2018.view.VirtualView;
 import static java.lang.System.*;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class SagradaServer {
-    private int PORT = 1111;
+    private int port = 1111;
     private int maxClients = 4;
     private VirtualView virtualView;
     private Controller controller;
@@ -18,6 +19,7 @@ public class SagradaServer {
     private ServerTimer timer;
     private final int time;
     private HandleVirtualClientClosed handleVirtualClientClosed = new HandleVirtualClientClosed(this);
+    private HandleRemoteServer handleRemoteServer;
 
     private ArrayList<CoupleClientNickname> clients = new ArrayList<>();
     private Nickname nicknames = new Nickname();
@@ -30,7 +32,9 @@ public class SagradaServer {
         stdin.close();
         this.controller = new Controller();
         this.virtualView = new VirtualView(this);
-        this.clientGatherer = new ClientGatherer(this, PORT);
+        this.handleRemoteServer = new HandleRemoteServer(this);
+
+        this.clientGatherer = new ClientGatherer(this, port);
         this.clientGatherer.start();
     }
 
@@ -47,6 +51,16 @@ public class SagradaServer {
         if (this.clients.size() == this.maxClients) this.clientGatherer.closeClientGatherer();
     }
 
+    protected synchronized void addClient(ClientInterface clientInterface, String nick){
+        this.clients.add(new CoupleClientNickname(clientInterface, nick));
+        if ((this.clients.size() == 2) && (this.timer == null)) {
+            this.timer = new ServerTimer(this, this.time);
+            this.timer.start();
+        }
+        if (this.clients.size() == this.maxClients) this.clientGatherer.closeClientGatherer();
+
+    }
+
     protected synchronized ArrayList<CoupleClientNickname> getClients() {
         return this.clients;
     }
@@ -60,7 +74,7 @@ public class SagradaServer {
                 break;
             }
         }
-        if (this.clients.size() < this.maxClients) this.clientGatherer = new ClientGatherer(this, this.PORT);
+        if (this.clients.size() < this.maxClients) this.clientGatherer = new ClientGatherer(this, this.port);
         if (this.clients.size() == 1) {
             if (this.timer != null) this.timer.stopTimer();
             this.timer = new ServerTimer(this, this.time);
