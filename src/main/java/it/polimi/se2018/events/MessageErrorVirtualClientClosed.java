@@ -13,6 +13,7 @@ public class MessageErrorVirtualClientClosed extends MessageError {
 
     public void accept(VisitorServer visitorServer){
         visitorServer.visit(this);
+        System.out.println("3.Accept in message");
     }
 
     public ClientInterface getClientInterface() {

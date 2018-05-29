@@ -66,6 +66,7 @@ public class SagradaServer {
     }
 
     protected synchronized void removeClient(ClientInterface client) {
+        System.out.println("5.Removing");
         for(CoupleClientNickname c: this.clients) {
             if(c.getVirtualClient().equals(client)){
                 this.clients.remove(c);

@@ -8,6 +8,7 @@ import it.polimi.se2018.view.ViewForClient;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -33,7 +34,7 @@ public class SagradaClient {
             String nicknameForRmi = viewForClient.getNickname();
             try {
                 server = (ServerInterface) Naming.lookup("//localhost/RemoteServer");
-                ClientInterface remoteRef = (ClientInterface) UnicastRemoteObject.exportObject(client, 0);
+                ClientInterface remoteRef =  (ClientInterface) UnicastRemoteObject.exportObject(client, 0);
                 server.addClient(remoteRef, nicknameForRmi);
             } catch (RemoteException e) {
                 e.printStackTrace();

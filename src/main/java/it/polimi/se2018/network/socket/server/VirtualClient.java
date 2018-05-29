@@ -39,9 +39,9 @@ public class VirtualClient extends Observable implements ClientInterface, Runnab
              inputStream.close();
         }
         catch(IOException | ClassNotFoundException e){
-            e.printStackTrace();
+            //e.printStackTrace();
             this.notifyObservers(new MessageErrorVirtualClientClosed(this));
-            out.println("MessageErrorVirtualClientClosed send");
+            out.println("1.MessageErrorVirtualClientClosed send ");
         }
 
     }
@@ -55,8 +55,8 @@ public class VirtualClient extends Observable implements ClientInterface, Runnab
             out.println("Message send to" + message.getNickname());
         }
         catch(IOException e){
-            e.printStackTrace();
-            this.virtualView.notifyObservers(new Message());
+            //e.printStackTrace();
+            this.notifyObservers(new Message());
             this.loop = false;
             Thread.currentThread().interrupt();
         }

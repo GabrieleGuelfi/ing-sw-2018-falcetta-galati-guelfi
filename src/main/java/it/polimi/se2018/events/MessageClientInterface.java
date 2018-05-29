@@ -9,9 +9,8 @@ public class MessageClientInterface extends Message {
     private ClientInterface clientInterface;
 
     public MessageClientInterface(ClientInterface c, String nick){
-        super();
+        super(nick);
         this.clientInterface = c;
-        super.nickname = nick;
     }
 
     public ClientInterface getClientInterface() {
