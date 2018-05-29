@@ -4,7 +4,7 @@ public class WindowPattern {
 
     public static final int MAX_ROW = 4;
     public static final int MAX_COL = 5;
-     Box[][] grid;
+    private Box[][] grid;
     private int difficulty;
     private int emptyBox;
     private String name;
@@ -14,7 +14,6 @@ public class WindowPattern {
         int j;
 
         grid = new Box[MAX_ROW][MAX_COL];
-
         for(i = 0; i<4; i++) {
             for (j = 0; j < 5; j++) {
                 grid[i][j] = new Box(0, Colour.WHITE);

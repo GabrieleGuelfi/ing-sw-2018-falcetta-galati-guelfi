@@ -58,16 +58,11 @@ public class Controller implements SagradaVisitor, Observer {
         this.match = new Match(new Bag(), players, objectives, tools, view);
 
         for(String player: nickname) {
-            HandleJSON.chooseWP(player, virtualView);
+            List<Integer> patterns = HandleJSON.chooseWP(player);
+            view.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
         }
 
         // TOOLS PART!
-
-        /*for (int i = 0; i < 10; i++) {
-            match.nextNumRound();
-            //manageRound(i % match.getPlayers().size());
-        }*/
-
 
     }
 

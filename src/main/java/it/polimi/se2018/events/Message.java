@@ -12,13 +12,15 @@ import java.io.Serializable;
  */
 public class Message implements Serializable  {
 
-    String nickname;
+    private String nickname;
 
     public Message(String s){
         this.nickname = s;
     }
 
-    public Message(){this.nickname = "everybody";}
+    public Message() {
+        this.nickname = "everybody";
+    }
 
     public void accept(SagradaVisitor v){
         v.visit(this);
