@@ -9,4 +9,8 @@ public interface SagradaVisitor {
     void visit(MessageNickname message);
     void visit(MessagePrivObj message);
     void visit(MessagePublicObj message);
+    void visit(MessageChooseWP message);
+    void visit(MessageWPChanged message);
+    void visit(MessageTurnChanged message);
+    void visit(MessageDPChanged message);
 }

@@ -6,14 +6,18 @@ import it.polimi.se2018.events.*;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.*;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
+import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.utils.Observer;
+import it.polimi.se2018.utils.SagradaVisitor;
 import it.polimi.se2018.view.VirtualView;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Controller extends VisitorController implements Observer {
+import static java.lang.System.*;
+
+public class Controller implements SagradaVisitor, Observer {
 
     private Match match;
     private VirtualView virtualView;
@@ -33,6 +37,8 @@ public class Controller extends VisitorController implements Observer {
 
         this.virtualView = view;
 
+        view.register(this);
+
         for (String p : nickname) {
             Player player = new Player(p);
             players.add(player);
@@ -48,9 +54,23 @@ public class Controller extends VisitorController implements Observer {
 
         givePrivateObjective(players);
 
-        /*for(Player player: match.getActivePlayers()) {
-            Utils.chooseWP(player.getNickname(), virtualView);
-        } */
+        // Create the match...
+        this.match = new Match(new Bag(), players, objectives, tools, view);
+
+        for(String player: nickname) {
+            HandleJSON.chooseWP(player, virtualView);
+        }
+
+        for(Player p: players) {
+            while(p.getWindowPattern()==null) {
+
+            }
+        }
+
+        Player firstPlayer = match.getRound().getPlayerTurn();
+        this.match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool().copy()));
+        this.match.notifyObservers(new MessageTurnChanged(firstPlayer.getNickname(), firstPlayer.isPlacedDie(), firstPlayer.isUsedTool()));
+
 
         // TOOLS PART!
 
@@ -59,8 +79,7 @@ public class Controller extends VisitorController implements Observer {
             //manageRound(i % match.getPlayers().size());
         }*/
 
-        // Create the match...
-        this.match = new Match(new Bag(), players, objectives, tools, view);
+
     }
 
 
@@ -72,7 +91,7 @@ public class Controller extends VisitorController implements Observer {
 
         for (Player p : players) {
             int index = generator.nextInt(colours.length);
-            while (rand.contains(index))
+            while (rand.contains(index) || colours[index].equals(Colour.WHITE))
                 index = generator.nextInt(colours.length);
             rand.add(index);
             p.setPrivateObjective(new PrivateObjective(colours[index]));
@@ -291,8 +310,12 @@ public class Controller extends VisitorController implements Observer {
 
 
     @Override
+    public void visit(Message message) {
+
+    }
+
+    @Override
     public void visit(MessageError messageError) {
-        super.visit(messageError);
     }
 
     @Override
@@ -307,6 +330,38 @@ public class Controller extends VisitorController implements Observer {
 
     @Override
     public void visit(MessagePublicObj message) {
+
+    }
+
+    @Override
+    public void visit(MessageChooseWP message) {
+
+        Player player = null;
+        for (Player p: match.getPlayers()) {
+            if (p.getNickname().equals(message.getNickname()))
+                player = p;
+        }
+        if (player!=null) {
+            player.setWindowPattern(HandleJSON.createWindowPattern(player.getNickname(), message.getFirstIndex(), message.getSecondIndex()));
+            match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
+        }
+        else {
+            out.println("nickname non valido");
+        }
+    }
+
+    @Override
+    public void visit(MessageWPChanged message) {
+
+    }
+
+    @Override
+    public void visit(MessageTurnChanged message) {
+
+    }
+
+    @Override
+    public void visit(MessageDPChanged message) {
 
     }
 }

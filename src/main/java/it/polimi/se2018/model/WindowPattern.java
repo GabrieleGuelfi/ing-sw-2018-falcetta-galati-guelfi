@@ -1,6 +1,8 @@
 package it.polimi.se2018.model;
 
-public class WindowPattern {
+import java.io.Serializable;
+
+public class WindowPattern implements Serializable {
 
     public static final int MAX_ROW = 4;
     public static final int MAX_COL = 5;

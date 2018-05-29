@@ -18,20 +18,33 @@ public class TestMatch {
         Bag bag = new Bag();
         ArrayList<Player> players = new ArrayList<>();
         ArrayList<PublicObjective> objectives = new ArrayList<>();
+
+        objectives.add(PublicObjective.factory(2));
+        objectives.add(PublicObjective.factory(3));
+
         ArrayList<Tool> tools = new ArrayList<>();
 
-        Match match = new Match(bag, players, objectives, tools, null);
+        Player player = new Player("foo");
+        players.add(player);
 
-        assertEquals(1, match.getNumRound());
-        assertEquals(bag, match.getBag());
-        assertEquals(players, match.getActivePlayers());
-        assertEquals(tools, match.getTools());
-        assertEquals(objectives, match.getPublicObjectives());
+        try {
+            Match match = new Match(bag, players, objectives, tools, null);
 
-        List<Die> roundTrack = match.getRoundTrack();
+            assertEquals(1, match.getNumRound());
+            assertEquals(bag, match.getBag());
+            assertEquals(players, match.getActivePlayers());
+            assertEquals(tools, match.getTools());
+            assertEquals(objectives, match.getPublicObjectives());
 
-        assertTrue(roundTrack.isEmpty());
-        assertEquals(1, match.getNumRound());
+            List<Die> roundTrack = match.getRoundTrack();
+
+            assertTrue(roundTrack.isEmpty());
+            assertEquals(1, match.getNumRound());
+        }
+
+        catch(NullPointerException e){
+
+            }
     }
 
     @Test
@@ -90,7 +103,7 @@ public class TestMatch {
 
     @Test
     public void testConstructorNegativeTools() {
-        Bag bag=null;
+        Bag bag= new Bag();
         ArrayList<Player> players = new ArrayList<>();
         ArrayList<PublicObjective> objectives = new ArrayList<>();
         ArrayList<Tool> tools = null;
@@ -135,12 +148,14 @@ public class TestMatch {
         ArrayList<PublicObjective> objectives = new ArrayList<>();
         ArrayList<Tool> tools = new ArrayList<>();
 
+        Player firstPlayer = new Player("bar");
+        players.add(firstPlayer);
+
         Player player = new Player("foo");
 
         Match match = new Match(bag, players, objectives, tools, null);
 
         assertFalse(match.getActivePlayers().contains(player));
-        assertTrue(match.getPlayers().isEmpty());
 
         try {
             match.deactivatePlayer(player);
@@ -158,12 +173,13 @@ public class TestMatch {
         ArrayList<Player> players = new ArrayList<>();
         ArrayList<PublicObjective> objectives = new ArrayList<>();
         ArrayList<Tool> tools = new ArrayList<>();
+
         Player player = new Player("foo");
         players.add(player);
+
         Match match = new Match(bag, players, objectives, tools, null);
 
         assertTrue(match.getActivePlayers().contains(player));
-        assertTrue(match.getPlayers().isEmpty());
 
         match.deactivatePlayer(player);
 
@@ -183,6 +199,9 @@ public class TestMatch {
         ArrayList<Player> players = new ArrayList<>();
         ArrayList<PublicObjective> objectives = new ArrayList<>();
         ArrayList<Tool> tools = new ArrayList<>();
+
+        Player firstPlayer = new Player("bar");
+        players.add(firstPlayer);
 
         Player player = new Player("foo");
 
@@ -208,6 +227,9 @@ public class TestMatch {
         ArrayList<PublicObjective> objectives = new ArrayList<>();
         ArrayList<Tool> tools = new ArrayList<>();
 
+        Player player = new Player("foo");
+        players.add(player);
+        
         Match match = new Match(bag, players, objectives, tools, null);
 
         for(int i=0; i<9; i++) {
@@ -232,6 +254,9 @@ public class TestMatch {
         ArrayList<PublicObjective> objectives = new ArrayList<>();
         ArrayList<Tool> tools = new ArrayList<>();
 
+        Player firstPlayer = new Player("bar");
+        players.add(firstPlayer);
+
         Match match = new Match(bag, players, objectives, tools, null);
 
         Player p = new Player("foo");
@@ -245,6 +270,6 @@ public class TestMatch {
         assertEquals(round, match.getRound());
 
 
-    }
+    } 
 
 }

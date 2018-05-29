@@ -1,10 +1,17 @@
 package it.polimi.se2018.view;
 
+import it.polimi.se2018.model.Die;
+import it.polimi.se2018.model.dicecollection.DraftPool;
+import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.MessageChooseWP;
 import it.polimi.se2018.events.MessageNickname;
+import it.polimi.se2018.model.Colour;
+import it.polimi.se2018.model.WindowPattern;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,8 +19,13 @@ import static java.lang.System.*;
 
 public class ViewForClient extends Observable implements Observer {
 
+    private static final int MAX_ROW = 4;
+    private static final int MAX_COL = 5;
+
     private static ViewForClient viewForClient;
     private Scanner scanner;
+    private String nickname;
+    private WindowPattern windowPattern;
 
     public static ViewForClient createViewForClient() {
         if (viewForClient==null) {
@@ -30,49 +42,113 @@ public class ViewForClient extends Observable implements Observer {
         out.println("Welcome in Sagrada!");
     }
 
-    public String getNickname() {
+    public void askNickname() {
         out.println("Please, choose your nickname");
-        return scanner.nextLine();
+        this.nickname = scanner.nextLine();
+        notifyObservers(new Message(nickname));
     }
 
-    public void nicknameConfirmation(MessageNickname nicknameMessage) {
+    void nicknameConfirmation(MessageNickname nicknameMessage) {
         if (nicknameMessage.getBoolean()) {
-            out.println("All settled! Wait for the game to begin...");
+            out.println("\nAll settled! Wait for the game to begin...");
         }
         else {
-            out.println("Nickname already used: please, choose another one");
-            String nickname = getNickname();
-            notifyObservers(new Message(nickname));
+            out.println("\nNickname already used: choose another one");
+            askNickname();
         }
     }
 
-    public void showPrivateObjective(String colour) {
-        out.println("Your private objective is of colour: " + colour);
+    void showPrivateObjective(String colour) {
+        out.println("\nYour private objective is of colour: " + colour);
     }
 
-    public void showPublicObjective(List<String> descriptions, List<Integer> points) {
-        out.println("Public objectives: ");
+    void showPublicObjective(List<String> descriptions, List<Integer> points) {
+        out.println("\nPublic objectives: ");
         for(int i=0; i<descriptions.size(); i++) {
             out.println(i+1 + ") " + descriptions.get(i) + " VP: " + points.get(i));
         }
     }
 
-    public void askMove(boolean canMoveDie, boolean canUseTool) {
+    void askWindowPattern(int firstCard, int secondCard) {
+
+        int choice;
+        List<WindowPattern> windowPatterns = new ArrayList<>();
+
+        out.println("\nYou have to choose the window pattern between these four: ");
+        windowPatterns.add(HandleJSON.createWindowPattern(null, firstCard, 0));
+        windowPatterns.add(HandleJSON.createWindowPattern(null, firstCard, 1));
+        windowPatterns.add(HandleJSON.createWindowPattern(null, secondCard, 0));
+        windowPatterns.add(HandleJSON.createWindowPattern(null, secondCard, 1));
+        for (WindowPattern wp: windowPatterns) {
+            out.print(windowPatterns.indexOf(wp)+1 + ") ");
+            printWindowPattern(wp);
+        }
+        out.println("Write the number of the window pattern you want to use.");
+        choice = scanner.nextInt();
+        while(choice<1 || choice>4) {
+            out.println("Invalid choice: try again.");
+            choice = scanner.nextInt();
+        }
+
+        if (choice<3) {
+            notifyObservers(new MessageChooseWP(nickname, firstCard, choice-1));
+        } else {
+            notifyObservers(new MessageChooseWP(nickname, secondCard, (choice-1)%2));
+        }
+    }
+
+    void windowPatternUpdated(String player, WindowPattern wp) {
+        if (!player.equals(this.nickname)) {
+            out.println("Player " + player + " windows pattern is now:");
+            printWindowPattern(wp);
+        }
+        else {
+            out.println("Your window pattern is now: ");
+            printWindowPattern(wp);
+        }
+    }
+
+    private void printWindowPattern(WindowPattern wp) {
+        out.println(wp.getName() + "\nDifficulty: " + wp.getDifficulty());
+        for (int i=0; i<MAX_ROW; i++) {
+            out.println();
+            for (int j=0; j<MAX_COL; j++) {
+                if (wp.getBox(i, j).hasAValueRestriction()) {
+                    out.print("[" + wp.getBox(i, j).getValueRestriction() + "] ");
+                }
+                else {
+                    out.print("[" + Colour.getFirstLetter(wp.getBox(i, j).getColourRestriction()) + "] ");
+                }
+            }
+        }
+        out.println();
+        out.println();
+    }
+
+    void manageTurn(String playerTurn, boolean hasUsedDie, boolean hasUsedTool) {
+        if(playerTurn.equals(this.nickname)) {
+            askMove(hasUsedDie, hasUsedTool);
+        } else {
+            out.println("\n" + playerTurn + " is now playing...");
+        }
+    }
+
+    public void askMove(boolean hasMovedDie, boolean hasUsedTool) {
         out.println("Please, select your move: ");
         int i=1;
-        if (canMoveDie) {
+        if (!hasMovedDie) {
             out.println(i + ") Move a die");
             i++;
         }
-        if (canUseTool) {
+        if (!hasUsedTool) {
             out.println(i + ") Use a tool");
             i++;
         }
         out.println(i + ") Do nothing");
         int choice = scanner.nextInt();
-        if (choice==1 && canMoveDie) moveDie();
-        if ((choice==1 && !canMoveDie)||(choice==2 && canMoveDie && canUseTool)) useTool();
-        if (choice==2 && (!canMoveDie||!canUseTool)); //notifyObservers(new MessageDoNothing());
+        if (choice==1 && !hasMovedDie) moveDie();
+        if ((choice==1 && hasMovedDie)||(choice==2 && !hasMovedDie && !hasUsedTool)) useTool();
+        if (choice==2 && (hasMovedDie ||hasUsedTool)); //notifyObservers(new MessageDoNothing());
 
     }
 
@@ -84,6 +160,15 @@ public class ViewForClient extends Observable implements Observer {
         out.println("Please, select the tool you want to use");
 
     }
+
+    void printDraftPool(DraftPool dp) {
+        out.println("Draftpool is now: ");
+        for(Die d: dp.getBag()) {
+            out.print("[" + Colour.getFirstLetter(d.getColour()) + d.getValue() + "] ");
+        }
+        out.println();
+    }
+
 
     @Override
     public void update(Message m) {

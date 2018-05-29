@@ -10,6 +10,19 @@ public enum Colour {
     RED,
     YELLOW,
     PURPLE,
-    BLUE,
+    BLUE;
+
+    public static char getFirstLetter(Colour colour) {
+         switch (colour) {
+             case WHITE: return 'W';
+             case GREEN: return 'G';
+             case RED: return 'R';
+             case YELLOW: return 'Y';
+             case PURPLE: return 'P';
+             case BLUE: return 'B';
+         }
+
+         return 'W';
+    }
 
 }

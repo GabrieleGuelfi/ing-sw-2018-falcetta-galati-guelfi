@@ -1,9 +1,11 @@
 package it.polimi.se2018.model;
 
+import java.io.Serializable;
+
 /**
  * is a Boc of a window pattern, with colour or value restriction
  */
-public class Box {
+public class Box implements Serializable {
 
     private int valueRestriction;
     private Colour colourRestriction;
@@ -44,6 +46,10 @@ public class Box {
      * @return the colour restriction of this box
      */
     public Colour getColourRestriction() { return colourRestriction;}
+
+    public boolean hasAValueRestriction() {
+        return (this.colourRestriction==Colour.WHITE);
+    }
 
     /**
      * place a die in this box
