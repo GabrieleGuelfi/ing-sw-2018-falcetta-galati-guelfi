@@ -1,6 +1,7 @@
 package it.polimi.se2018.events;
 
 import it.polimi.se2018.utils.SagradaVisitor;
+import it.polimi.se2018.view.VisitorView;
 
 public class MessageNickname extends Message{
 
@@ -15,7 +16,7 @@ public class MessageNickname extends Message{
     }
 
     @Override
-    public void accept(SagradaVisitor v) {
+    public void accept(VisitorView v){
         v.visit(this);
     }
 }

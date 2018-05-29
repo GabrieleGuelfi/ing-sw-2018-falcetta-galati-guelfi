@@ -3,6 +3,7 @@ package it.polimi.se2018.events;
 import it.polimi.se2018.network.socket.server.SagradaServer;
 import it.polimi.se2018.network.socket.server.VirtualClient;
 import it.polimi.se2018.utils.SagradaVisitor;
+import it.polimi.se2018.view.VisitorView;
 
 import java.io.Serializable;
 
@@ -12,7 +13,7 @@ import java.io.Serializable;
  */
 public class Message implements Serializable  {
 
-    private String nickname;
+    protected String nickname;
 
     public Message(String s){
         this.nickname = s;
@@ -22,7 +23,7 @@ public class Message implements Serializable  {
         this.nickname = "everybody";
     }
 
-    public void accept(SagradaVisitor v){
+    public void accept(VisitorView v){
         v.visit(this);
     }
 
