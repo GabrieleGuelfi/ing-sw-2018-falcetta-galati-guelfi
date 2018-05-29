@@ -8,7 +8,6 @@ import it.polimi.se2018.model.dicecollection.*;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.utils.Observer;
-import it.polimi.se2018.utils.SagradaVisitor;
 import it.polimi.se2018.view.VirtualView;
 
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ import java.util.Random;
 
 import static java.lang.System.*;
 
-public class Controller implements SagradaVisitor, Observer {
+public class Controller implements VisitorController, Observer {
 
     private Match match;
     private VirtualView virtualView;
@@ -302,32 +301,7 @@ public class Controller implements SagradaVisitor, Observer {
     public void update(Message message) {
         message.accept(this);
     }
-
-
-    @Override
-    public void visit(Message message) {
-
-    }
-
-    @Override
-    public void visit(MessageError messageError) {
-    }
-
-    @Override
-    public void visit(MessageNickname message) {
-
-    }
-
-    @Override
-    public void visit(MessagePrivObj message) {
-
-    }
-
-    @Override
-    public void visit(MessagePublicObj message) {
-
-    }
-
+    
     @Override
     public void visit(MessageChooseWP message) {
 
@@ -345,18 +319,4 @@ public class Controller implements SagradaVisitor, Observer {
         }
     }
 
-    @Override
-    public void visit(MessageWPChanged message) {
-
-    }
-
-    @Override
-    public void visit(MessageTurnChanged message) {
-
-    }
-
-    @Override
-    public void visit(MessageDPChanged message) {
-
-    }
 }
