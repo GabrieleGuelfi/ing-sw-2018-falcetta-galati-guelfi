@@ -1,6 +1,7 @@
 package it.polimi.se2018.view;
 
 import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.messageforserver.MessageError;
 import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.dicecollection.DraftPool;

@@ -1,4 +1,4 @@
-package it.polimi.se2018.events.messageforview;
+package it.polimi.se2018.events.messageforserver;
 
 
 import it.polimi.se2018.events.Message;
@@ -8,6 +8,10 @@ public class MessageError extends Message {
 
     public MessageError(){
         super("MessageError");
+    }
+
+    public MessageError(String s){
+        super(s);
     }
 
     @Override

@@ -2,124 +2,265 @@ package it.polimi.se2018.network.socket.server;
 
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.messageforserver.MessageAddClientInterface;
+import it.polimi.se2018.events.messageforserver.MessageErrorClientGathererClosed;
+import it.polimi.se2018.events.messageforserver.MessageErrorVirtualClientClosed;
+import it.polimi.se2018.events.messageforserver.MessageError;
+import it.polimi.se2018.events.messageforview.MessageNickname;
 import it.polimi.se2018.network.socket.client.ClientInterface;
 import it.polimi.se2018.view.VirtualView;
 import static java.lang.System.*;
+
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.rmi.Naming;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import it.polimi.se2018.utils.Observer;
 import java.util.Scanner;
 
-public class SagradaServer implements VisitorServer {
+public class SagradaServer implements VisitorServer, Observer{
     private int port = 1111;
     private int maxClients = 4;
     private VirtualView virtualView;
     private Controller controller;
     private ClientGatherer clientGatherer;
     private ServerTimer timer;
+    private boolean gameIsStarted;
     private final int time;
-    private HandleVirtualClientClosed handleVirtualClientClosed = new HandleVirtualClientClosed(this);
-    private HandleRemoteServer handleRemoteServer;
+    private ArrayList<String> nicknameDisconnected;
+    private HandleClientGatherer handleClientGatherer;
 
     private ArrayList<CoupleClientNickname> clients = new ArrayList<>();
-    private Nickname nicknames = new Nickname();
 
     public SagradaServer() {
 
+        //WHEN SERVER START, IT ASKS HOW LONG IT HAVE TO WAIT ON LOBBY BEFORE START THE GAME
         Scanner stdin = new Scanner(System.in);
         out.println("Set time for lobby timer.");
         this.time = stdin.nextInt();
         stdin.close();
+
+        //INITIALIZE CONTROLLER AND VIRTUAL VIEW
         this.controller = new Controller();
         this.virtualView = new VirtualView(this);
-        this.handleRemoteServer = new HandleRemoteServer(this);
+        this.nicknameDisconnected = new ArrayList<>();
+        this.gameIsStarted = false;
 
+        //INITIALIZE REMOTE SERVER
+        try{
+            LocateRegistry.createRegistry(1099);
+            RemoteServer remoteServer = new RemoteServer();
+            remoteServer.register(this);
+            ServerInterface serverInterface =  (ServerInterface) UnicastRemoteObject.exportObject(remoteServer, 0);
+            Naming.rebind("//localhost/RemoteServer", serverInterface);
+            out.println("Remote Server enabled.");
+        }
+        catch(RemoteException | MalformedURLException e){
+            out.println("Remote Server has a problem.");
+        }
+
+
+        //RUN CLIENT GATHERER FOR SOCKET CONNECTION
         this.clientGatherer = new ClientGatherer(this, port);
-        this.clientGatherer.start();
+        (new Thread(this.clientGatherer)).start();
     }
 
-    protected synchronized void addClient(Socket clientConnection, String nick) {
+    public static void main(String[] args){
+        new SagradaServer();
+    }
 
-        VirtualClient cm = new VirtualClient(this.virtualView, clientConnection);
+
+    protected void addClient(Socket clientConnection, String nick) {
+
+        //CREATE A VIRTUAL CLIENT AND SET NICKNAME
+        VirtualClient cm = new VirtualClient(clientConnection);
         clients.add(new CoupleClientNickname(cm, nick));
-        cm.register(this.handleVirtualClientClosed);
+
+        //ADD SAGRADA SERVER AS OBSERVER OF THIS NEW VIRTUAL CLIENT
+        cm.register(this);
+
+        //START VIRTUAL CLIENT
         new Thread(cm).start();
-        if ((this.clients.size() == 2) && (this.timer == null)) {
+
+        out.println(nick + " enjoyed");
+
+        if(gameIsStarted && this.nicknameDisconnected.contains(nick)) this.nicknameDisconnected.remove(nick);
+
+        //CONTROL TIMER AND CLIENT GATHERER
+        if (this.clients.size() == 2 && !this.gameIsStarted) {
             this.timer = new ServerTimer(this, this.time);
             this.timer.start();
         }
-        if (this.clients.size() == this.maxClients) this.clientGatherer.closeClientGatherer();
+        else if (this.clients.size() == this.maxClients && !this.gameIsStarted) {
+            this.timer.interrupt();
+            out.println("All player enjoyed the party.");
+            this.startGame();
+        }
+        else if(this.clients.size() == this.maxClients){
+            this.handleClientGatherer = new HandleClientGatherer(this.clientGatherer);
+            this.handleClientGatherer.start();
+            out.println(nick + " was reconnected");
+        }
+        else if(this.gameIsStarted) out.println(nick + " was reconnected");
+
     }
 
-    protected synchronized void addClient(ClientInterface clientInterface, String nick){
+    private void addClient(ClientInterface clientInterface, String nick){
+
+        //CREATE NEW COUPLE-CLIENT-NICKNAME AND ADD IT TO THIS.CLIENTS
         this.clients.add(new CoupleClientNickname(clientInterface, nick));
-        if ((this.clients.size() == 2) && (this.timer == null)) {
+
+        out.println(nick + " enjoyed");
+
+        if(gameIsStarted && this.nicknameDisconnected.contains(nick)) this.nicknameDisconnected.remove(nick);
+
+        //CONTROL TIMER AND CLIENT GATHERER
+        if (this.clients.size() == 2 && !this.gameIsStarted) {
             this.timer = new ServerTimer(this, this.time);
             this.timer.start();
         }
-        if (this.clients.size() == this.maxClients) this.clientGatherer.closeClientGatherer();
+        else if (this.clients.size() == this.maxClients && !this.gameIsStarted) {
+            this.timer.interrupt();
+            out.println("All player enjoyed the party.");
+            this.startGame();
+        }
+        else if(this.clients.size() == this.maxClients){
+            this.handleClientGatherer = new HandleClientGatherer(this.clientGatherer);
+            this.handleClientGatherer.start();
 
+            out.println(nick + " was reconnected");
+        }
+        else if(this.gameIsStarted) out.println(nick + " was reconnected");
     }
 
-    protected synchronized ArrayList<CoupleClientNickname> getClients() {
+    protected ArrayList<CoupleClientNickname> getClients() {
         return this.clients;
     }
 
-    protected synchronized void removeClient(ClientInterface client) {
-        System.out.println("5.Removing");
+    private void removeClient(ClientInterface client) {
+        //REMOVE THIS CLIENT INTERFACE
+        String string = null;
+        CoupleClientNickname couple = null;
+
         for(CoupleClientNickname c: this.clients) {
             if(c.getVirtualClient().equals(client)){
-                this.clients.remove(c);
-                this.nicknames.notifyClientClosed(c.getNickname());
-                out.println(c.getNickname()  + "removed.");
-                break;
+                string = c.getNickname();
+                couple = c;
             }
         }
-        if (this.clients.size() < this.maxClients) this.clientGatherer = new ClientGatherer(this, this.port);
-        if (this.clients.size() == 1) {
-            if (this.timer != null) this.timer.stopTimer();
-            this.timer = new ServerTimer(this, this.time);
-            this.timer.start();
+        if(gameIsStarted) this.nicknameDisconnected.add(string);
+        this.clients.remove(couple);
+        out.println(string  + " is removed.");
+
+
+        //CONTROL TIMER AND CLIENT GATHERER
+        if (this.clients.size() < this.maxClients && gameIsStarted) {
+            this.handleClientGatherer.setClientGathererActive();
+            this.handleClientGatherer.interrupt();
+        }
+        if (this.clients.size() == 1 && this.timer != null) {
+            this.timer.stopTimer();
+            out.println("not enough players");
         }
     }
 
     public ClientInterface searchVirtualClient(String player) {
+        //SEARCH WHICH VIRTUAL CLIENT IS ASSOCIATED TO NICKNAME 'PLAYER'
         try {
             for (CoupleClientNickname c : this.clients) {
                 if (c.getNickname().equals(player)) return c.getVirtualClient();
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
+            out.println("Client" + player + "does not exists.");
         }
         return null;
     }
 
     public void broadcast(Message message) {
+        //SEND A MESSAGE TO ALL CLIENT
         for (CoupleClientNickname c : this.clients) {
             c.getVirtualClient().notify(message);
         }
     }
 
+    protected boolean verifyNickname(String string){
+        if(gameIsStarted && this.nicknameDisconnected.contains(string)) return true;
+        else if(gameIsStarted) return false;
+        else{
+            for(CoupleClientNickname c : this.clients) if(c.getNickname().equals(string)) return false;
+        }
+        return true;
+    }
+
     protected void startGame() {
+
         if (this.clients.size() == 1) {
-            this.timer = new ServerTimer(this, this.time);
-            this.timer.start();
+            out.println("not enough player.");
         } else {
-            this.clientGatherer.closeClientGatherer();
-            if (this.timer != null) this.timer.stopTimer();
-            this.nicknames.setGameStarted();
-            this.maxClients = this.nicknames.getNicknames().size();
+            //CONTROL TIMER AND CLOSE CLIENT GATHERER
+            //SET MAX CLIENTS
+            //NOTIFY CONTROLLER THE BEGGING OF THE GAME
+            this.handleClientGatherer = new HandleClientGatherer(this.clientGatherer);
+            this.handleClientGatherer.start();
+            this.maxClients = this.clients.size();
+            this.gameIsStarted = true;
             out.println("START GAME");
-            this.controller.startGame(this.nicknames.getNicknames(), this.virtualView);
+            ArrayList<String> allClients = new ArrayList<>();
+            for(CoupleClientNickname c :  this.clients){
+                allClients.add(c.getNickname());
+                out.println(c.getNickname());
+            }
+
+            this.controller.startGame(allClients, this.virtualView);
         }
     }
 
-    public Nickname getNicknames() {
-        return nicknames;
+    @Override
+    public void update(Message message){
+        message.accept(this);
     }
 
-    protected VirtualView getVirtualView(){return this.virtualView;}
-
-    public static void main(String[] args){
-        new SagradaServer();
+    @Override
+    public void visit(Message message){
+        //NOTIFY CONTROLLER
+        this.virtualView.notifyObservers(message);
     }
+
+    @Override
+    public void visit(MessageErrorVirtualClientClosed message){
+        //REMOVE A CLIENT
+        out.println("VirtualClient was disconnected");
+        this.removeClient(message.getClientInterface());
+    }
+
+    @Override
+    public void visit(MessageError message){
+        //PRINT THE ERROR
+       out.println(message.getNickname());
+    }
+
+    @Override
+    public void visit(MessageAddClientInterface message){
+        //VERIFY IF THE NICKNAME IS AVAILABLE
+        boolean value = this.verifyNickname(message.getNickname());
+        if(value) {
+            message.getClientInterface().notify(new MessageNickname(true));
+            this.addClient(message.getClientInterface(), message.getNickname());
+        }
+        else message.getClientInterface().notify(new MessageNickname(false));
+    }
+
+    @Override
+    public void visit(MessageErrorClientGathererClosed message){
+        //CREATE A NEW CLIENT GATHERER
+        out.println(message.getNickname());
+        if(this.clientGatherer != null)this.clientGatherer.stopClientGatherer();
+        this.clientGatherer = new ClientGatherer(this,this.port);
+    }
+
+
 }

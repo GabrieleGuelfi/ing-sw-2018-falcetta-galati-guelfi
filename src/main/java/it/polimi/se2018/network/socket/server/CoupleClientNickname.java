@@ -6,7 +6,7 @@ public class CoupleClientNickname {
     private ClientInterface virtualClient;
     private String nickname;
 
-    protected CoupleClientNickname(ClientInterface c, String s){
+    CoupleClientNickname(ClientInterface c, String s){
         this.virtualClient = c;
         this.nickname = s;
     }

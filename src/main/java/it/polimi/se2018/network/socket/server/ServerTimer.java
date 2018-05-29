@@ -17,14 +17,18 @@ public class ServerTimer extends Thread{
     public void run() {
         try {
             for(int i = time; i > 0; i--){
-                out.println(i + "seconds remains");
-                Thread.sleep(1000);
+                if(loop) {
+                    out.println(i + " seconds remains");
+                    Thread.sleep(1000);
+                }
             }
             if(loop) {
                 this.sagradaServer.startGame();
             }
+            else{
+                out.println("Not ready. Wait a moment please.\n");
+            }
         }catch(InterruptedException e){
-            e.printStackTrace();
             Thread.currentThread().interrupt();
         }
 
@@ -32,5 +36,6 @@ public class ServerTimer extends Thread{
 
     protected void stopTimer(){
         this.loop = false;
+        Thread.currentThread().interrupt();
     }
 }
