@@ -2,13 +2,14 @@ package it.polimi.se2018.controller;
 
 
 import it.polimi.se2018.controller.tool.Tool;
-import it.polimi.se2018.events.*;
+import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.messageforcontroller.*;
+import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.*;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.utils.Observer;
-import it.polimi.se2018.utils.SagradaVisitor;
 import it.polimi.se2018.view.VirtualView;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.Random;
 
 import static java.lang.System.*;
 
-public class Controller implements SagradaVisitor, Observer {
+public class Controller implements VisitorController, Observer {
 
     private Match match;
     private VirtualView virtualView;
@@ -59,7 +60,7 @@ public class Controller implements SagradaVisitor, Observer {
 
         for(String player: nickname) {
             List<Integer> patterns = HandleJSON.chooseWP(player);
-            view.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
+            view.send(new MessageSetWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
         }
 
         for(Player p: players) {
@@ -303,33 +304,13 @@ public class Controller implements SagradaVisitor, Observer {
         message.accept(this);
     }
 
-
     @Override
     public void visit(Message message) {
 
     }
 
     @Override
-    public void visit(MessageError messageError) {
-    }
-
-    @Override
-    public void visit(MessageNickname message) {
-
-    }
-
-    @Override
-    public void visit(MessagePrivObj message) {
-
-    }
-
-    @Override
-    public void visit(MessagePublicObj message) {
-
-    }
-
-    @Override
-    public void visit(MessageChooseWP message) {
+    public void visit(MessageSetWP message) {
 
         Player player = null;
         for (Player p: match.getPlayers()) {
@@ -345,18 +326,4 @@ public class Controller implements SagradaVisitor, Observer {
         }
     }
 
-    @Override
-    public void visit(MessageWPChanged message) {
-
-    }
-
-    @Override
-    public void visit(MessageTurnChanged message) {
-
-    }
-
-    @Override
-    public void visit(MessageDPChanged message) {
-
-    }
 }

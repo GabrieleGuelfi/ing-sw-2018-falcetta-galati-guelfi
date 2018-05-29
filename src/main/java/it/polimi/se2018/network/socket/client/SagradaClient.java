@@ -1,7 +1,5 @@
 package it.polimi.se2018.network.socket.client;
 
-import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.MessageError;
 import it.polimi.se2018.network.socket.server.ServerInterface;
 import it.polimi.se2018.view.ViewForClient;
 

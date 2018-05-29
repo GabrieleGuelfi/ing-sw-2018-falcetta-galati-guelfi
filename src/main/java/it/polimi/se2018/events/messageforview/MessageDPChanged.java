@@ -1,7 +1,8 @@
-package it.polimi.se2018.events;
+package it.polimi.se2018.events.messageforview;
 
 import it.polimi.se2018.model.dicecollection.DraftPool;
-import it.polimi.se2018.utils.SagradaVisitor;
+import it.polimi.se2018.events.Message;
+import it.polimi.se2018.view.VisitorView;
 
 public class MessageDPChanged extends Message {
 
@@ -17,7 +18,7 @@ public class MessageDPChanged extends Message {
     }
 
     @Override
-    public void accept(SagradaVisitor v) {
+    public void accept(VisitorView v){
         v.visit(this);
     }
 }

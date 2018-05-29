@@ -1,8 +1,8 @@
-package it.polimi.se2018.events;
+package it.polimi.se2018.events.messageforview;
 
-import it.polimi.se2018.utils.SagradaVisitor;
+import it.polimi.se2018.events.Message;
+import it.polimi.se2018.view.VisitorView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MessagePublicObj extends Message {
@@ -24,7 +24,7 @@ public class MessagePublicObj extends Message {
     }
 
     @Override
-    public void accept(SagradaVisitor v){
+    public void accept(VisitorView v){
         v.visit(this);
     }
 }

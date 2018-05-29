@@ -1,11 +1,9 @@
 package it.polimi.se2018.view;
 
+import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.utils.HandleJSON;
-import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.MessageChooseWP;
-import it.polimi.se2018.events.MessageNickname;
 import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.WindowPattern;
 import it.polimi.se2018.utils.Observable;
@@ -17,7 +15,7 @@ import java.util.Scanner;
 
 import static java.lang.System.*;
 
-public class ViewForClient extends Observable implements Observer {
+public class ViewForClient extends Observable implements Observer, VisitorView {
 
     private static final int MAX_ROW = 4;
     private static final int MAX_COL = 5;
@@ -58,7 +56,7 @@ public class ViewForClient extends Observable implements Observer {
         notifyObservers(new Message(nickname));
     }
 
-    void nicknameConfirmation(MessageNickname nicknameMessage) {
+    private void nicknameConfirmation(MessageNickname nicknameMessage) {
         if (nicknameMessage.getBoolean()) {
             out.println("\nAll settled! Wait for the game to begin...");
         }
@@ -68,18 +66,18 @@ public class ViewForClient extends Observable implements Observer {
         }
     }
 
-    void showPrivateObjective(String colour) {
+    private void showPrivateObjective(String colour) {
         out.println("\nYour private objective is of colour: " + colour);
     }
 
-    void showPublicObjective(List<String> descriptions, List<Integer> points) {
+    private void showPublicObjective(List<String> descriptions, List<Integer> points) {
         out.println("\nPublic objectives: ");
         for(int i=0; i<descriptions.size(); i++) {
             out.println(i+1 + ") " + descriptions.get(i) + " VP: " + points.get(i));
         }
     }
 
-    void askWindowPattern(int firstCard, int secondCard) {
+    private void askWindowPattern(int firstCard, int secondCard) {
 
         int choice;
         List<WindowPattern> windowPatterns = new ArrayList<>();
@@ -107,7 +105,7 @@ public class ViewForClient extends Observable implements Observer {
         }
     }
 
-    void windowPatternUpdated(String player, WindowPattern wp) {
+    private void windowPatternUpdated(String player, WindowPattern wp) {
         if (!player.equals(this.nickname)) {
             out.println("Player " + player + " windows pattern is now:");
             printWindowPattern(wp);
@@ -135,7 +133,7 @@ public class ViewForClient extends Observable implements Observer {
         out.println();
     }
 
-    void manageTurn(String playerTurn, boolean hasUsedDie, boolean hasUsedTool) {
+    private void manageTurn(String playerTurn, boolean hasUsedDie, boolean hasUsedTool) {
         if(playerTurn.equals(this.nickname)) {
             askMove(hasUsedDie, hasUsedTool);
         } else {
@@ -143,7 +141,7 @@ public class ViewForClient extends Observable implements Observer {
         }
     }
 
-    public void askMove(boolean hasMovedDie, boolean hasUsedTool) {
+    private void askMove(boolean hasMovedDie, boolean hasUsedTool) {
         out.println("Please, select your move: ");
         int i=1;
         if (!hasMovedDie) {
@@ -171,7 +169,7 @@ public class ViewForClient extends Observable implements Observer {
 
     }
 
-    void printDraftPool(DraftPool dp) {
+    private void printDraftPool(DraftPool dp) {
         out.println("Draftpool is now: ");
         for(Die d: dp.getBag()) {
             out.print("[" + Colour.getFirstLetter(d.getColour()) + d.getValue() + "] ");
@@ -182,7 +180,54 @@ public class ViewForClient extends Observable implements Observer {
 
     @Override
     public void update(Message m) {
-        m.accept(new VisitorView());
+        m.accept(this);
+    }
+
+    @Override
+    public void visit(Message message) {
+        out.println("This is a message!");
+    }
+
+    @Override
+    public void visit(MessageError message) {
+        out.println("This is a message error!");
+    }
+
+    @Override
+    public void visit(MessageNickname message) {
+        nicknameConfirmation(message);
+    }
+
+    @Override
+    public void visit(MessagePrivObj message) {
+        showPrivateObjective(message.getColour());
+    }
+
+    @Override
+    public void visit(MessagePublicObj message) {
+        showPublicObjective(message.getDescriptions(), message.getPoints());
+    }
+
+    @Override
+    public void visit(MessageChooseWP message) {
+        askWindowPattern(message.getFirstIndex(), message.getSecondIndex());
+    }
+
+    @Override
+    public void visit(MessageWPChanged message) {
+        windowPatternUpdated(message.getPlayer(), message.getWp());
+    }
+
+    @Override
+    public void visit(MessageTurnChanged message) {
+        manageTurn(message.getPlayerTurn(), message.hasPlacedDie(), message.hasUsedTool());
+    }
+
+    @Override
+    public void visit(MessageDPChanged message) {
+        printDraftPool(message.getDraftPool());
     }
 
 }
+
+

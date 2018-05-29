@@ -1,6 +1,7 @@
-package it.polimi.se2018.events;
+package it.polimi.se2018.events.messageforview;
 
-import it.polimi.se2018.utils.SagradaVisitor;
+import it.polimi.se2018.events.Message;
+import it.polimi.se2018.view.VisitorView;
 
 public class MessageTurnChanged extends Message {
 
@@ -28,7 +29,7 @@ public class MessageTurnChanged extends Message {
     }
 
     @Override
-    public void accept(SagradaVisitor v) {
+    public void accept(VisitorView v){
         v.visit(this);
     }
 }

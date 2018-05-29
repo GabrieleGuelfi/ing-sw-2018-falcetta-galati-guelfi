@@ -4,5 +4,6 @@ import it.polimi.se2018.events.Message;
 
 public interface ClientInterface {
 
-    public void notify(Message message);
+    void notify(Message message);
+
 }

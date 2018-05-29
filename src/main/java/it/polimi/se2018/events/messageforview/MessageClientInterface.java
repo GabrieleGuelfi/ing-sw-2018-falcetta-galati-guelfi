@@ -1,8 +1,9 @@
-package it.polimi.se2018.events;
+package it.polimi.se2018.events.messageforview;
 
 
 import it.polimi.se2018.network.socket.client.ClientInterface;
 import it.polimi.se2018.network.socket.server.VisitorServer;
+import it.polimi.se2018.events.Message;
 
 public class MessageClientInterface extends Message {
 

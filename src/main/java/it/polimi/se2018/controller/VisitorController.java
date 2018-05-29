@@ -1,11 +1,11 @@
 package it.polimi.se2018.controller;
 
-import it.polimi.se2018.controller.Controller;
-import it.polimi.se2018.events.*;
-import it.polimi.se2018.utils.SagradaVisitor;
+import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.messageforcontroller.MessageSetWP;
 
-public abstract class VisitorController implements SagradaVisitor {
+public interface VisitorController {
 
-    public void visit(MessageError messageError){}
+    void visit (Message message);
+    void visit(MessageSetWP message);
 
 }
