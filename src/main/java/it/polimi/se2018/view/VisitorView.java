@@ -14,5 +14,7 @@ public interface VisitorView {
     void visit(MessageWPChanged message);
     void visit(MessageTurnChanged message);
     void visit(MessageDPChanged message);
+    void visit(MessageConfirmMove message);
+    void visit(MessageErrorMove message);
 
 }
