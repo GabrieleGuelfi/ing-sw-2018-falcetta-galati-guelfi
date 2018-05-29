@@ -8,13 +8,26 @@ public class VisitorServer implements SagradaVisitor{
 
     SagradaServer sagradaServer;
 
-    VisitorServer(SagradaServer s){
+    public VisitorServer(SagradaServer s){
         this.sagradaServer = s;
     }
 
     public void visit(MessageErrorVirtualClientClosed message){
         this.sagradaServer.removeClient(message.getClientInterface());
     }
-    public void visit(Message message){}
-    public void visit(MessageError messageError){}
+    public void visit(Message message){
+        System.out.println("Message from VisitorServer");
+    }
+    public void visit(MessageError message){}
+    public void visit(MessageNickname message){
+        this.sagradaServer.getVirtualView().notifyObservers(message);
+    }
+    public void visit(MessagePrivObj message){}
+    public void visit(MessagePublicObj message){}
+    public void visit(MessageClientInterface message){
+        boolean valueAccess = this.sagradaServer.getNicknames().verifyNickname(message.getNickname());
+        if(valueAccess) this.sagradaServer.addClient(message.getClientInterface(), message.getNickname());
+        else message.getClientInterface().notify(new Message());
+    }
+
 }
