@@ -64,6 +64,11 @@ public class NetworkHandler extends Thread implements ServerInterface {
         }
     }
 
+    @Override
+    public void addClient(ClientInterface clientInterface, String nickname) {
+
+    }
+
     public synchronized void stopConnection() {
         if(!socket.isClosed()) {
             try {

@@ -27,6 +27,16 @@ public class ViewForClient extends Observable implements Observer {
     private String nickname;
     private WindowPattern windowPattern;
 
+    public String getNickname() {
+        out.println("Choose your nickname:");
+        return scanner.nextLine();
+    }
+
+    public String askRmiOrSocket() {
+        out.println("Rmi or socket?");
+        return scanner.nextLine();
+    }
+
     public static ViewForClient createViewForClient() {
         if (viewForClient==null) {
             viewForClient = new ViewForClient();

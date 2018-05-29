@@ -1,4 +1,4 @@
-package it.polimi.se2018.network.rmi;
+package it.polimi.se2018.network.rmi.server;
 
 import it.polimi.se2018.events.*;
 import it.polimi.se2018.network.socket.client.ClientInterface;
@@ -8,7 +8,12 @@ import it.polimi.se2018.utils.Observable;
 import java.rmi.Remote;
 
 
-public class RemoteServer extends Observable implements ServerInterface, Remote {
+public class RemoteServer extends Observable implements ServerInterface {
+
+    public RemoteServer() {
+        super();
+    }
+
 
     public void send(Message message){
         this.notifyObservers(message);

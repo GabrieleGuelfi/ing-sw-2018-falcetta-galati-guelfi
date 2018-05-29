@@ -1,4 +1,4 @@
-package it.polimi.se2018.network.rmi;
+package it.polimi.se2018.network.rmi.server;
 
 import it.polimi.se2018.events.*;
 import it.polimi.se2018.network.socket.server.SagradaServer;
@@ -18,11 +18,11 @@ public class HandleRemoteServer implements Observer {
     public HandleRemoteServer(SagradaServer server){
         this.sagradaServer = server;
         try{
-            LocateRegistry.createRegistry(5555);
+            LocateRegistry.createRegistry(0);
             RemoteServer remoteServer = new RemoteServer();
             remoteServer.register(this);
-            UnicastRemoteObject.exportObject(remoteServer, 5555);
-            Naming.rebind("//SagradaServer/RemoteServer", remoteServer);
+            UnicastRemoteObject.exportObject(remoteServer, 0);
+            Naming.rebind("//localhost/RemoteServer", remoteServer);
         }
         catch(RemoteException | MalformedURLException e){
             e.printStackTrace();
