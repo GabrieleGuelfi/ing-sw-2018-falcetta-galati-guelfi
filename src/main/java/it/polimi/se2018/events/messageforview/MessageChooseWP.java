@@ -1,7 +1,6 @@
-package it.polimi.se2018.events;
+package it.polimi.se2018.events.messageforview;
 
-import it.polimi.se2018.controller.VisitorController;
-import it.polimi.se2018.utils.SagradaVisitor;
+import it.polimi.se2018.events.Message;
 import it.polimi.se2018.view.VisitorView;
 
 public class MessageChooseWP extends Message {
@@ -25,10 +24,6 @@ public class MessageChooseWP extends Message {
 
     @Override
     public void accept(VisitorView v){
-        v.visit(this);
-    }
-
-    public void accept(VisitorController v) {
         v.visit(this);
     }
 

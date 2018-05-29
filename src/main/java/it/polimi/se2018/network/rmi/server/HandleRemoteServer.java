@@ -1,6 +1,6 @@
 package it.polimi.se2018.network.rmi.server;
 
-import it.polimi.se2018.events.*;
+import it.polimi.se2018.events.messageforview.Message;
 import it.polimi.se2018.network.socket.server.SagradaServer;
 import it.polimi.se2018.network.socket.server.VisitorServer;
 import it.polimi.se2018.utils.Observer;

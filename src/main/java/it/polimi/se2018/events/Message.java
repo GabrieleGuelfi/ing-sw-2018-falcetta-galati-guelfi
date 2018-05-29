@@ -1,17 +1,11 @@
 package it.polimi.se2018.events;
 
-import it.polimi.se2018.network.socket.server.SagradaServer;
-import it.polimi.se2018.network.socket.server.VirtualClient;
-import it.polimi.se2018.utils.SagradaVisitor;
+import it.polimi.se2018.controller.VisitorController;
 import it.polimi.se2018.view.VisitorView;
 
 import java.io.Serializable;
 
-/**
- * @author Federico Galati
- *
- */
-public class Message implements Serializable  {
+public class Message implements Serializable{
 
     protected String nickname;
 
@@ -21,6 +15,10 @@ public class Message implements Serializable  {
 
     public Message() {
         this.nickname = "everybody";
+    }
+
+    public void accept(VisitorController v){
+        v.visit(this);
     }
 
     public void accept(VisitorView v){

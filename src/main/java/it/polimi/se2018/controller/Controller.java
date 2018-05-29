@@ -2,7 +2,9 @@ package it.polimi.se2018.controller;
 
 
 import it.polimi.se2018.controller.tool.Tool;
-import it.polimi.se2018.events.*;
+import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.messageforcontroller.*;
+import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.*;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
@@ -58,7 +60,7 @@ public class Controller implements VisitorController, Observer {
 
         for(String player: nickname) {
             List<Integer> patterns = HandleJSON.chooseWP(player);
-            view.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
+            view.send(new MessageSetWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
         }
 
         for(Player p: players) {
@@ -301,9 +303,14 @@ public class Controller implements VisitorController, Observer {
     public void update(Message message) {
         message.accept(this);
     }
-    
+
     @Override
-    public void visit(MessageChooseWP message) {
+    public void visit(Message message) {
+
+    }
+
+    @Override
+    public void visit(MessageSetWP message) {
 
         Player player = null;
         for (Player p: match.getPlayers()) {

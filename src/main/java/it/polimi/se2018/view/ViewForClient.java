@@ -1,6 +1,6 @@
 package it.polimi.se2018.view;
 
-import it.polimi.se2018.events.*;
+import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.utils.HandleJSON;

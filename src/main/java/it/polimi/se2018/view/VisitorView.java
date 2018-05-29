@@ -1,6 +1,7 @@
 package it.polimi.se2018.view;
 
-import it.polimi.se2018.events.*;
+import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.messageforview.*;
 
 public interface VisitorView {
 

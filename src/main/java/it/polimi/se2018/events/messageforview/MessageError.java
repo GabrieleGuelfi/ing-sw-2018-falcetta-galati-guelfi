@@ -1,7 +1,7 @@
-package it.polimi.se2018.events;
+package it.polimi.se2018.events.messageforview;
 
 
-import it.polimi.se2018.utils.SagradaVisitor;
+import it.polimi.se2018.events.Message;
 import it.polimi.se2018.view.VisitorView;
 
 public class MessageError extends Message {

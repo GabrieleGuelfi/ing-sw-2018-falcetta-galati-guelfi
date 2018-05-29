@@ -1,10 +1,8 @@
 package it.polimi.se2018.utils;
 
-import it.polimi.se2018.events.MessageChooseWP;
 import it.polimi.se2018.model.Box;
 import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.WindowPattern;
-import it.polimi.se2018.view.VirtualView;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
