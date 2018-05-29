@@ -233,16 +233,15 @@ public class TestMatch {
         Match match = new Match(bag, players, objectives, tools, null);
 
         for(int i=0; i<9; i++) {
-            match.nextNumRound();
+            match.setRound();
         }
 
         try {
-            match.nextNumRound();
+            match.setRound();
         }
         catch(IllegalStateException e) {
             return;
         }
-
         fail();
     }
 

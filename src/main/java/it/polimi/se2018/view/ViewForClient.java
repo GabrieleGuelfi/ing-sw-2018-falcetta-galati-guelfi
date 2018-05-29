@@ -1,7 +1,8 @@
 package it.polimi.se2018.view;
 
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.messageforserver.MessageError;
+import it.polimi.se2018.events.messageforcontroller.MessageMoveDie;
+import it.polimi.se2018.events.messageforcontroller.MessageSetWP;
 import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.dicecollection.DraftPool;
@@ -27,14 +28,9 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
     private String nickname;
     private WindowPattern windowPattern;
 
-    public String getNickname() {
-        out.println("Choose your nickname:");
-        return scanner.nextLine();
-    }
-
-    public String askRmiOrSocket() {
-        out.println("Rmi or socket?");
-        return scanner.nextLine();
+    private ViewForClient() {
+        scanner = new Scanner(System.in);
+        out.println("Welcome in Sagrada!");
     }
 
     public static ViewForClient createViewForClient() {
@@ -47,9 +43,14 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
         }
     }
 
-    private ViewForClient() {
-        scanner = new Scanner(System.in);
-        out.println("Welcome in Sagrada!");
+    public String getNicknameForRmi() {
+        out.println("Choose your nickname:");
+        return scanner.nextLine();
+    }
+
+    public String askRmiOrSocket() {
+        out.println("Rmi or socket?");
+        return scanner.nextLine();
     }
 
     public void askNickname() {
@@ -101,9 +102,9 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
         }
 
         if (choice<3) {
-            notifyObservers(new MessageChooseWP(nickname, firstCard, choice-1));
+            notifyObservers(new MessageSetWP(nickname, firstCard, choice-1));
         } else {
-            notifyObservers(new MessageChooseWP(nickname, secondCard, (choice-1)%2));
+            notifyObservers(new MessageSetWP(nickname, secondCard, (choice-1)%2));
         }
     }
 
@@ -118,29 +119,24 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
         }
     }
 
-    private void printWindowPattern(WindowPattern wp) {
-        out.println(wp.getName() + "\nDifficulty: " + wp.getDifficulty());
-        for (int i=0; i<MAX_ROW; i++) {
-            out.println();
-            for (int j=0; j<MAX_COL; j++) {
-                if (wp.getBox(i, j).hasAValueRestriction()) {
-                    out.print("[" + wp.getBox(i, j).getValueRestriction() + "] ");
-                }
-                else {
-                    out.print("[" + Colour.getFirstLetter(wp.getBox(i, j).getColourRestriction()) + "] ");
-                }
-            }
-        }
-        out.println();
-        out.println();
-    }
-
     private void manageTurn(String playerTurn, boolean hasUsedDie, boolean hasUsedTool) {
         if(playerTurn.equals(this.nickname)) {
             askMove(hasUsedDie, hasUsedTool);
         } else {
             out.println("\n" + playerTurn + " is now playing...");
         }
+    }
+
+    private void handleErrorMove(String reason, boolean hasMovedDie, boolean hasUsedTool) {
+        out.println("Your move has been rejected for this reason: " + reason);
+        out.println("Try again...");
+        askMove(hasMovedDie, hasUsedTool);
+    }
+
+    private void handleSuccessMove(boolean hasMovedDie, boolean hasUsedTool) {
+        out.println("Success! Your move has been accomplished.");
+        if (hasMovedDie&&hasUsedTool) out.println("Your turn is over.");
+        else askMove(hasMovedDie, hasUsedTool);
     }
 
     private void askMove(boolean hasMovedDie, boolean hasUsedTool) {
@@ -164,6 +160,14 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
 
     private void moveDie() {
         out.println("Please, select the die you want to move from the draftpool");
+        int dieToMove = scanner.nextInt();
+        out.println("Where do you want to place it?");
+        out.print("Row: ");
+        int row = scanner.nextInt();
+        out.print("Column: ");
+        int column = scanner.nextInt();
+        notifyObservers(new MessageMoveDie(this.nickname, dieToMove, row, column));
+
     }
 
     private void useTool() {
@@ -171,8 +175,31 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
 
     }
 
+    private void printWindowPattern(WindowPattern wp) {
+        out.println(wp.getName() + "\nDifficulty: " + wp.getDifficulty());
+        out.print("   1   2   3   4   5");
+        for (int i=0; i<MAX_ROW; i++) {
+            out.println();
+            out.print(i+1 +" ");
+            for (int j=0; j<MAX_COL; j++) {
+                if (wp.getBox(i, j).hasAValueRestriction()) {
+                    out.print("[" + wp.getBox(i, j).getValueRestriction() + "] ");
+                }
+                else {
+                    out.print("[" + Colour.getFirstLetter(wp.getBox(i, j).getColourRestriction()) + "] ");
+                }
+            }
+        }
+        out.println();
+        out.println();
+    }
+
     private void printDraftPool(DraftPool dp) {
         out.println("Draftpool is now: ");
+        for(Die d: dp.getBag()) {
+            out.print(" " + (dp.getBag().indexOf(d)+1) + "   ");
+        }
+        out.println();
         for(Die d: dp.getBag()) {
             out.print("[" + Colour.getFirstLetter(d.getColour()) + d.getValue() + "] ");
         }
@@ -222,12 +249,22 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageTurnChanged message) {
-        manageTurn(message.getPlayerTurn(), message.hasPlacedDie(), message.hasUsedTool());
+        manageTurn(message.getPlayerTurn(), false, false);
     }
 
     @Override
     public void visit(MessageDPChanged message) {
         printDraftPool(message.getDraftPool());
+    }
+
+    @Override
+    public void visit(MessageConfirmMove message) {
+        handleSuccessMove(message.hasPlacedDie(), message.hasUsedTool());
+    }
+
+    @Override
+    public void visit(MessageErrorMove message) {
+        handleErrorMove(message.getReason(), message.hasPlacedDie(), message.hasUsedTool());
     }
 
 }

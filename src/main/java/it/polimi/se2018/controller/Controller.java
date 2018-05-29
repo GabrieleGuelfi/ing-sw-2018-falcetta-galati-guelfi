@@ -60,7 +60,7 @@ public class Controller implements VisitorController, Observer {
 
         for(String player: nickname) {
             List<Integer> patterns = HandleJSON.chooseWP(player);
-            view.send(new MessageSetWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
+            view.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
         }
 
         for(Player p: players) {
@@ -71,7 +71,8 @@ public class Controller implements VisitorController, Observer {
 
         Player firstPlayer = match.getRound().getPlayerTurn();
         this.match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool().copy()));
-        this.match.notifyObservers(new MessageTurnChanged(firstPlayer.getNickname(), firstPlayer.isPlacedDie(), firstPlayer.isUsedTool()));
+        this.match.notifyObservers(new MessageTurnChanged(firstPlayer.getNickname()));
+
 
 
         // TOOLS PART!
@@ -95,58 +96,21 @@ public class Controller implements VisitorController, Observer {
         }
     }
 
-
-
-    /*
-    private void manageMoveDie(MoveDie m) {
-        if (m.getPlayer().isPlacedDie()) { //maybe we can place this in manageRound
-            //notify(view, "die already placed");
-            return;
-        }
-        if (m.getRow() < 1 || m.getRow() > 4 || m.getColumn() < 1 || m.getColumn() > 5) {
-            //error input not valid
-            return;
-        }
-        if (isNearDie(m) && verifyColor(m) && verifyNumber(m)){
-            m.getPlayer().getWindowPattern().putDice(m.getDie(), m.getRow(), m.getColumn());
-            //notify(view, "die placed");
-            return;
-        }
-        //3 if for search the restrictions violated and notify all to users
-        if (!isNearDie(m)) {
-            //error
-        }
-        if (!verifyColor(m)) {
-            //error
-        }
-        if (!verifyNumber(m)) {
-            //error
-        }
-        return;
-    }
-    */
-
-
     /**
      * Verify if there is another Die near the position chosen by user
      * @param m move performed by user
-     * @return false if there is another die near
+     * @return true if there is another die near
      */
-    /*
-    private boolean isNearDie(MoveDie m) {
+    private boolean isNearDie(WindowPattern w, int row, int column) {
 
-        WindowPattern windowPattern = m.getPlayer().getWindowPattern();
-        int row = m.getRow();
-        int column = m.getColumn();
-
-        if (windowPattern.getEmptyBox() == 20) {
-            return (row == 1 || row == WindowPattern.MAX_ROW || column == 1 || column == WindowPattern.MAX_COL);
+        if (w.getEmptyBox() == 20) {
+            return (row == 0 || row == WindowPattern.MAX_ROW-1 || column == 0 || column == WindowPattern.MAX_COL);
         }
-        for(int i = row-2; i < row+1; i++ ) {
-            for(int j = column-2; j < column+1; j++) {
-                if (i != row-1 || j != column-1) {
+        for(int i=row-1; i<row+2; i++ ) {
+            for(int j=column-1; j<column+2; j++) {
+                if (i!=row || j!=column) {
                     try {
-                        if (windowPattern.getBox(i, j).getDie() != null)
+                        if (w.getBox(i, j).getDie() != null)
                             return true;
                     } catch (IllegalArgumentException e) {
                     }
@@ -154,74 +118,71 @@ public class Controller implements VisitorController, Observer {
             }
         }
         return false;
+
     }
-    */
 
     /**
      * verify if there is another Die with the same colour near, or if there is colourRestriction in the Box
-     * @param m move performed by user
+     * @param m
      * @return false if Die break colour restriction
      */
-    /*
-    private boolean verifyColor(MoveDie m) {
+    private boolean verifyColor(WindowPattern w, int row, int column, Die die) {
 
-        WindowPattern windowPattern = m.getPlayer().getWindowPattern();
         try {
-            if (windowPattern.getBox(m.getRow(), m.getColumn()).getColourRestriction() != m.getDie().getColour() && windowPattern.getBox(m.getRow(), m.getColumn()).getColourRestriction() != Colour.WHITE)
+            if (w.getBox(row, column).getColourRestriction() != die.getColour() && w.getBox(row, column).getColourRestriction() != Colour.WHITE)
                 return false;
         } catch (IllegalArgumentException | NullPointerException e){}
         try {
-            if (windowPattern.getBox(m.getRow() - 2, m.getColumn() - 1).getDie().getColour() == m.getDie().getColour())
+            if (w.getBox(row - 1, column).getDie().getColour() == die.getColour())
                 return false;
         } catch (IllegalArgumentException | NullPointerException e) {}
         try {
-            if (windowPattern.getBox(m.getRow() - 1, m.getColumn() - 2).getDie().getColour() == m.getDie().getColour())
+            if (w.getBox(row, column - 1).getDie().getColour() == die.getColour())
                 return false;
         } catch (IllegalArgumentException | NullPointerException e) {}
         try {
-            if (windowPattern.getBox(m.getRow() - 1, m.getColumn()).getDie().getColour() == m.getDie().getColour())
+            if (w.getBox(row, column + 1).getDie().getColour() == die.getColour())
                 return false;
         } catch (IllegalArgumentException | NullPointerException e) {}
         try {
-            if (windowPattern.getBox(m.getRow(), m.getColumn() - 1).getDie().getColour() == m.getDie().getColour())
+            if (w.getBox(row + 1, column).getDie().getColour() == die.getColour())
                 return false;
         } catch (IllegalArgumentException | NullPointerException e) {}
         return true;
     }
-    */
 
     /**
      * verify if there is another Die with the same number near, or if there is numberRestriction in the Box
-     * @param m move performed by user
+     * @param w
+     * @param row
+     * @param column
+     * @param die
      * @return false if Die break number restriction
      */
-    /*
-    private boolean verifyNumber( MoveDie m) {
+    private boolean verifyNumber(WindowPattern w, int row, int column, Die die) {
 
-        WindowPattern windowPattern = m.getPlayer().getWindowPattern();
         try {
-            if (windowPattern.getBox(m.getRow(), m.getColumn()).getValueRestriction() != m.getDie().getValue() && windowPattern.getBox(m.getRow(), m.getColumn()).getValueRestriction() != -1) //-1 equals to no restriction
+            if (w.getBox(row, column).getValueRestriction() != die.getValue() && w.getBox(row, column).getValueRestriction() != -1) //-1 equals to no restriction
                 return false;
         } catch (IllegalArgumentException | NullPointerException e) {}
         try {
-            if (windowPattern.getBox(m.getRow() - 2, m.getColumn() - 1).getDie().getValue() == m.getDie().getValue()) //if null?
+            if (w.getBox(row - 1, column).getDie().getValue() == die.getValue())
                 return false;
         } catch (IllegalArgumentException | NullPointerException e) {}
         try {
-            if (windowPattern.getBox(m.getRow() - 1, m.getColumn() - 2).getDie().getValue() == m.getDie().getValue())
+            if (w.getBox(row, column - 1).getDie().getValue() == die.getValue())
                 return false;
         } catch (IllegalArgumentException | NullPointerException e) {}
         try {
-            if (windowPattern.getBox(m.getRow() - 1, m.getColumn()).getDie().getValue() == m.getDie().getValue())
+            if (w.getBox(row, column + 1).getDie().getValue() == die.getValue())
                 return false;
         } catch (IllegalArgumentException | NullPointerException e) {}
         try {
-            if (windowPattern.getBox(m.getRow(), m.getColumn() - 1).getDie().getValue() == m.getDie().getValue())
+            if (w.getBox(row + 1, column).getDie().getValue() == die.getValue())
                 return false;
         } catch (IllegalArgumentException | NullPointerException e) {}
         return true;
     }
-    */
 
     /**
      * calculate the score of a player, based on his private objective and the three public ones
@@ -249,64 +210,9 @@ public class Controller implements VisitorController, Observer {
 
     }
 
-    /*
-    public void update(Message message) {
-        System.out.println(message.getString());
-        // Here the controller should take the news from the view and handle them.
-    }
-    */
-
-    /*
-    public void update(MessageDie message) {
-        System.out.println("UPDATE PER MESSAGEDIE");
-    }
-    */
-
-    /* @Override
-    public void update(MoveDie m) {
-
-        if (m.getPlayer() != match.getRound().getPlayerTurn()) {
-            //notifyObservers(new Message(TypeMessage.ERROR_TURN, ((MoveDie) o).getPlayer()));
-            return;
-        }
-        if (m.getPlayer().isPlacedDie()) {
-            //notifyObservers(new Message(TypeMessage.ERROR_DIE, ((MoveDie) o).getPlayer()));
-            return;
-        }
-        manageMoveDie(m);
-        m.getPlayer().setPlacedDie(true);
-        if (m.getPlayer().isPlacedDie() && m.getPlayer().isUsedTool()) {
-            m.getPlayer().setPlacedDie(false);
-            m.getPlayer().setUsedTool(false);
-            match.getRound().nextTurn(match.getPlayers());
-            //notifyObservers(new Message(TypeMessage.NEW_TURN, match.getRound().getPlayerTurn()));
-        }
-        else {
-            //notifyObservers(new Message(TypeMessage.CHOOSE_MOVE, match.getRound().getPlayerTurn()));
-        }
-
-        if (match.getRound().getNumTurn() == 2*match.getActivePlayers().size()) {
-            try {
-                match.setRound();
-                //notifyObservers(new Message(TypeMessage.NEW_ROUND, match.getRound().getPlayerTurn()));
-            } catch (IllegalStateException e) {
-                for(Player player: match.getActivePlayers()) {
-                    calcResults(player, match.getPublicObjectives());
-                }
-                //notifyObservers(new Message(TypeMessage.END_MATCH, null));
-            }
-        }
-    }
-    */
-
     @Override
     public void update(Message message) {
         message.accept(this);
-    }
-
-    @Override
-    public void visit(Message message) {
-
     }
 
     @Override
@@ -324,6 +230,57 @@ public class Controller implements VisitorController, Observer {
         else {
             out.println("nickname non valido");
         }
+    }
+
+    @Override
+    public void visit(MessageMoveDie message) {
+
+        Die d = match.getRound().getDraftPool().getBag().get(message.getDieFromDraftPool());
+        Player player = null;
+
+        for (Player p : match.getPlayers()) {
+            if (p.getNickname().equals(message.getNickname()))
+                player = p;
+        }
+        if (player==null) {
+            out.println("player doesn't exist");
+            return;
+        }
+        if (player.isPlacedDie()) {
+            virtualView.send(new MessageErrorMove(player.getNickname(), "Die already placed in this turn", player.isPlacedDie(), player.isUsedTool()));
+            return;
+        }
+        if (isNearDie(player.getWindowPattern(), message.getRow(), message.getColumn())) {
+            virtualView.send(new MessageErrorMove(player.getNickname(), "No dice near the position", player.isPlacedDie(), player.isUsedTool()));
+            return;
+        }
+        if (!verifyNumber(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
+            virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Value Restriction!", player.isPlacedDie(), player.isUsedTool()));
+            return;
+        }
+        if (!verifyColor(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
+            virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Colour Restriction!", player.isPlacedDie(), player.isUsedTool()));
+            return;
+        }
+        if (player.isUsedTool() && player.isPlacedDie()) {
+            try {
+                match.getRound().nextTurn(match.getPlayers());
+                virtualView.send(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
+                return;
+            }
+            catch (IllegalStateException e) {
+                try {
+                    match.setRound();
+                    return;
+                }
+                catch (IllegalStateException e1) {
+                    //endMatch();
+                    return;
+                }
+            }
+        }
+        virtualView.send(new MessageConfirmMove(player.getNickname(), player.isPlacedDie(), player.isUsedTool()));
+
     }
 
 }
