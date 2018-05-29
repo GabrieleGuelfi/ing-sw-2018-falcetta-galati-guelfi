@@ -1,6 +1,6 @@
 package it.polimi.se2018.network.socket.client;
 
-import it.polimi.se2018.events.messageforview.Message;
+import it.polimi.se2018.events.Message;
 import it.polimi.se2018.network.socket.server.ServerInterface;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
