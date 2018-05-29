@@ -23,6 +23,27 @@ public class VisitorServer implements SagradaVisitor{
     }
     public void visit(MessagePrivObj message){}
     public void visit(MessagePublicObj message){}
+
+    @Override
+    public void visit(MessageChooseWP message) {
+
+    }
+
+    @Override
+    public void visit(MessageWPChanged message) {
+
+    }
+
+    @Override
+    public void visit(MessageTurnChanged message) {
+
+    }
+
+    @Override
+    public void visit(MessageDPChanged message) {
+
+    }
+
     public void visit(MessageClientInterface message){
         boolean valueAccess = this.sagradaServer.getNicknames().verifyNickname(message.getNickname());
         if(valueAccess) this.sagradaServer.addClient(message.getClientInterface(), message.getNickname());

@@ -2,6 +2,7 @@ package it.polimi.se2018.view;
 
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.*;
+import it.polimi.se2018.network.socket.client.ClientInterface;
 import it.polimi.se2018.network.socket.server.*;
 import it.polimi.se2018.utils.*;
 
@@ -20,6 +21,11 @@ public class VirtualView extends Observable implements Observer, ServerInterface
 
     public void send(Message message){
         this.sagradaServer.searchVirtualClient(message.getNickname()).notify(message);
+    }
+
+    @Override
+    public void addClient(ClientInterface clientInterface, String nickname) {
+
     }
 
 }

@@ -2,7 +2,7 @@ package it.polimi.se2018.network.socket.server;
 
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.network.rmi.HandleRemoteServer;
+import it.polimi.se2018.network.rmi.server.HandleRemoteServer;
 import it.polimi.se2018.network.socket.client.ClientInterface;
 import it.polimi.se2018.view.VirtualView;
 import static java.lang.System.*;
