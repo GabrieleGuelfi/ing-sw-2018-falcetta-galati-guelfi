@@ -1,7 +1,7 @@
 package it.polimi.se2018.network.socket.server;
 
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.messageforview.MessageErrorVirtualClientClosed;
+import it.polimi.se2018.events.messageforserver.MessageErrorVirtualClientClosed;
 import it.polimi.se2018.network.socket.client.ClientInterface;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.view.VirtualView;

@@ -8,7 +8,7 @@ import it.polimi.se2018.utils.Observer;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public class ClientImplementation extends Observable implements ClientInterface, Observer, Remote {
+public class ClientImplementation extends Observable implements ClientInterface, Observer {
 
     private ServerInterface server;
 

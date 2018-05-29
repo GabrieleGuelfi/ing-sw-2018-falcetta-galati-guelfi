@@ -1,16 +1,12 @@
-package it.polimi.se2018.network.rmi.server;
+package it.polimi.se2018.network.socket.server;
 
 import it.polimi.se2018.events.messageforview.Message;
-import it.polimi.se2018.network.socket.server.SagradaServer;
-import it.polimi.se2018.network.socket.server.ServerInterface;
-import it.polimi.se2018.network.socket.server.VisitorServer;
 import it.polimi.se2018.utils.Observer;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 public class HandleRemoteServer implements Observer {

@@ -1,4 +1,4 @@
-package it.polimi.se2018.network.rmi.server;
+package it.polimi.se2018.network.socket.server;
 
 import it.polimi.se2018.events.messageforview.Message;
 import it.polimi.se2018.events.messageforview.MessageClientInterface;

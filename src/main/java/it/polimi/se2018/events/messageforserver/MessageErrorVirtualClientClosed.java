@@ -1,7 +1,7 @@
-package it.polimi.se2018.events.messageforview;
+package it.polimi.se2018.events.messageforserver;
 
+import it.polimi.se2018.events.messageforview.MessageError;
 import it.polimi.se2018.network.socket.client.ClientInterface;
-import it.polimi.se2018.network.socket.server.VisitorServer;
 
 public class MessageErrorVirtualClientClosed extends MessageError {
     private ClientInterface clientInterface;
