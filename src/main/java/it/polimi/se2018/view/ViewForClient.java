@@ -1,6 +1,7 @@
 package it.polimi.se2018.view;
 
 import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.messageforcontroller.MessageSetWP;
 import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.dicecollection.DraftPool;
@@ -100,9 +101,9 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
         }
 
         if (choice<3) {
-            notifyObservers(new MessageChooseWP(nickname, firstCard, choice-1));
+            notifyObservers(new MessageSetWP(nickname, firstCard, choice-1));
         } else {
-            notifyObservers(new MessageChooseWP(nickname, secondCard, (choice-1)%2));
+            notifyObservers(new MessageSetWP(nickname, secondCard, (choice-1)%2));
         }
     }
 
@@ -163,6 +164,9 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
 
     private void moveDie() {
         out.println("Please, select the die you want to move from the draftpool");
+        int dieToMove = scanner.nextInt();
+        out.println("Where do you want to place it?");
+
     }
 
     private void useTool() {
@@ -221,7 +225,7 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageTurnChanged message) {
-        manageTurn(message.getPlayerTurn(), message.hasPlacedDie(), message.hasUsedTool());
+        manageTurn(message.getPlayerTurn(), false, false);
     }
 
     @Override

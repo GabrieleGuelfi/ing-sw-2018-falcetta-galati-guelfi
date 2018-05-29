@@ -60,7 +60,7 @@ public class Controller implements VisitorController, Observer {
 
         for(String player: nickname) {
             List<Integer> patterns = HandleJSON.chooseWP(player);
-            view.send(new MessageSetWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
+            view.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
         }
 
         for(Player p: players) {
@@ -71,7 +71,8 @@ public class Controller implements VisitorController, Observer {
 
         Player firstPlayer = match.getRound().getPlayerTurn();
         this.match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool().copy()));
-        this.match.notifyObservers(new MessageTurnChanged(firstPlayer.getNickname(), firstPlayer.isPlacedDie(), firstPlayer.isUsedTool()));
+        this.match.notifyObservers(new MessageTurnChanged(firstPlayer.getNickname());
+
 
 
         // TOOLS PART!
