@@ -4,9 +4,9 @@ import it.polimi.se2018.events.Message;
 
 public class MessageErrorMove extends Message {
 
-    String reason;
-    boolean hasUsedTool;
-    boolean hasPlacedDie;
+    private  String reason;
+    private  boolean hasUsedTool;
+    private  boolean hasPlacedDie;
 
     public MessageErrorMove(String nickname, String reason, boolean hasPlacedDie, boolean hasUsedTool) {
         super(nickname);

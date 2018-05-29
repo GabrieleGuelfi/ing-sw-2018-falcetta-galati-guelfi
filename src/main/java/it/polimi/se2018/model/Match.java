@@ -85,7 +85,7 @@ public class Match extends Observable {
         return round;
     }
 
-    public void nextNumRound() {
+    private void nextNumRound() {
         if (this.numRound == 10) throw new IllegalStateException("Maximum number of turns reached!");
         this.numRound++;
     }
@@ -96,7 +96,7 @@ public class Match extends Observable {
      */
     public void setRound() {
         nextNumRound();
-        if (players.indexOf(firstPlayerRound) == players.size())
+        if (players.indexOf(firstPlayerRound) == players.size()-1)
             firstPlayerRound = players.get(0);
         else
             firstPlayerRound = players.get(players.indexOf(firstPlayerRound)+1);

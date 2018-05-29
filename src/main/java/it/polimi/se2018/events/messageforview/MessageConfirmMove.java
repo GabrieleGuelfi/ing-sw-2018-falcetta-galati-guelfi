@@ -5,10 +5,10 @@ import it.polimi.se2018.view.VisitorView;
 
 public class MessageConfirmMove extends Message {
 
-    boolean hasPlacedDie;
-    boolean hasUsedTool;
+    private boolean hasPlacedDie;
+    private boolean hasUsedTool;
 
-    public MessageConfirmMove(String nickname, boolean hasPlacedDie ,boolean hasUsedTool) {
+    public MessageConfirmMove(String nickname, boolean hasPlacedDie, boolean hasUsedTool) {
         super(nickname);
         this.hasPlacedDie = hasPlacedDie;
         this.hasUsedTool = hasUsedTool;
