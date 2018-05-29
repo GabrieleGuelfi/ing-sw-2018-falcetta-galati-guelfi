@@ -26,11 +26,6 @@ public final class HandleJSON {
         throw new IllegalStateException("utility class");
     }
 
-    /**
-     * create a window pattern from a json Object
-     * @param grid is the grid from json file
-     * @param w1 is the window pattern to be created
-     */
     public static WindowPattern createWindowPattern (String nickname, int firstIndex, int secondIndex) {
 
         if (nickname!=null && !windowPattern.containsKey(nickname)) {
@@ -86,7 +81,7 @@ public final class HandleJSON {
         return null;
     }
 
-    public static void chooseWP(String nickname, VirtualView view) {
+    public static List<Integer> chooseWP(String nickname) {
 
         Integer index;
         Random generator = new Random();
@@ -100,6 +95,6 @@ public final class HandleJSON {
             choice.add(index);
         }
         windowPattern.put(nickname, choice);
-        view.send(new MessageChooseWP(nickname, rand.get(rand.size()-2), rand.get(rand.size()-1)));
+        return rand;
     }
 }
