@@ -1,9 +1,5 @@
 package it.polimi.se2018.events;
 
-import it.polimi.se2018.network.socket.server.SagradaServer;
-import it.polimi.se2018.network.socket.server.VirtualClient;
-import it.polimi.se2018.utils.SagradaVisitor;
-
 import java.io.Serializable;
 
 /**

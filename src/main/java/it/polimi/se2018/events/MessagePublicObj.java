@@ -1,8 +1,5 @@
 package it.polimi.se2018.events;
 
-import it.polimi.se2018.utils.SagradaVisitor;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class MessagePublicObj extends Message {

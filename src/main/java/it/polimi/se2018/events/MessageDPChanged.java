@@ -1,7 +1,6 @@
 package it.polimi.se2018.events;
 
 import it.polimi.se2018.model.dicecollection.DraftPool;
-import it.polimi.se2018.utils.SagradaVisitor;
 
 public class MessageDPChanged extends Message {
 
