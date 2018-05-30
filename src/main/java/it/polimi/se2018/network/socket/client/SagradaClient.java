@@ -25,7 +25,6 @@ public class SagradaClient {
         viewForClient.register(client);
         client.register(viewForClient);
 
-        out.println("Rmi or Socket?");
         String choice = viewForClient.askRmiOrSocket();
         if(choice.equals("Rmi")) {
             String nicknameForRmi = viewForClient.getNicknameForRmi();

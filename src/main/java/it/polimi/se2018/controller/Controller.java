@@ -262,8 +262,14 @@ public class Controller implements VisitorController, Observer {
             virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Colour Restriction!", player.isPlacedDie(), player.isUsedTool()));
             return;
         }
+        player.getWindowPattern().putDice(d, message.getRow(), message.getColumn());
+        player.setPlacedDie(true);
         if (player.isUsedTool() && player.isPlacedDie()) {
+            player.setPlacedDie(false);
+            player.setUsedTool(false);
             try {
+                player.setPlacedDie(false);
+                player.setUsedTool(false);
                 match.getRound().nextTurn(match.getPlayers());
                 virtualView.send(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
                 return;
@@ -286,6 +292,30 @@ public class Controller implements VisitorController, Observer {
     @Override
     public void visit(MessageDoNothing message) {
 
+        Player player = null;
+
+        for (Player p : match.getPlayers()) {
+            if (p.getNickname().equals(message.getNickname()))
+                player = p;
+        }
+        if (player==null) {
+            out.println("player doesn't exist");
+            return;
+        }
+        player.setPlacedDie(false);
+        player.setUsedTool(false);
+        try {
+            match.getRound().nextTurn(match.getPlayers());
+            virtualView.send(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
+        }
+        catch (IllegalStateException e) {
+            try {
+                match.setRound();
+            }
+            catch (IllegalStateException e1) {
+                //endMatch();
+            }
+        }
     }
 
 }
