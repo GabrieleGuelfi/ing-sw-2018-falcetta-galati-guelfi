@@ -21,33 +21,35 @@ import java.util.Scanner;
 
 import static java.lang.System.*;
 
-public class ViewForClient extends Observable implements Observer, VisitorView {
+public class View extends Observable implements Observer, VisitorView {
 
     private static final int MAX_ROW = 4;
     private static final int MAX_COL = 5;
 
-    private static ViewForClient viewForClient;
+    private static View view;
     private Scanner scanner;
     private String nickname;
 
-    private ViewForClient() {
+    private View() {
         scanner = new Scanner(System.in);
         out.println("Welcome in Sagrada!");
     }
 
-    public static ViewForClient createViewForClient() {
-        if (viewForClient==null) {
-            viewForClient = new ViewForClient();
-            return viewForClient;
+    public static View createViewForClient() {
+        if (view ==null) {
+            view = new View();
+            return view;
         }
         else {
-            return viewForClient;
+            return view;
         }
     }
 
     public String getNicknameForRmi() {
         out.println("Choose your nickname:");
-        return scanner.nextLine();
+        String nick = scanner.nextLine();
+        nickname = nick;
+        return nick;
     }
 
     public String askRmiOrSocket() {
@@ -161,7 +163,6 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
     }
 
     private void moveDie() {
-        out.println("Please, select the die you want to move from the draftpool");
         int dieToMove = scanner.nextInt();
         out.println("Where do you want to place it?");
         out.print("Row: ");
