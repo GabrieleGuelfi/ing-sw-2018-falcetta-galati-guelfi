@@ -32,6 +32,7 @@ public class SagradaServer implements VisitorServer, Observer{
     private final int time;
     private ArrayList<String> nicknameDisconnected;
     private HandleClientGatherer handleClientGatherer;
+    private ArrayList<VerifyConnectionRmi> verifyConnectionRmi = new ArrayList<>();
 
     private ArrayList<CoupleClientNickname> clients = new ArrayList<>();
 
@@ -183,7 +184,12 @@ public class SagradaServer implements VisitorServer, Observer{
     public void broadcast(Message message) {
         //SEND A MESSAGE TO ALL CLIENT
         for (CoupleClientNickname c : this.clients) {
-            c.getVirtualClient().notify(message);
+            try {
+                c.getVirtualClient().notify(message);
+            }
+            catch (RemoteException e){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -246,12 +252,20 @@ public class SagradaServer implements VisitorServer, Observer{
     @Override
     public void visit(MessageAddClientInterface message){
         //VERIFY IF THE NICKNAME IS AVAILABLE
-        boolean value = this.verifyNickname(message.getNickname());
-        if(value) {
-            message.getClientInterface().notify(new MessageNickname(true));
-            this.addClient(message.getClientInterface(), message.getNickname());
+        //USED ONLY BY RMI
+        try {
+            boolean value = this.verifyNickname(message.getNickname());
+            if (value) {
+                message.getClientInterface().notify(new MessageNickname(true));
+                this.addClient(message.getClientInterface(), message.getNickname());
+                VerifyConnectionRmi v = new VerifyConnectionRmi(message.getClientInterface());
+                v.register(this);
+                (new Thread(v)).start();
+            } else message.getClientInterface().notify(new MessageNickname(false));
         }
-        else message.getClientInterface().notify(new MessageNickname(false));
+        catch (RemoteException e){
+            e.printStackTrace();
+        }
     }
 
     @Override

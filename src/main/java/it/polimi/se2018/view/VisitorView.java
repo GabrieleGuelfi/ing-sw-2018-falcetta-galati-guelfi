@@ -2,6 +2,7 @@ package it.polimi.se2018.view;
 
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.messageforserver.MessageError;
+import it.polimi.se2018.events.messageforserver.MessagePing;
 import it.polimi.se2018.events.messageforview.*;
 
 public interface VisitorView {
@@ -17,5 +18,6 @@ public interface VisitorView {
     void visit(MessageDPChanged message);
     void visit(MessageConfirmMove message);
     void visit(MessageErrorMove message);
+    void visit(MessagePing message);
 
 }

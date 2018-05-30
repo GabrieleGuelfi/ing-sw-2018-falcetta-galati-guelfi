@@ -5,6 +5,8 @@ import it.polimi.se2018.network.socket.client.ClientInterface;
 import it.polimi.se2018.network.socket.server.*;
 import it.polimi.se2018.utils.*;
 
+import java.rmi.RemoteException;
+
 public class VirtualView extends Observable implements Observer, ServerInterface{
 
     private SagradaServer sagradaServer;
@@ -19,7 +21,12 @@ public class VirtualView extends Observable implements Observer, ServerInterface
     }
 
     public void send(Message message){
-        this.sagradaServer.searchVirtualClient(message.getNickname()).notify(message);
+        try {
+            this.sagradaServer.searchVirtualClient(message.getNickname()).notify(message);
+        }
+        catch(RemoteException e){
+            e.printStackTrace();
+        }
     }
 
     @Override

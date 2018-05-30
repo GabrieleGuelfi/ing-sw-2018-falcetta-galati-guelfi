@@ -3,6 +3,8 @@ package it.polimi.se2018.view;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.messageforcontroller.MessageMoveDie;
 import it.polimi.se2018.events.messageforcontroller.MessageSetWP;
+import it.polimi.se2018.events.messageforserver.MessageError;
+import it.polimi.se2018.events.messageforserver.MessagePing;
 import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.dicecollection.DraftPool;
@@ -265,6 +267,11 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
     @Override
     public void visit(MessageErrorMove message) {
         handleErrorMove(message.getReason(), message.hasPlacedDie(), message.hasUsedTool());
+    }
+
+    @Override
+    public void visit(MessagePing message){
+        //THIS MESSAGE IS USED TO SERVER FOR VERIFY THE CONNECTION.
     }
 
 }

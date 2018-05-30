@@ -19,5 +19,6 @@ public class RemoteServer extends Observable implements ServerInterface {
 
     public void addClient(ClientInterface clientInterface, String nickaname) {
         this.notifyObservers(new MessageAddClientInterface(clientInterface, nickaname));
+
     }
 }

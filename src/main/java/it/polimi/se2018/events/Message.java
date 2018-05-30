@@ -19,7 +19,7 @@ public class Message implements Serializable{
     }
 
     public void accept(VisitorController v){
-        v.visit(this);
+       // v.visit(this);
     }
 
     public void accept(VisitorView v){

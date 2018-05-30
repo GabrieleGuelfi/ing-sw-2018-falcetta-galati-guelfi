@@ -56,7 +56,7 @@ public class VirtualClient extends Observable implements ClientInterface, Runnab
             ObjectOutputStream outputStream = new ObjectOutputStream(this.clientConnection.getOutputStream());
             outputStream.writeObject(message);
             outputStream.flush();
-            out.println("Message send to" + message.getNickname());
+            out.println("Message send to " + message.getNickname());
         }
         catch(IOException e){
 
