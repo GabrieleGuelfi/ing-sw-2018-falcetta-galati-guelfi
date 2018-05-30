@@ -45,11 +45,8 @@ public class SagradaClient {
         else {
             server = new NetworkHandler(HOST, PORT, client);
             client.addServer(server);
+            viewForClient.askNickname();
         }
-
-
-        viewForClient.askNickname();
-
 
     }
 }

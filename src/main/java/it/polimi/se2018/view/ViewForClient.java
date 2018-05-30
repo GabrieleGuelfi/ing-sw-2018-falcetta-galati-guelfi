@@ -1,6 +1,7 @@
 package it.polimi.se2018.view;
 
 import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.messageforcontroller.MessageDoNothing;
 import it.polimi.se2018.events.messageforcontroller.MessageMoveDie;
 import it.polimi.se2018.events.messageforcontroller.MessageSetWP;
 import it.polimi.se2018.events.messageforserver.MessageError;
@@ -28,7 +29,6 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
     private static ViewForClient viewForClient;
     private Scanner scanner;
     private String nickname;
-    private WindowPattern windowPattern;
 
     private ViewForClient() {
         scanner = new Scanner(System.in);
@@ -121,9 +121,9 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
         }
     }
 
-    private void manageTurn(String playerTurn, boolean hasUsedDie, boolean hasUsedTool) {
+    private void manageTurn(String playerTurn) {
         if(playerTurn.equals(this.nickname)) {
-            askMove(hasUsedDie, hasUsedTool);
+            askMove(false, false);
         } else {
             out.println("\n" + playerTurn + " is now playing...");
         }
@@ -156,7 +156,7 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
         int choice = scanner.nextInt();
         if (choice==1 && !hasMovedDie) moveDie();
         if ((choice==1 && hasMovedDie)||(choice==2 && !hasMovedDie && !hasUsedTool)) useTool();
-        if (choice==2 && (hasMovedDie ||hasUsedTool)); //notifyObservers(new MessageDoNothing());
+        if (choice==2 && (hasMovedDie ||hasUsedTool)) notifyObservers(new MessageDoNothing(this.nickname));
 
     }
 
@@ -168,7 +168,7 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
         int row = scanner.nextInt();
         out.print("Column: ");
         int column = scanner.nextInt();
-        notifyObservers(new MessageMoveDie(this.nickname, dieToMove, row, column));
+        notifyObservers(new MessageMoveDie(this.nickname, dieToMove-1, row-1, column-1));
 
     }
 
@@ -251,7 +251,7 @@ public class ViewForClient extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageTurnChanged message) {
-        manageTurn(message.getPlayerTurn(), false, false);
+        manageTurn(message.getPlayerTurn());
     }
 
     @Override

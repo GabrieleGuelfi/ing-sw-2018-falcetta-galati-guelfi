@@ -1,6 +1,7 @@
 package it.polimi.se2018.events.messageforview;
 
 import it.polimi.se2018.events.Message;
+import it.polimi.se2018.view.VisitorView;
 
 public class MessageErrorMove extends Message {
 
@@ -25,5 +26,10 @@ public class MessageErrorMove extends Message {
 
     public String getReason() {
         return reason;
+    }
+
+    @Override
+    public void accept(VisitorView v) {
+        v.visit(this);
     }
 }

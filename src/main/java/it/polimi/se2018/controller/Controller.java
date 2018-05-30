@@ -98,11 +98,10 @@ public class Controller implements VisitorController, Observer {
 
     /**
      * Verify if there is another Die near the position chosen by user
-     * @param m move performed by user
+     * performed by user
      * @return true if there is another die near
      */
     private boolean isNearDie(WindowPattern w, int row, int column) {
-
         if (w.getEmptyBox() == 20) {
             return (row == 0 || row == WindowPattern.MAX_ROW-1 || column == 0 || column == WindowPattern.MAX_COL);
         }
@@ -123,7 +122,7 @@ public class Controller implements VisitorController, Observer {
 
     /**
      * verify if there is another Die with the same colour near, or if there is colourRestriction in the Box
-     * @param m
+     * @param
      * @return false if Die break colour restriction
      */
     private boolean verifyColor(WindowPattern w, int row, int column, Die die) {
@@ -162,7 +161,8 @@ public class Controller implements VisitorController, Observer {
     private boolean verifyNumber(WindowPattern w, int row, int column, Die die) {
 
         try {
-            if (w.getBox(row, column).getValueRestriction() != die.getValue() && w.getBox(row, column).getValueRestriction() != -1) //-1 equals to no restriction
+            if (w.getBox(row, column).getValueRestriction() != die.getValue() && w.getBox(row, column).getValueRestriction() != 0) //-1 equals to no restriction
+
                 return false;
         } catch (IllegalArgumentException | NullPointerException e) {}
         try {
@@ -250,7 +250,7 @@ public class Controller implements VisitorController, Observer {
             virtualView.send(new MessageErrorMove(player.getNickname(), "Die already placed in this turn", player.isPlacedDie(), player.isUsedTool()));
             return;
         }
-        if (isNearDie(player.getWindowPattern(), message.getRow(), message.getColumn())) {
+        if (!isNearDie(player.getWindowPattern(), message.getRow(), message.getColumn())) {
             virtualView.send(new MessageErrorMove(player.getNickname(), "No dice near the position", player.isPlacedDie(), player.isUsedTool()));
             return;
         }
@@ -280,6 +280,11 @@ public class Controller implements VisitorController, Observer {
             }
         }
         virtualView.send(new MessageConfirmMove(player.getNickname(), player.isPlacedDie(), player.isUsedTool()));
+
+    }
+
+    @Override
+    public void visit(MessageDoNothing message) {
 
     }
 
