@@ -1,7 +1,7 @@
 package it.polimi.se2018.network.socket.client;
 
 import it.polimi.se2018.network.socket.server.ServerInterface;
-import it.polimi.se2018.view.ViewForClient;
+import it.polimi.se2018.view.View;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -18,16 +18,16 @@ public class SagradaClient {
 
     public static void main(String[] args) {
 
-        ViewForClient viewForClient = ViewForClient.createViewForClient();
+        View view = View.createView();
         ClientImplementation client = new ClientImplementation();
         ServerInterface server = null;
 
-        viewForClient.register(client);
-        client.register(viewForClient);
+        view.register(client);
+        client.register(view);
 
-        String choice = viewForClient.askRmiOrSocket();
+        String choice = view.askRmiOrSocket();
         if(choice.equals("Rmi")) {
-            String nicknameForRmi = viewForClient.getNicknameForRmi();
+            String nicknameForRmi = view.getNicknameForRmi();
             try {
                 server = (ServerInterface) Naming.lookup("//localhost/RemoteServer");
                 ClientInterface remoteRef =  (ClientInterface) UnicastRemoteObject.exportObject(client, 0);
@@ -44,7 +44,7 @@ public class SagradaClient {
         else {
             server = new NetworkHandler(HOST, PORT, client);
             client.addServer(server);
-            viewForClient.askNickname();
+            view.askNickname();
         }
 
     }

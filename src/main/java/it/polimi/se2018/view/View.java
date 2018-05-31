@@ -35,7 +35,7 @@ public class View extends Observable implements Observer, VisitorView {
         out.println("Welcome in Sagrada!");
     }
 
-    public static View createViewForClient() {
+    public static View createView() {
         if (view ==null) {
             view = new View();
             return view;
