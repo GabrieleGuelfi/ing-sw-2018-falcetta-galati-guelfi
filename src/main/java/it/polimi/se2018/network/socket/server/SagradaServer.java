@@ -221,7 +221,7 @@ public class SagradaServer implements VisitorServer, Observer{
                 out.println(c.getNickname());
             }
 
-            this.controller.startGame(allClients, this.virtualView);
+            this.controller.prepareGame(allClients, this.virtualView);
         }
     }
 

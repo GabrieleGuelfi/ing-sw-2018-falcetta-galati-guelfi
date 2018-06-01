@@ -38,6 +38,7 @@ public class View extends Observable implements Observer, VisitorView {
 
     private View() {
         scanner = new Scanner(System.in);
+        System.setProperty("jansi.passthrough", "true");
         AnsiConsole.systemInstall();
         out.println("Welcome in Sagrada!");
     }
@@ -150,7 +151,10 @@ public class View extends Observable implements Observer, VisitorView {
     private void handleRoundChanged(String nickname, int round) {
         out.println();
         out.println("_|-|_|-|_|-|_|-| ROUND " + round + " |-|_|-|_|-|_|-|_");
-        if (nickname.equals(this.nickname)) out.println("It's your turn!");
+        if (nickname.equals(this.nickname)) {
+            out.println("It's your turn!");
+            askMove(false, false);
+        }
         else out.println(nickname + " is currently playing...");
 
     }
@@ -224,7 +228,7 @@ public class View extends Observable implements Observer, VisitorView {
                         out.print( ansi().fg(YELLOW).a("[" + wp.getBox(i,j).getDie().getValue() + "] ").reset() );
                     }
                     if (colour.equals(Colour.PURPLE)) {
-                        out.print( ansi().fg(CYAN).a("[" + wp.getBox(i,j).getDie().getValue() + "] ").reset() );
+                        out.print( ansi().fg(MAGENTA).a("[" + wp.getBox(i,j).getDie().getValue() + "] ").reset() );
                     }
                 }
             }

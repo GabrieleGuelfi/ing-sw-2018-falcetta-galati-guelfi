@@ -27,7 +27,7 @@ public class Controller implements VisitorController, Observer {
         this.match = null;
     }
 
-    public void startGame(List<String> nickname, VirtualView view) {
+    public void prepareGame(List<String> nickname, VirtualView view) {
 
         List<Player> players = new ArrayList<>();
         List<PublicObjective> objectives = new ArrayList<>();
@@ -63,21 +63,20 @@ public class Controller implements VisitorController, Observer {
             view.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
         }
 
-        for(Player p: players) {
-            boolean loop = true;
-            while(loop) {
-                if (p.getWindowPattern()!=null)
-                    loop=false;
-            }
-        }
-
-        Player firstPlayer = match.getRound().getPlayerTurn();
-        this.match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool().copy()));
-        out.println("nick: "+firstPlayer.getNickname());
-        this.match.notifyObservers(new MessageTurnChanged(firstPlayer.getNickname()));
-
         // TOOLS PART!
 
+    }
+
+    private boolean areWPset() {
+        for(Player p: match.getActivePlayers()) {
+            if (p.getWindowPattern()==null) return false;
+        }
+        return true;
+    }
+
+    private void startGame() {
+        this.match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool().copy()));
+        this.match.notifyObservers(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
     }
 
     private void givePrivateObjective(List<Player> players) {
@@ -225,7 +224,9 @@ public class Controller implements VisitorController, Observer {
         catch (IllegalStateException e) {
             try {
                 match.setRound();
-                //match.notifyObservers(new MessageRoundChanged(match.getFirstPlayerRound().getNickname(), match.getNumRound()));
+                match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
+                match.notifyObservers(new MessageRoundChanged(match.getFirstPlayerRound().getNickname(), match.getNumRound()));
+
             }
             catch (IllegalStateException e1) {
                 //endMatch();
@@ -249,6 +250,7 @@ public class Controller implements VisitorController, Observer {
         if (player!=null) {
             player.setWindowPattern(HandleJSON.createWindowPattern(player.getNickname(), message.getFirstIndex(), message.getSecondIndex()));
             match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
+            if (areWPset()) startGame();
         }
         else {
             out.println("nickname non valido");
@@ -290,6 +292,7 @@ public class Controller implements VisitorController, Observer {
         }
         virtualView.send(new MessageConfirmMove(player.getNickname(), player.isPlacedDie(), player.isUsedTool()));
         match.getRound().getDraftPool().removeDie(message.getDieFromDraftPool());
+        match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
         match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
     }
 

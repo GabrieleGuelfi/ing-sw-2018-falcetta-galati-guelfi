@@ -25,6 +25,7 @@ public class SagradaClient {
         view.register(client);
         client.register(view);
 
+
         String choice = view.askRmiOrSocket(); //insert a while to ask Rmi or Socket, if user write wrong use socket for default
         if(choice.equals("Rmi")) {
             String nicknameForRmi = view.getNicknameForRmi();
