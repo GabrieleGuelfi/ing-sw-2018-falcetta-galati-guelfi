@@ -19,6 +19,8 @@ public class Player {
     public Player(String nickname) {
         this.nickname = nickname;
         points = 0;
+        placedDie = false;
+        usedTool = false;
     }
 
     public String getNickname() { return this.nickname; }

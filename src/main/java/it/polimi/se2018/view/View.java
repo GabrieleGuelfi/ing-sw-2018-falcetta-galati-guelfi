@@ -158,11 +158,13 @@ public class View extends Observable implements Observer, VisitorView {
         int choice = scanner.nextInt();
         if (choice==1 && !hasMovedDie) moveDie();
         if ((choice==1 && hasMovedDie)||(choice==2 && !hasMovedDie && !hasUsedTool)) useTool();
-        if (choice==2 && (hasMovedDie ||hasUsedTool)) notifyObservers(new MessageDoNothing(this.nickname));
+        if (choice==2 && (hasMovedDie || hasUsedTool)) notifyObservers(new MessageDoNothing(this.nickname));
+        if (choice==3) notifyObservers(new MessageDoNothing(this.nickname));
 
     }
 
     private void moveDie() {
+        out.println("Choose a die from Draftpool:");
         int dieToMove = scanner.nextInt();
         out.println("Where do you want to place it?");
         out.print("Row: ");
@@ -252,7 +254,7 @@ public class View extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageTurnChanged message) {
-        manageTurn(message.getPlayerTurn());
+        manageTurn(message.getNickname());
     }
 
     @Override

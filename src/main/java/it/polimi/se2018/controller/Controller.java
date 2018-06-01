@@ -64,22 +64,21 @@ public class Controller implements VisitorController, Observer {
         }
 
         for(Player p: players) {
-            while(p.getWindowPattern()==null) {
-
+            boolean loop = true;
+            while(loop) {
+                if (p.getWindowPattern()!=null)
+                    loop=false;
             }
         }
 
         Player firstPlayer = match.getRound().getPlayerTurn();
         this.match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool().copy()));
+        out.println("nick: "+firstPlayer.getNickname());
         this.match.notifyObservers(new MessageTurnChanged(firstPlayer.getNickname()));
-
-
 
         // TOOLS PART!
 
     }
-
-
 
     private void givePrivateObjective(List<Player> players) {
         Random generator = new Random();
@@ -103,7 +102,7 @@ public class Controller implements VisitorController, Observer {
      */
     private boolean isNearDie(WindowPattern w, int row, int column) {
         if (w.getEmptyBox() == 20) {
-            return (row == 0 || row == WindowPattern.MAX_ROW-1 || column == 0 || column == WindowPattern.MAX_COL);
+            return (row == 0 || row == WindowPattern.MAX_ROW-1 || column == 0 || column == WindowPattern.MAX_COL-1);
         }
         for(int i=row-1; i<row+2; i++ ) {
             for(int j=column-1; j<column+2; j++) {
@@ -210,6 +209,30 @@ public class Controller implements VisitorController, Observer {
 
     }
 
+    private Player searchNick(String nickname) {
+        for (Player p : match.getPlayers()) {
+            if (p.getNickname().equals(nickname))
+                return p;
+        }
+        return null;
+    }
+
+    private void nextTurn() {
+        try {
+            match.getRound().nextTurn(match.getPlayers());
+            match.notifyObservers(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
+        }
+        catch (IllegalStateException e) {
+            try {
+                match.setRound();
+                //match.notifyObservers(new MessageRoundChanged(match.getFirstPlayerRound().getNickname(), match.getNumRound()));
+            }
+            catch (IllegalStateException e1) {
+                //endMatch();
+            }
+        }
+    }
+
     @Override
     public void update(Message message) {
         message.accept(this);
@@ -236,13 +259,9 @@ public class Controller implements VisitorController, Observer {
     public void visit(MessageMoveDie message) {
 
         Die d = match.getRound().getDraftPool().getBag().get(message.getDieFromDraftPool());
-        Player player = null;
+        Player player = searchNick(message.getNickname());
 
-        for (Player p : match.getPlayers()) {
-            if (p.getNickname().equals(message.getNickname()))
-                player = p;
-        }
-        if (player==null) {
+        if (player == null) {
             out.println("player doesn't exist");
             return;
         }
@@ -267,55 +286,25 @@ public class Controller implements VisitorController, Observer {
         if (player.isUsedTool() && player.isPlacedDie()) {
             player.setPlacedDie(false);
             player.setUsedTool(false);
-            try {
-                player.setPlacedDie(false);
-                player.setUsedTool(false);
-                match.getRound().nextTurn(match.getPlayers());
-                virtualView.send(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
-                return;
-            }
-            catch (IllegalStateException e) {
-                try {
-                    match.setRound();
-                    return;
-                }
-                catch (IllegalStateException e1) {
-                    //endMatch();
-                    return;
-                }
-            }
+            nextTurn();
         }
         virtualView.send(new MessageConfirmMove(player.getNickname(), player.isPlacedDie(), player.isUsedTool()));
-
+        match.getRound().getDraftPool().removeDie(message.getDieFromDraftPool());
+        match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
     }
 
     @Override
     public void visit(MessageDoNothing message) {
 
-        Player player = null;
+        Player player = searchNick(message.getNickname());
 
-        for (Player p : match.getPlayers()) {
-            if (p.getNickname().equals(message.getNickname()))
-                player = p;
-        }
-        if (player==null) {
+        if (player == null) {
             out.println("player doesn't exist");
             return;
         }
         player.setPlacedDie(false);
         player.setUsedTool(false);
-        try {
-            match.getRound().nextTurn(match.getPlayers());
-            virtualView.send(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
-        }
-        catch (IllegalStateException e) {
-            try {
-                match.setRound();
-            }
-            catch (IllegalStateException e1) {
-                //endMatch();
-            }
-        }
+        nextTurn();
     }
 
 }

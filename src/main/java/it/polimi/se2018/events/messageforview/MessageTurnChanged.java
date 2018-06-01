@@ -5,15 +5,8 @@ import it.polimi.se2018.view.VisitorView;
 
 public class MessageTurnChanged extends Message {
 
-    private String playerTurn;
-
     public MessageTurnChanged(String playerTurn) {
-        super();
-        this.playerTurn = playerTurn;
-    }
-
-    public String getPlayerTurn() {
-        return playerTurn;
+        super(playerTurn);
     }
 
     @Override

@@ -40,7 +40,7 @@ public final class HandleJSON {
         JSONParser parser = new JSONParser();
 
         try {
-            Object obj = parser.parse(new FileReader("./src/main/java/windowpattern/windowpattern"));
+            Object obj = parser.parse(new FileReader("./src/main/java/fileutils/windowpattern"));
             JSONArray schemes = (JSONArray) obj;
             schemes = (JSONArray) schemes.get(firstIndex);
             JSONObject schema = (JSONObject) schemes.get(secondIndex);
