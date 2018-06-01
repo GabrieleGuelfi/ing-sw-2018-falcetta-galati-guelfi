@@ -18,8 +18,11 @@ import it.polimi.se2018.utils.Observer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import org.fusesource.jansi.AnsiConsole;
 
 import static java.lang.System.*;
+import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Color.*;
 
 public class View extends Observable implements Observer, VisitorView {
 
@@ -30,8 +33,12 @@ public class View extends Observable implements Observer, VisitorView {
     private Scanner scanner;
     private String nickname;
 
+    private DraftPool currentDraftPool;
+    private WindowPattern currentWindowPattern;
+
     private View() {
         scanner = new Scanner(System.in);
+        AnsiConsole.systemInstall();
         out.println("Welcome in Sagrada!");
     }
 
@@ -99,11 +106,7 @@ public class View extends Observable implements Observer, VisitorView {
             printWindowPattern(wp);
         }
         out.println("Write the number of the window pattern you want to use.");
-        choice = scanner.nextInt();
-        while(choice<1 || choice>4) {
-            out.println("Invalid choice: try again.");
-            choice = scanner.nextInt();
-        }
+        choice = chooseBetween(1, 4);
 
         if (choice<3) {
             notifyObservers(new MessageSetWP(nickname, firstCard, choice-1));
@@ -120,6 +123,7 @@ public class View extends Observable implements Observer, VisitorView {
         else {
             out.println("Your window pattern is now: ");
             printWindowPattern(wp);
+            this.currentWindowPattern = wp;
         }
     }
 
@@ -143,6 +147,14 @@ public class View extends Observable implements Observer, VisitorView {
         else askMove(hasMovedDie, hasUsedTool);
     }
 
+    private void handleRoundChanged(String nickname, int round) {
+        out.println();
+        out.println("_|-|_|-|_|-|_|-| ROUND " + round + " |-|_|-|_|-|_|-|_");
+        if (nickname.equals(this.nickname)) out.println("It's your turn!");
+        else out.println(nickname + " is currently playing...");
+
+    }
+
     private void askMove(boolean hasMovedDie, boolean hasUsedTool) {
         out.println("Please, select your move: ");
         int i=1;
@@ -155,7 +167,7 @@ public class View extends Observable implements Observer, VisitorView {
             i++;
         }
         out.println(i + ") Do nothing");
-        int choice = scanner.nextInt();
+        int choice = chooseBetween(1, i);
         if (choice==1 && !hasMovedDie) moveDie();
         if ((choice==1 && hasMovedDie)||(choice==2 && !hasMovedDie && !hasUsedTool)) useTool();
         if (choice==2 && (hasMovedDie || hasUsedTool)) notifyObservers(new MessageDoNothing(this.nickname));
@@ -164,13 +176,17 @@ public class View extends Observable implements Observer, VisitorView {
     }
 
     private void moveDie() {
-        out.println("Choose a die from Draftpool:");
-        int dieToMove = scanner.nextInt();
-        out.println("Where do you want to place it?");
+        out.println("\nCurrently, this is your windows pattern:");
+        printWindowPattern(currentWindowPattern);
+        out.println("\nCurrently, this is the draftpool:");
+        printDraftPool(currentDraftPool);
+        out.println("\nChoose a die from draftpool:");
+        int dieToMove = chooseBetween(1, currentDraftPool.size());
+        out.println("\nWhere do you want to place it?");
         out.print("Row: ");
-        int row = scanner.nextInt();
+        int row = chooseBetween(1, MAX_ROW);
         out.print("Column: ");
-        int column = scanner.nextInt();
+        int column = chooseBetween(1, MAX_COL);
         notifyObservers(new MessageMoveDie(this.nickname, dieToMove-1, row-1, column-1));
 
     }
@@ -187,11 +203,29 @@ public class View extends Observable implements Observer, VisitorView {
             out.println();
             out.print(i+1 +" ");
             for (int j=0; j<MAX_COL; j++) {
-                if (wp.getBox(i, j).hasAValueRestriction()) {
-                    out.print("[" + wp.getBox(i, j).getValueRestriction() + "] ");
-                }
-                else {
-                    out.print("[" + Colour.getFirstLetter(wp.getBox(i, j).getColourRestriction()) + "] ");
+                if (wp.getBox(i, j).getDie() == null) {
+                    if (wp.getBox(i, j).hasAValueRestriction()) {
+                        out.print("[" + wp.getBox(i, j).getValueRestriction() + "] ");
+                    } else {
+                        out.print("[" + Colour.getFirstLetter(wp.getBox(i, j).getColourRestriction()) + "] ");
+                    }
+                } else {
+                    Colour colour = wp.getBox(i, j).getDie().getColour();
+                    if (colour.equals(Colour.RED)) {
+                        out.print( ansi().fg(RED).a("[" + wp.getBox(i,j).getDie().getValue() + "] ").reset() );
+                    }
+                    if (colour.equals(Colour.BLUE)) {
+                        out.print( ansi().fg(BLUE).a("[" + wp.getBox(i,j).getDie().getValue() + "] ").reset() );
+                    }
+                    if (colour.equals(Colour.GREEN)) {
+                        out.print( ansi().fg(GREEN).a("[" + wp.getBox(i,j).getDie().getValue() + "] ").reset() );
+                    }
+                    if (colour.equals(Colour.YELLOW)) {
+                        out.print( ansi().fg(YELLOW).a("[" + wp.getBox(i,j).getDie().getValue() + "] ").reset() );
+                    }
+                    if (colour.equals(Colour.PURPLE)) {
+                        out.print( ansi().fg(CYAN).a("[" + wp.getBox(i,j).getDie().getValue() + "] ").reset() );
+                    }
                 }
             }
         }
@@ -200,7 +234,7 @@ public class View extends Observable implements Observer, VisitorView {
     }
 
     private void printDraftPool(DraftPool dp) {
-        out.println("Draftpool is now: ");
+        out.println();
         for(Die d: dp.getBag()) {
             out.print(" " + (dp.getBag().indexOf(d)+1) + "   ");
         }
@@ -209,6 +243,18 @@ public class View extends Observable implements Observer, VisitorView {
             out.print("[" + Colour.getFirstLetter(d.getColour()) + d.getValue() + "] ");
         }
         out.println();
+    }
+
+    private int chooseBetween(int min, int max) {
+
+        int choice;
+        choice = scanner.nextInt();
+        while(choice<min || choice>max) {
+            out.println("Invalid choice: try again.");
+            choice = scanner.nextInt();
+        }
+        return choice;
+
     }
 
 
@@ -259,6 +305,7 @@ public class View extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageDPChanged message) {
+        currentDraftPool = message.getDraftPool();
         printDraftPool(message.getDraftPool());
     }
 
@@ -275,6 +322,11 @@ public class View extends Observable implements Observer, VisitorView {
     @Override
     public void visit(MessagePing message){
         //THIS MESSAGE IS USED TO SERVER FOR VERIFY THE CONNECTION.
+    }
+
+    @Override
+    public void visit(MessageRoundChanged message) {
+        handleRoundChanged(message.getNickname(), message.getNumRound());
     }
 
 }
