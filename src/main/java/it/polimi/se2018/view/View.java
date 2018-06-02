@@ -1,9 +1,7 @@
 package it.polimi.se2018.view;
 
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.messageforcontroller.MessageDoNothing;
-import it.polimi.se2018.events.messageforcontroller.MessageMoveDie;
-import it.polimi.se2018.events.messageforcontroller.MessageSetWP;
+import it.polimi.se2018.events.messageforcontroller.*;
 import it.polimi.se2018.events.messageforserver.MessageError;
 import it.polimi.se2018.events.messageforserver.MessagePing;
 import it.polimi.se2018.events.messageforview.*;
@@ -18,6 +16,7 @@ import it.polimi.se2018.utils.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import org.fusesource.jansi.AnsiConsole;
 
@@ -78,8 +77,8 @@ public class View extends Observable implements Observer, VisitorView {
         }
     }
 
-    private void showPrivateObjective(String colour) {
-        out.println("\nYour private objective is of colour: " + colour);
+    private void showPrivateObjective(String description) {
+        out.println("\nYour private objective is:\n" + description);
     }
 
     private void showPublicObjective(List<String> descriptions, List<Integer> points) {
@@ -87,6 +86,28 @@ public class View extends Observable implements Observer, VisitorView {
         for(int i=0; i<descriptions.size(); i++) {
             out.println(i+1 + ") " + descriptions.get(i) + " VP: " + points.get(i));
         }
+    }
+
+    private void showRoundTrack(Map<Integer, List<Die>> roundTrack) {
+
+        if (roundTrack.isEmpty()) {
+            out.println("\nRound Track empty! This is the First Turn!");
+            return;
+        }
+        out.print("\nRound Track: ");
+        for (Integer j : roundTrack.keySet()) {
+            out.print("\n"+j+": ");
+            for (Die d : roundTrack.get(j)) {
+                for (Color color : Color.values()) {
+                    if (color.toString().equals(d.getColour().toString())) {
+                        out.print(ansi().fg(color).a("[" + d.getValue() + "] ").reset());
+                    }
+                }
+                if (d.getColour().equals(Colour.PURPLE))
+                    out.print(ansi().fg(MAGENTA).a("[" + d.getValue() + "] ").reset());
+            }
+        }
+
     }
 
     private void askWindowPattern(int firstCard, int secondCard) {
@@ -140,10 +161,14 @@ public class View extends Observable implements Observer, VisitorView {
         askMove(hasMovedDie, hasUsedTool);
     }
 
-    private void handleSuccessMove(boolean hasMovedDie, boolean hasUsedTool) {
-        out.println("\nSuccess! Your move has been accomplished.");
-        if (hasMovedDie&&hasUsedTool) out.println("\nYour turn is over.");
-        else askMove(hasMovedDie, hasUsedTool);
+    private void handleSuccessMove(boolean hasMovedDie, boolean hasUsedTool, boolean movePerformed) {
+        if (movePerformed)
+            out.println("\nSuccess! Your move has been accomplished.");
+        if (hasMovedDie&&hasUsedTool) {
+            out.println("\nYour turn is over.");
+            return;
+        }
+        askMove(hasMovedDie, hasUsedTool);
     }
 
     private void handleRoundChanged(String nickname, int round) {
@@ -160,7 +185,7 @@ public class View extends Observable implements Observer, VisitorView {
         boolean moveToolOk = true;
 
         //out.println( ansi().eraseScreen() );
-        out.println("Please, select your move: ");
+        out.println("\n\nPlease, select your move: ");
         int i=1;
         out.println(i + ") Request information");
         i++;
@@ -177,7 +202,6 @@ public class View extends Observable implements Observer, VisitorView {
 
         if (choice==1) {
             requestInformation();
-            askMove(hasMovedDie, hasUsedTool);
         }
         if (choice==2 && !hasMovedDie) moveDieOk = moveDie();
         if ((choice==2 && hasMovedDie)||(choice==3 && !hasMovedDie && !hasUsedTool)) moveToolOk = useTool();
@@ -191,8 +215,14 @@ public class View extends Observable implements Observer, VisitorView {
     }
 
     private void requestInformation() {
-
-        // to implement messages
+        out.println("\nWhat do you want to see?");
+        for (RequestType t: RequestType.values()) {
+            out.println((t.ordinal()+1)+") "+t.toString());
+        }
+        int choice = chooseBetween(1, 6);
+        for (RequestType t: RequestType.values())
+            if (t.ordinal()+1==choice)
+                notifyObservers(new MessageRequest(this.nickname, t));
 
     }
 
@@ -324,7 +354,7 @@ public class View extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessagePrivObj message) {
-        showPrivateObjective(message.getColour());
+        showPrivateObjective(message.getDescription());
     }
 
     @Override
@@ -356,7 +386,7 @@ public class View extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageConfirmMove message) {
-        handleSuccessMove(message.hasPlacedDie(), message.hasUsedTool());
+        handleSuccessMove(message.hasPlacedDie(), message.hasUsedTool(), message.isMovePerformed());
     }
 
     @Override
@@ -372,6 +402,11 @@ public class View extends Observable implements Observer, VisitorView {
     @Override
     public void visit(MessageRoundChanged message) {
         handleRoundChanged(message.getNickname(), message.getNumRound());
+    }
+
+    @Override
+    public void visit(MessageRoundTrack message) {
+        showRoundTrack(message.getRoundTrack());
     }
 
 }

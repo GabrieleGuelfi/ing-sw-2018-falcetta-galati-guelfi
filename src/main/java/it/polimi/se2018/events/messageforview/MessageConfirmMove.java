@@ -7,11 +7,13 @@ public class MessageConfirmMove extends Message {
 
     private boolean hasPlacedDie;
     private boolean hasUsedTool;
+    private boolean movePerformed;
 
-    public MessageConfirmMove(String nickname, boolean hasPlacedDie, boolean hasUsedTool) {
+    public MessageConfirmMove(String nickname, boolean hasPlacedDie, boolean hasUsedTool, boolean movePerformed) {
         super(nickname);
         this.hasPlacedDie = hasPlacedDie;
         this.hasUsedTool = hasUsedTool;
+        this.movePerformed = movePerformed;
     }
 
     public boolean hasPlacedDie() {
@@ -22,6 +24,9 @@ public class MessageConfirmMove extends Message {
         return hasUsedTool;
     }
 
+    public boolean isMovePerformed() {
+        return movePerformed;
+    }
 
     @Override
     public void accept(VisitorView v) {

@@ -15,7 +15,7 @@ public class PrivateObjective {
      */
     public PrivateObjective(Colour shade) {
         this.shade = shade;
-        this.description = "Shades of " + shade + ": Private\nSum of values on "+shade+" dice";
+        this.description = "Shades of " + shade + ": Private\nSum of values on "+shade+" dice\n";
     }
 
     /**

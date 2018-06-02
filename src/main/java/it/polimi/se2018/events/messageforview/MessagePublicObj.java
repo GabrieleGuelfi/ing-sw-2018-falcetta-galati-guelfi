@@ -15,6 +15,12 @@ public class MessagePublicObj extends Message {
         this.points = points;
     }
 
+    public MessagePublicObj (String nickname, List<String> descriptions, List<Integer> points) {
+        super(nickname);
+        this.descriptions = descriptions;
+        this.points = points;
+    }
+
     public List<String> getDescriptions() {
         return descriptions;
     }

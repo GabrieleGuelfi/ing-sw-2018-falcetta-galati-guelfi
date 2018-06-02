@@ -20,6 +20,6 @@ public interface VisitorView {
     void visit(MessageErrorMove message);
     void visit(MessagePing message);
     void visit(MessageRoundChanged message);
-
+    void visit(MessageRoundTrack message);
 
 }

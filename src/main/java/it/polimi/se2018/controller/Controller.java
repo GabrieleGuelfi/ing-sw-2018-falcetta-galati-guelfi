@@ -91,7 +91,7 @@ public class Controller implements VisitorController, Observer {
                 index = generator.nextInt(colours.length);
             rand.add(index);
             p.setPrivateObjective(new PrivateObjective(colours[index]));
-            virtualView.send(new MessagePrivObj(p.getNickname(), colours[index].toString()));
+            virtualView.send(new MessagePrivObj(p.getNickname(), p.getPrivateObjective().getDescription()));
         }
     }
 
@@ -160,8 +160,7 @@ public class Controller implements VisitorController, Observer {
     private boolean verifyNumber(WindowPattern w, int row, int column, Die die) {
 
         try {
-            if (w.getBox(row, column).getValueRestriction() != die.getValue() && w.getBox(row, column).getValueRestriction() != 0) //-1 equals to no restriction
-
+            if (w.getBox(row, column).getValueRestriction() != die.getValue() && w.getBox(row, column).getValueRestriction() != 0) //0 equals to no restriction
                 return false;
         } catch (IllegalArgumentException | NullPointerException e) {}
         try {
@@ -224,6 +223,7 @@ public class Controller implements VisitorController, Observer {
         }
         catch (IllegalStateException e) {
             try {
+                match.setRoundTrack();
                 match.setRound();
                 match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
                 match.notifyObservers(new MessageRoundChanged(match.getFirstPlayerRound().getNickname(), match.getNumRound()));
@@ -291,7 +291,7 @@ public class Controller implements VisitorController, Observer {
             player.setUsedTool(false);
             nextTurn();
         }
-        virtualView.send(new MessageConfirmMove(player.getNickname(), player.isPlacedDie(), player.isUsedTool()));
+        virtualView.send(new MessageConfirmMove(player.getNickname(), player.isPlacedDie(), player.isUsedTool(), true));
         match.getRound().getDraftPool().removeDie(message.getDieFromDraftPool());
         match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
         match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
@@ -309,6 +309,45 @@ public class Controller implements VisitorController, Observer {
         player.setPlacedDie(false);
         player.setUsedTool(false);
         nextTurn();
+
     }
 
+    @Override
+    public void visit(MessageRequest message) {
+        Player player = searchNick(message.getNickname());
+        switch (message.getType()) {
+            case TOOL:
+                break;
+            case MYWP:
+                virtualView.send(new MessageWPChanged(message.getNickname(), player.getWindowPattern(), message.getNickname()));
+                break;
+            case ALLWP: {
+                for (Player p: match.getActivePlayers()) {
+                    if (!p.getNickname().equals(message.getNickname())) {
+                        virtualView.send(new MessageWPChanged(message.getNickname(), p.getWindowPattern(), p.getNickname()));
+                    }
+                }
+                break;
+            }
+            case PRIVATE:
+                virtualView.send(new MessagePrivObj(message.getNickname(), player.getPrivateObjective().getDescription()));
+                break;
+            case PUBLIC: {
+                List<String> publicObjDescriptions = new ArrayList<>();
+                List<Integer> publicObjPoints = new ArrayList<>();
+                for(PublicObjective p: match.getPublicObjectives()) {
+                    publicObjDescriptions.add(p.getDescription());
+                    publicObjPoints.add(p.getVp());
+                }
+                if(!publicObjDescriptions.isEmpty())
+                    virtualView.send(new MessagePublicObj(message.getNickname(), publicObjDescriptions, publicObjPoints));
+                break;
+            }
+            case ROUNDTRACK:
+                virtualView.send(new MessageRoundTrack(message.getNickname(), match.getRoundTrack()));
+                break;
+            default: throw new IllegalArgumentException("Request not valid");
+        }
+        virtualView.send(new MessageConfirmMove(message.getNickname(), player.isPlacedDie(), player.isUsedTool(), false));
+    }
 }

@@ -15,6 +15,12 @@ public class MessageWPChanged extends Message {
         this.player = player;
     }
 
+    public MessageWPChanged(String player, WindowPattern wp, String wpOwner) {
+        super(player);
+        this.wp = wp;
+        this.player = wpOwner;
+    }
+
     public String getPlayer() {
         return player;
     }
