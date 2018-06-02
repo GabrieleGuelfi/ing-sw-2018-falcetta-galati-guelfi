@@ -23,11 +23,11 @@ public class Controller implements VisitorController, Observer {
     private Match match;
     private VirtualView virtualView;
 
-    public Controller() {
-        this.match = null;
+    public Controller(List<String> nickname, VirtualView view) {
+        prepareGame(nickname, view);
     }
 
-    public void prepareGame(List<String> nickname, VirtualView view) {
+    private void prepareGame(List<String> nickname, VirtualView view) {
 
         List<Player> players = new ArrayList<>();
         List<PublicObjective> objectives = new ArrayList<>();
@@ -76,7 +76,8 @@ public class Controller implements VisitorController, Observer {
 
     private void startGame() {
         this.match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool().copy()));
-        this.match.notifyObservers(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
+        this.match.notifyObservers(new MessageRoundChanged(match.getRound().getPlayerTurn().getNickname(), match.getNumRound()));
+        //this.match.notifyObservers(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
     }
 
     private void givePrivateObjective(List<Player> players) {

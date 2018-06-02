@@ -1,5 +1,6 @@
 package it.polimi.se2018.network.socket.client;
 
+import it.polimi.se2018.events.Message;
 import it.polimi.se2018.network.socket.server.ServerInterface;
 import it.polimi.se2018.view.View;
 
@@ -16,37 +17,53 @@ public class SagradaClient {
     private static final int PORT = 1111;
     private static final String HOST = "localhost";
 
-    public static void main(String[] args) {
+    private ClientImplementation client;
+    private ServerInterface server;
+    private View view;
 
-        View view = View.createView();
-        ClientImplementation client = new ClientImplementation();
-        ServerInterface server = null;
+    private void connectThroughSocket() {
+        String nickname = view.askNickname();
+        server = new NetworkHandler(HOST, PORT, client);
+        client.addServer(server);
+        view.notifyObservers(new Message(nickname));
+    }
+
+    private void connectThroughRmi() {
+        String nickname = view.askNickname();
+        try {
+            server = (ServerInterface) Naming.lookup("//localhost/RemoteServer");
+            ClientInterface remoteRef =  (ClientInterface) UnicastRemoteObject.exportObject(client, 0);
+            server.addClient(remoteRef, nickname);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            client.addServer(server); }
+
+    }
+
+    public SagradaClient() {
+        view = View.createView();
+        client = new ClientImplementation();
 
         view.register(client);
         client.register(view);
 
+        int choice = view.askConnection();
 
-        String choice = view.askRmiOrSocket(); //insert a while to ask Rmi or Socket, if user write wrong use socket for default
-        if(choice.equals("Rmi")) {
-            String nicknameForRmi = view.getNicknameForRmi();
-            try {
-                server = (ServerInterface) Naming.lookup("//localhost/RemoteServer");
-                ClientInterface remoteRef =  (ClientInterface) UnicastRemoteObject.exportObject(client, 0);
-                server.addClient(remoteRef, nicknameForRmi);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            } catch (NotBoundException e) {
-                e.printStackTrace();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            finally { client.addServer(server); }
-        }
-        else {
-            server = new NetworkHandler(HOST, PORT, client);
-            client.addServer(server);
-            view.askNickname();
-        }
-
+        if(choice==1) connectThroughSocket();
+        else connectThroughRmi();
     }
+
+
+    public static void main(String[] args) {
+        new SagradaClient();
+    }
+
+
+
 }

@@ -44,8 +44,7 @@ public class SagradaServer implements VisitorServer, Observer{
         this.time = stdin.nextInt();
         stdin.close();
 
-        //INITIALIZE CONTROLLER AND VIRTUAL VIEW
-        this.controller = new Controller();
+        //INITIALIZE VIRTUAL VIEW
         this.virtualView = new VirtualView(this);
         this.nicknameDisconnected = new ArrayList<>();
         this.gameIsStarted = false;
@@ -221,7 +220,7 @@ public class SagradaServer implements VisitorServer, Observer{
                 out.println(c.getNickname());
             }
 
-            this.controller.prepareGame(allClients, this.virtualView);
+            this.controller = new Controller(allClients, this.virtualView);
         }
     }
 
