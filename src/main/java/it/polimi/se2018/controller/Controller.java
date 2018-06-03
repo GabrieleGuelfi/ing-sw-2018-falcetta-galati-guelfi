@@ -323,39 +323,7 @@ public class Controller implements VisitorController, Observer {
     @Override
     public void visit(MessageRequest message) {
         Player player = searchNick(message.getNickname());
-        switch (message.getType()) {
-            case TOOL:
-                break;
-            case MYWP:
-                virtualView.send(new MessageWPChanged(message.getNickname(), player.getWindowPattern(), message.getNickname()));
-                break;
-            case ALLWP: {
-                for (Player p: match.getActivePlayers()) {
-                    if (!p.getNickname().equals(message.getNickname())) {
-                        virtualView.send(new MessageWPChanged(message.getNickname(), p.getWindowPattern(), p.getNickname()));
-                    }
-                }
-                break;
-            }
-            case PRIVATE:
-                virtualView.send(new MessagePrivObj(message.getNickname(), player.getPrivateObjective().getDescription()));
-                break;
-            case PUBLIC: {
-                List<String> publicObjDescriptions = new ArrayList<>();
-                List<Integer> publicObjPoints = new ArrayList<>();
-                for(PublicObjective p: match.getPublicObjectives()) {
-                    publicObjDescriptions.add(p.getDescription());
-                    publicObjPoints.add(p.getVp());
-                }
-                if(!publicObjDescriptions.isEmpty())
-                    virtualView.send(new MessagePublicObj(message.getNickname(), publicObjDescriptions, publicObjPoints));
-                break;
-            }
-            case ROUNDTRACK:
-                virtualView.send(new MessageRoundTrack(message.getNickname(), match.getRoundTrack()));
-                break;
-            default: throw new IllegalArgumentException("Request not valid");
-        }
+        message.getType().performRequest(player, virtualView, match);
         virtualView.send(new MessageConfirmMove(message.getNickname(), player.isPlacedDie(), player.isUsedTool(), false));
     }
 }

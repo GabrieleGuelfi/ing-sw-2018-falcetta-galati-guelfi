@@ -1,5 +1,6 @@
 package it.polimi.se2018.view;
 
+import it.polimi.se2018.controller.RequestType;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.messageforcontroller.*;
 import it.polimi.se2018.events.messageforserver.MessageError;

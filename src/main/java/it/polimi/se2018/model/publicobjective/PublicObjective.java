@@ -2,6 +2,10 @@ package it.polimi.se2018.model.publicobjective;
 
 import it.polimi.se2018.model.WindowPattern;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * abstract class for public objectives with short description and score, here is calculated a score for a window pattern
  * @author Gabriele Guelfi
@@ -22,25 +26,86 @@ public abstract class PublicObjective {
         this.vp = vp;
     }
 
+    private static final Map<Integer, Command> PUBOBJ;
+
+    static {
+        final Map<Integer, Command> pubObj = new HashMap<>();
+        pubObj.put(1, new Command() {
+            @Override
+            public PublicObjective create() {
+                return new DiffRow("Rows with no repeated colors", 6, true);
+            }
+        });
+        pubObj.put(2, new Command() {
+            @Override
+            public PublicObjective create() {
+                return new DiffColumn("Column with no repeated colours", 5, true);
+            }
+        });
+        pubObj.put(3, new Command() {
+            @Override
+            public PublicObjective create() {
+                return new DiffRow("Rows with no repeated values", 5, false);
+            }
+        });
+        pubObj.put(4, new Command() {
+            @Override
+            public PublicObjective create() {
+                return new DiffColumn("Column with no repeated values", 4, false);
+            }
+        });
+        pubObj.put(5, new Command() {
+            @Override
+            public PublicObjective create() {
+                return new SetShades("Sets of 1 & 2 values anywhere", 2, 1);
+            }
+        });
+        pubObj.put(6, new Command() {
+            @Override
+            public PublicObjective create() {
+                return new SetShades("Sets of 3 & 4 values anywhere", 2, 3);
+            }
+        });
+        pubObj.put(7, new Command() {
+            @Override
+            public PublicObjective create() {
+                return new SetShades("Sets of 5 & 6 values anywhere", 2, 5);
+            }
+        });
+        pubObj.put(8, new Command() {
+            @Override
+            public PublicObjective create() {
+                return new DiffEverywhere("Sets of one of each value anywhere", 5, false);
+            }
+        });
+        pubObj.put(9, new Command() {
+            @Override
+            public PublicObjective create() {
+                return new DiagColour("Count of diagonally adjacent same color dice");
+            }
+        });
+        pubObj.put(10, new Command() {
+            @Override
+            public PublicObjective create() {
+                return new DiffEverywhere("Sets of one of each color anywhere", 4, true);
+            }
+        });
+        PUBOBJ = Collections.unmodifiableMap(pubObj);
+    }
+
     /**
      * Create the right type of Public Objective
      * @param n identify the ten type of Objective
      * @return a new PublicObjective of the right type
      */
     public static PublicObjective factory(int n) {
-        switch(n) {
-            case 1: return new DiffRow("Rows with no repeated colors", 6, true);
-            case 2: return new DiffColumn("Column with no repeated colours", 5, true);
-            case 3: return new DiffRow("Rows with no repeated values", 5, false);
-            case 4: return new DiffColumn("Column with no repeated values", 4, false);
-            case 5: return new SetShades("Sets of 1 & 2 values anywhere", 2, 1);
-            case 6: return new SetShades("Sets of 3 & 4 values anywhere", 2, 3);
-            case 7: return new SetShades("Sets of 5 & 6 values anywhere", 2, 5);
-            case 8: return new DiffEverywhere("Sets of one of each value anywhere", 5, false);
-            case 9: return new DiagColour("Count of diagonally adjacent same color dice");
-            case 10: return new DiffEverywhere("Sets of one of each color anywhere", 4, true);
-            default: throw new IllegalArgumentException("Invalid parameter!");
+
+        Command command = PUBOBJ.get(n);
+        if (command == null) {
+            throw new IllegalArgumentException("Invalid input type: "
+                    + n);
         }
+        return command.create();
     }
 
     /**
@@ -63,4 +128,5 @@ public abstract class PublicObjective {
      * @return score of the windowPattern
      */
     public abstract int calcScore(WindowPattern windowPattern);
+
 }
