@@ -21,5 +21,6 @@ public interface VisitorView {
     void visit(MessagePing message);
     void visit(MessageRoundChanged message);
     void visit(MessageRoundTrack message);
+    void visit(MessageEndMatch message);
 
 }

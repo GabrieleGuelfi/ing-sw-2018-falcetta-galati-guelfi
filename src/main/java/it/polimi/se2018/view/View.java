@@ -15,13 +15,13 @@ import it.polimi.se2018.model.WindowPattern;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.fusesource.jansi.AnsiConsole;
 
 import static java.lang.System.*;
+import static java.util.stream.Collectors.toMap;
 import static org.fusesource.jansi.Ansi.*;
 import static org.fusesource.jansi.Ansi.Color.*;
 
@@ -42,6 +42,18 @@ public class View extends Observable implements Observer, VisitorView {
         System.setProperty("jansi.passthrough", "true");
         AnsiConsole.systemInstall();
         out.println("Welcome in Sagrada!");
+
+        List<Integer> results = new ArrayList<>();
+        results.add(2);
+        results.add(5);
+        results.add(6);
+        List<String> nicknames = new ArrayList<>();
+        nicknames.add("Ale");
+        nicknames.add("Gabbo");
+        nicknames.add("FedeGal");
+
+        handleEndMatch(nicknames, results);
+
     }
 
     public static View createView() {
@@ -178,6 +190,37 @@ public class View extends Observable implements Observer, VisitorView {
         out.println("Draftpool for this round: ");
         printDraftPool(currentDraftPool);
         manageTurn(nickname);
+    }
+
+    private void handleEndMatch(List<String> nicknames, List<Integer> points) {
+
+        Map<String , Integer> results = new HashMap<>();
+        Map<String , Integer> resultsSorted;
+
+        int i = 0;
+        for(String playerNickname: nicknames) {
+            results.put(playerNickname, points.get(i));
+            i++;
+        }
+
+        resultsSorted = results.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        out.println( ansi().eraseScreen() );
+        out.println( ansi().fg(RED).a("End of the match!").reset());
+        out.println("The winner is... " + nicknames.get(0) + "!\n");
+        out.println("Full classification: ");
+
+
+        i = 1;
+
+        for (String playerNickname: resultsSorted.keySet()) {
+            out.println( i +") " + playerNickname + " with " + resultsSorted.get(playerNickname) + " points");
+            i++;
+        }
+
+
     }
 
     private void askMove(boolean hasMovedDie, boolean hasUsedTool) {
@@ -381,8 +424,6 @@ public class View extends Observable implements Observer, VisitorView {
     @Override
     public void visit(MessageDPChanged message) {
         currentDraftPool = message.getDraftPool();
-        //out.println("Draftpool has been updated: ");
-        //printDraftPool(message.getDraftPool());
     }
 
     @Override
@@ -408,6 +449,11 @@ public class View extends Observable implements Observer, VisitorView {
     @Override
     public void visit(MessageRoundTrack message) {
         showRoundTrack(message.getRoundTrack());
+    }
+
+    @Override
+    public void visit(MessageEndMatch message) {
+        handleEndMatch(message.getNicknames(), message.getPoints());
     }
 
 }
