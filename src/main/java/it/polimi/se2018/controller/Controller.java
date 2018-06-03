@@ -185,26 +185,22 @@ public class Controller implements VisitorController, Observer {
     /**
      * calculate the score of a player, based on his private objective and the three public ones
      * @param player player whose score is calculated
-     * @param p public objective of the match
      */
-    private void calcResults(Player player, List<PublicObjective> p) {
-
-        WindowPattern windowPattern = player.getWindowPattern();
+    private void calcResults(Player player) {
 
         //privateObjective
-        for(int i=0; i<WindowPattern.MAX_ROW; i++) {
-            for (int j=0; j<WindowPattern.MAX_COL; j++) {
-                try {
-                    if (windowPattern.getBox(i, j).getDie().getColour() == player.getPrivateObjective().getShade())
-                        player.addPoints(windowPattern.getBox(i, j).getDie().getValue());
-                } catch (IllegalArgumentException | NullPointerException e) {}
-            }
-        }
+        player.addPoints(player.getPrivateObjective().calcScore(player.getWindowPattern()));
 
         //publicObjectives
-        for (PublicObjective publicObjective : p) {
+        for (PublicObjective publicObjective : match.getPublicObjectives()) {
             player.addPoints(publicObjective.calcScore(player.getWindowPattern()));
         }
+
+        //favor tokens
+        player.addPoints(player.getFavorTokens());
+
+        //Empty box
+        player.addPoints(-player.getWindowPattern().getEmptyBox());
 
     }
 
@@ -230,9 +226,21 @@ public class Controller implements VisitorController, Observer {
 
             }
             catch (IllegalStateException e1) {
-                //endMatch();
+                endMatch();
             }
         }
+    }
+
+    private void endMatch() {
+        List<Integer> points = new ArrayList<>();
+        List<String> nicknames = new ArrayList<>();
+        for (Player p : match.getActivePlayers()) {
+            calcResults(p);
+            points.add(p.getPoints());
+            nicknames.add(p.getNickname());
+        }
+        match.notifyObservers(new MessageEndMatch(points, nicknames));
+
     }
 
     @Override

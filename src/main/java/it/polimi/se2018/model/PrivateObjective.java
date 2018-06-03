@@ -32,4 +32,17 @@ public class PrivateObjective {
         return shade;
     }
 
+    public int calcScore(WindowPattern w) {
+        int points = 0;
+        for(int i=0; i<WindowPattern.MAX_ROW; i++) {
+            for (int j=0; j<WindowPattern.MAX_COL; j++) {
+                try {
+                    if (w.getBox(i, j).getDie().getColour() == shade)
+                        points += w.getBox(i, j).getDie().getValue();
+                } catch (IllegalArgumentException | NullPointerException e) {}
+            }
+        }
+        return points;
+    }
+
 }
