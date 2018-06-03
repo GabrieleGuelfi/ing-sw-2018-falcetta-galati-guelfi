@@ -1,7 +1,7 @@
 package it.polimi.se2018.network.socket.client;
 
 import it.polimi.se2018.network.socket.server.ServerInterface;
-import it.polimi.se2018.view.ViewForClient;
+import it.polimi.se2018.view.View;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -18,7 +18,7 @@ public class SagradaClient {
 
     public static void main(String[] args) {
 
-        ViewForClient viewForClient = ViewForClient.createViewForClient();
+        View viewForClient = View.createViewForClient();
         ClientImplementation client = new ClientImplementation();
         ServerInterface server = null;
 

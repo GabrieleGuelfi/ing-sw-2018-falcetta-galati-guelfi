@@ -12,7 +12,7 @@ public class VerifyConnectionRmi extends Observable implements Runnable {
     private ClientInterface clientInterface;
     private boolean loop;
 
-    protected VerifyConnectionRmi(ClientInterface c){
+    VerifyConnectionRmi(ClientInterface c){
         this.clientInterface = c;
         loop = true;
     }

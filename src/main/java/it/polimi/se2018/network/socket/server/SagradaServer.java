@@ -162,7 +162,7 @@ public class SagradaServer implements VisitorServer, Observer{
             this.handleClientGatherer.setClientGathererActive();
             this.handleClientGatherer.interrupt();
         }
-        if (this.clients.size() == 1 && this.timer != null) {
+        if (this.clients.size() == 1 && this.timer != null && !this.gameIsStarted) {
             this.timer.stopTimer();
             out.println("not enough players");
         }
@@ -233,6 +233,7 @@ public class SagradaServer implements VisitorServer, Observer{
     @Override
     public void visit(Message message){
         //NOTIFY CONTROLLER
+        out.println("Message visited on server");
         this.virtualView.notifyObservers(message);
     }
 
