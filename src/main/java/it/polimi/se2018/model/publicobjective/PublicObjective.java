@@ -4,6 +4,8 @@ import it.polimi.se2018.model.WindowPattern;
 
 import java.util.*;
 
+import static java.lang.System.out;
+
 /**
  * abstract class for public objectives with short description and score, here is calculated a score for a window pattern
  * @author Gabriele Guelfi
@@ -98,12 +100,14 @@ public abstract class PublicObjective {
      */
     public static PublicObjective factory(int n) {
 
-        Command command = PUBOBJ.get(n);
-        if (command == null) {
-            throw new IllegalArgumentException("Invalid input type: "
-                    + n);
+        try {
+            Command command = PUBOBJ.get(n);
+            return command.create();
         }
-        return command.create();
+        catch (IndexOutOfBoundsException e) {
+            out.println("Public Objective not existing");
+            return null;
+        }
     }
 
     /**

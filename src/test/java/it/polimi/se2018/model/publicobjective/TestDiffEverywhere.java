@@ -15,7 +15,7 @@ public class TestDiffEverywhere {
     @Test
     public void TestCalcScoreValues() {
         WindowPattern w = new WindowPattern("foo", 5);
-        PublicObjective diffEverywhere = PublicObjective.factory(8);
+        PublicObjective diffEverywhere = PublicObjective.factory(7);
         List<Die> dice = new ArrayList<>();
         for (int i=0; i<6; i++)
             dice.add(i, new Die(Colour.WHITE));
@@ -51,7 +51,7 @@ public class TestDiffEverywhere {
     @Test
     public void TestCalcScoreColour() {
         WindowPattern w = new WindowPattern("foo", 5);
-        PublicObjective diffEverywhere = PublicObjective.factory(10);
+        PublicObjective diffEverywhere = PublicObjective.factory(9);
 
         w.putDice(new Die(Colour.BLUE), 0, 0);
         w.putDice(new Die(Colour.YELLOW), 0, 1);

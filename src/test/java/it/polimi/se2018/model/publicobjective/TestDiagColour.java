@@ -12,7 +12,7 @@ public class TestDiagColour {
     @Test
     public void TestCalcScoreColour() {
         WindowPattern w = new WindowPattern("foo", 5);
-        PublicObjective diagColour = PublicObjective.factory(9);
+        PublicObjective diagColour = PublicObjective.factory(8);
 
         w.putDice(new Die(Colour.YELLOW), 0, 0);
         w.putDice(new Die(Colour.MAGENTA), 0, 1);

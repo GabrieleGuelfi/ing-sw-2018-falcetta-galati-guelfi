@@ -15,7 +15,7 @@ public class TestSetShades {
     @Test
     public void TestCalcScoreOne() {
         WindowPattern w = new WindowPattern("foo", 5);
-        PublicObjective setShades = PublicObjective.factory(5);
+        PublicObjective setShades = PublicObjective.factory(4);
         List<Die> dice = new ArrayList<>();
         for (int i=0; i<6; i++)
             dice.add(i, new Die(Colour.WHITE));
@@ -50,7 +50,7 @@ public class TestSetShades {
     @Test
     public void TestCalcScoreThree() {
         WindowPattern w = new WindowPattern("foo", 5);
-        PublicObjective setShades = PublicObjective.factory(6);
+        PublicObjective setShades = PublicObjective.factory(5);
         List<Die> dice = new ArrayList<>();
         for (int i=0; i<6; i++)
             dice.add(i, new Die(Colour.WHITE));
@@ -85,7 +85,7 @@ public class TestSetShades {
     @Test
     public void TestCalcScoreFive() {
         WindowPattern w = new WindowPattern("foo", 5);
-        PublicObjective setShades = PublicObjective.factory(7);
+        PublicObjective setShades = PublicObjective.factory(6);
         List<Die> dice = new ArrayList<>();
         for (int i=0; i<6; i++)
             dice.add(i, new Die(Colour.WHITE));

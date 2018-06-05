@@ -13,7 +13,7 @@ import java.util.*;
  */
 public class DiceCollection implements Serializable {
 
-    List<Die> bag;
+    private List<Die> bag;
 
     /**
      * Constructor
@@ -51,7 +51,6 @@ public class DiceCollection implements Serializable {
      * Copy method
      * @return a DiceCollection with all the dice contained in this, but in a different object.
      */
-
     public List<Die> getBag() {
         return bag;
     }

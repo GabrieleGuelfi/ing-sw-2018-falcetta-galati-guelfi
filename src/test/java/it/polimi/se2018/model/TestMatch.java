@@ -36,6 +36,9 @@ public class TestMatch {
             assertEquals(players, match.getActivePlayers());
             assertEquals(tools, match.getTools());
             assertEquals(objectives, match.getPublicObjectives());
+            assertEquals(new Round(match.getRound().getDraftPool(), player), match.getRound());
+            assertEquals(bag, match.getBag());
+            assertEquals(player, match.getFirstPlayerRound());
 
             Map<Integer, List<Die>> roundTrack = match.getRoundTrack();
 
@@ -247,7 +250,7 @@ public class TestMatch {
     }
 
     @Test
-    public void testGetSetRound() {
+    public void testSetRoundTrack() {
         Bag bag = new Bag();
         bag.populateBag();
         ArrayList<Player> players = new ArrayList<>();
@@ -259,17 +262,9 @@ public class TestMatch {
 
         Match match = new Match(bag, players, objectives, tools, null);
 
-        Player p = new Player("foo");
+        match.setRoundTrack();
 
-        DraftPool dp = new DraftPool(bag, 4);
-
-        Round round = new Round(dp, p);
-
-        match.setRound(round);
-
-        assertEquals(round, match.getRound());
-
-
+        assertEquals(match.getRound().getDraftPool().getBag(), match.getRoundTrack().get(1));
     } 
 
 }

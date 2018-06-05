@@ -15,7 +15,7 @@ public class TestDiffRow {
     @Test
     public void TestCalcScoreColour() {
         WindowPattern w = new WindowPattern("foo", 5);
-        PublicObjective diffRow = PublicObjective.factory(1);
+        PublicObjective diffRow = PublicObjective.factory(0);
 
         w.putDice(new Die(Colour.BLUE), 0, 0);
         w.putDice(new Die(Colour.YELLOW), 0, 1);
@@ -41,7 +41,7 @@ public class TestDiffRow {
     @Test
     public void TestCalcScoreValues() {
         WindowPattern w = new WindowPattern("foo", 5);
-        PublicObjective diffRow = PublicObjective.factory(3);
+        PublicObjective diffRow = PublicObjective.factory(2);
         List<Die> dice = new ArrayList<>();
         for (int i=0; i<6; i++)
             dice.add(i, new Die(Colour.WHITE));

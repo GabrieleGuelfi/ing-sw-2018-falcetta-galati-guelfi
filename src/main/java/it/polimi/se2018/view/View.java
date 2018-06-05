@@ -305,7 +305,7 @@ public class View extends Observable implements Observer, VisitorView {
     }
 
     private void printBoxWithoutDie(Box box) {
-        if (box.hasAValueRestriction()) {
+        if (box.hasNoValueRestriction()) {
             if(box.getValueRestriction()!=0) out.print("[" + box.getValueRestriction() + "] ");
             else out.print("[ ] ");
         } else {
