@@ -47,9 +47,9 @@ public class Controller implements VisitorController, Observer {
         }
 
         for (int i=0; i<3; i++) {
-            index = generator.nextInt(10)+1;
+            index = generator.nextInt(10);
             while (rand.contains(index))
-                index = generator.nextInt(10)+1;
+                index = generator.nextInt(10);
             rand.add(index);
             objectives.add(PublicObjective.factory(index));
         }

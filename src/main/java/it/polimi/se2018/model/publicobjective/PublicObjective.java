@@ -2,9 +2,7 @@ package it.polimi.se2018.model.publicobjective;
 
 import it.polimi.se2018.model.WindowPattern;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * abstract class for public objectives with short description and score, here is calculated a score for a window pattern
@@ -26,71 +24,71 @@ public abstract class PublicObjective {
         this.vp = vp;
     }
 
-    private static final Map<Integer, Command> PUBOBJ;
+    private static final List<Command> PUBOBJ;
 
     static {
-        final Map<Integer, Command> pubObj = new HashMap<>();
-        pubObj.put(1, new Command() {
+        final List<Command> pubObj = new ArrayList<>();
+        pubObj.add(new Command() {
             @Override
             public PublicObjective create() {
                 return new DiffRow("Rows with no repeated colors", 6, true);
             }
         });
-        pubObj.put(2, new Command() {
+        pubObj.add(new Command() {
             @Override
             public PublicObjective create() {
                 return new DiffColumn("Column with no repeated colours", 5, true);
             }
         });
-        pubObj.put(3, new Command() {
+        pubObj.add(new Command() {
             @Override
             public PublicObjective create() {
                 return new DiffRow("Rows with no repeated values", 5, false);
             }
         });
-        pubObj.put(4, new Command() {
+        pubObj.add(new Command() {
             @Override
             public PublicObjective create() {
                 return new DiffColumn("Column with no repeated values", 4, false);
             }
         });
-        pubObj.put(5, new Command() {
+        pubObj.add(new Command() {
             @Override
             public PublicObjective create() {
                 return new SetShades("Sets of 1 & 2 values anywhere", 2, 1);
             }
         });
-        pubObj.put(6, new Command() {
+        pubObj.add(new Command() {
             @Override
             public PublicObjective create() {
                 return new SetShades("Sets of 3 & 4 values anywhere", 2, 3);
             }
         });
-        pubObj.put(7, new Command() {
+        pubObj.add(new Command() {
             @Override
             public PublicObjective create() {
                 return new SetShades("Sets of 5 & 6 values anywhere", 2, 5);
             }
         });
-        pubObj.put(8, new Command() {
+        pubObj.add(new Command() {
             @Override
             public PublicObjective create() {
                 return new DiffEverywhere("Sets of one of each value anywhere", 5, false);
             }
         });
-        pubObj.put(9, new Command() {
+        pubObj.add(new Command() {
             @Override
             public PublicObjective create() {
                 return new DiagColour("Count of diagonally adjacent same color dice");
             }
         });
-        pubObj.put(10, new Command() {
+        pubObj.add(new Command() {
             @Override
             public PublicObjective create() {
                 return new DiffEverywhere("Sets of one of each color anywhere", 4, true);
             }
         });
-        PUBOBJ = Collections.unmodifiableMap(pubObj);
+        PUBOBJ = Collections.unmodifiableList(pubObj);
     }
 
     /**
