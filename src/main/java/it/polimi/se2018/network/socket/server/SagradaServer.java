@@ -243,7 +243,6 @@ public class SagradaServer implements VisitorServer, Observer{
     @Override
     public void visit(Message message){
         //NOTIFY CONTROLLER
-        this.virtualView.notifyObservers(message);
     }
 
     @Override

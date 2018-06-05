@@ -13,5 +13,6 @@ public class RemoteClient extends Observable implements ClientInterface {
         this.notifyObservers(message);
     }
 
+    @Override
     public void closeConnection(){}
 }
