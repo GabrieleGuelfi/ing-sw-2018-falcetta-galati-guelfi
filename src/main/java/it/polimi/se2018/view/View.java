@@ -43,17 +43,6 @@ public class View extends Observable implements Observer, VisitorView {
         AnsiConsole.systemInstall();
         out.println("Welcome in Sagrada!");
 
-        List<Integer> results = new ArrayList<>();
-        results.add(2);
-        results.add(5);
-        results.add(6);
-        List<String> nicknames = new ArrayList<>();
-        nicknames.add("Ale");
-        nicknames.add("Gabbo");
-        nicknames.add("FedeGal");
-
-        handleEndMatch(nicknames, results);
-
     }
 
     public static View createView() {
