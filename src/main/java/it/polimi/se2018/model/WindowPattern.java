@@ -65,7 +65,9 @@ public class WindowPattern implements Serializable {
     /**
      * decrease by one the number of empty box
      */
-    private void decreaseEmptyBox(){ emptyBox = emptyBox - 1;}
+    private void decreaseEmptyBox(){
+        emptyBox = emptyBox - 1;
+    }
 
     /**
      * put a box in row and column
@@ -73,7 +75,9 @@ public class WindowPattern implements Serializable {
      * @param row in which you want to put the box
      * @param column column in which you want to put the box
      */
-    public void setBox(Box b, int row, int column){ grid[row][column] = b; } //costruttore..?
+    public void setBox(Box b, int row, int column){
+        grid[row][column] = b;
+    }
 
     /**
      * @param row row of searched Box

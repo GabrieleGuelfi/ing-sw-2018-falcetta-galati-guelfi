@@ -19,8 +19,6 @@ public class TestDiceCollection {
     public void testAddDie() {
         DiceCollection dice = new DiceCollection();
 
-        assertEquals(0, dice.size());
-
         Die die = new Die(Colour.BLUE);
         dice.addDie(die);
 
@@ -65,11 +63,11 @@ public class TestDiceCollection {
     @Test
     public void testCopy() {
         DiceCollection dc = new DiceCollection();
-        DiceCollection dc1 = null;
+        DiceCollection dc1;
 
         Die die1 = new Die(Colour.BLUE);
         Die die2 = new Die(Colour.GREEN);
-        Die die3 = new Die(Colour.PURPLE);
+        Die die3 = new Die(Colour.MAGENTA);
 
         die1.setRandomValue();
         die2.setRandomValue();
@@ -93,6 +91,7 @@ public class TestDiceCollection {
         }
 
         assertEquals(dc.size(), dc1.size());
+        assertEquals(true, dc.getBag().equals(dc1.getBag()));
 
     }
 }

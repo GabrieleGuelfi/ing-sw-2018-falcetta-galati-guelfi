@@ -11,6 +11,7 @@ public class TestBox {
         Box box = new Box(3, Colour.BLUE);
         assertEquals(3, box.getValueRestriction());
         assertEquals(Colour.BLUE, box.getColourRestriction());
+        assertEquals(false, box.hasNoValueRestriction());
     }
 
     @Test
@@ -18,6 +19,7 @@ public class TestBox {
         Box box = new Box(5);
         assertEquals(5, box.getValueRestriction());
         assertEquals(Colour.WHITE, box.getColourRestriction());
+        assertEquals(true, box.hasNoValueRestriction());
     }
 
     @Test

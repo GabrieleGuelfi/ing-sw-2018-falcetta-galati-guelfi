@@ -39,7 +39,7 @@ public class TestDraftPool {
             if (die.getColour()==Colour.GREEN) greenDice++;
             if (die.getColour()==Colour.YELLOW) yellowDice++;
             if (die.getColour()==Colour.RED) redDice++;
-            if (die.getColour()==Colour.PURPLE) purpleDice++;
+            if (die.getColour()==Colour.MAGENTA) purpleDice++;
         }
 
         assertEquals(0, draftPool.size());
@@ -50,7 +50,7 @@ public class TestDraftPool {
             if (die.getColour()==Colour.GREEN) greenDice++;
             if (die.getColour()==Colour.YELLOW) yellowDice++;
             if (die.getColour()==Colour.RED) redDice++;
-            if (die.getColour()==Colour.PURPLE) purpleDice++;
+            if (die.getColour()==Colour.MAGENTA) purpleDice++;
         }
 
         assertEquals(0, bag.size());

@@ -78,11 +78,6 @@ public class Match extends Observable {
         return firstPlayerRound;
     }
 
-    public void setRound(Round r) {
-        if(r==null) throw new IllegalArgumentException("Invalid round!");
-        this.round = r;
-    }
-
     public Round getRound() {
         return round;
     }

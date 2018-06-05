@@ -16,7 +16,6 @@ import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.fusesource.jansi.AnsiConsole;
 
@@ -46,7 +45,7 @@ public class View extends Observable implements Observer, VisitorView {
     }
 
     public static View createView() {
-        if (view ==null) {
+        if (view == null) {
             view = new View();
             return view;
         }
@@ -105,8 +104,6 @@ public class View extends Observable implements Observer, VisitorView {
                         out.print(ansi().fg(color).a("[" + d.getValue() + "] ").reset());
                     }
                 }
-                if (d.getColour().equals(Colour.PURPLE))
-                    out.print(ansi().fg(MAGENTA).a("[" + d.getValue() + "] ").reset());
             }
         }
 
@@ -308,7 +305,7 @@ public class View extends Observable implements Observer, VisitorView {
     }
 
     private void printBoxWithoutDie(Box box) {
-        if (box.hasAValueRestriction()) {
+        if (box.hasNoValueRestriction()) {
             if(box.getValueRestriction()!=0) out.print("[" + box.getValueRestriction() + "] ");
             else out.print("[ ] ");
         } else {
@@ -318,7 +315,6 @@ public class View extends Observable implements Observer, VisitorView {
                     out.print(ansi().fg(color).a("[ ] ").reset());
                 }
             }
-            if(boxColour.equals(Colour.PURPLE)) out.print(ansi().fg(MAGENTA).a("[ ] ").reset());
         }
     }
 
@@ -329,8 +325,6 @@ public class View extends Observable implements Observer, VisitorView {
                 out.print(ansi().fg(color).a("[" + box.getDie().getValue() + "] ").reset());
             }
         }
-
-        if(dieColour.equals(Colour.PURPLE)) out.print(ansi().fg(MAGENTA).a("[" + box.getDie().getValue() + "] ").reset());
     }
 
     private void printDraftPool(DraftPool dp) {
@@ -345,8 +339,6 @@ public class View extends Observable implements Observer, VisitorView {
                     out.print(ansi().fg(color).a("[" + d.getValue() + "] ").reset());
                 }
             }
-            if (d.getColour().equals(Colour.PURPLE))
-                out.print(ansi().fg(MAGENTA).a("[" + d.getValue() + "] ").reset());
         }
         out.println("\n");
     }
@@ -368,7 +360,6 @@ public class View extends Observable implements Observer, VisitorView {
     @Override
     public void update(Message m)
     {
-        System.out.println("MESSAGE ACCEPTED");
         m.accept(this);
     }
 
@@ -399,8 +390,6 @@ public class View extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageChooseWP message) {
-
-        System.out.println("Message choose wp visited");
         askWindowPattern(message.getFirstIndex(), message.getSecondIndex());
     }
 

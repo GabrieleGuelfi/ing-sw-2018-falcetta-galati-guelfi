@@ -5,6 +5,7 @@ import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.messageforserver.*;
 import it.polimi.se2018.events.messageforview.MessageNickname;
 import it.polimi.se2018.network.socket.client.ClientInterface;
+import it.polimi.se2018.network.socket.client.ConnectionHandlerThread;
 import it.polimi.se2018.view.VirtualView;
 import static java.lang.System.*;
 
@@ -243,6 +244,8 @@ public class SagradaServer implements VisitorServer, Observer{
     @Override
     public void visit(Message message){
         //NOTIFY CONTROLLER
+        (new ConnectionHandlerThread(this.virtualView, message)).start();
+
     }
 
     @Override

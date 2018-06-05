@@ -15,25 +15,25 @@ public class TestDiffRow {
     @Test
     public void TestCalcScoreColour() {
         WindowPattern w = new WindowPattern("foo", 5);
-        PublicObjective diffRow = PublicObjective.factory(1);
+        PublicObjective diffRow = PublicObjective.factory(0);
 
         w.putDice(new Die(Colour.BLUE), 0, 0);
         w.putDice(new Die(Colour.YELLOW), 0, 1);
         w.putDice(new Die(Colour.RED), 0, 2);
         w.putDice(new Die(Colour.GREEN), 0, 3);
-        w.putDice(new Die(Colour.PURPLE), 0, 4);
+        w.putDice(new Die(Colour.MAGENTA), 0, 4);
 
         w.putDice(new Die(Colour.BLUE), 3, 0);
         w.putDice(new Die(Colour.YELLOW), 3, 1);
         w.putDice(new Die(Colour.RED), 3, 2);
         w.putDice(new Die(Colour.GREEN), 3, 3);
-        w.putDice(new Die(Colour.PURPLE), 3, 4);
+        w.putDice(new Die(Colour.MAGENTA), 3, 4);
 
         w.putDice(new Die(Colour.BLUE), 2, 0);
         w.putDice(new Die(Colour.BLUE), 2, 1);
         w.putDice(new Die(Colour.RED), 2, 2);
         w.putDice(new Die(Colour.RED), 2, 3);
-        w.putDice(new Die(Colour.PURPLE), 2, 4);
+        w.putDice(new Die(Colour.MAGENTA), 2, 4);
 
         assertEquals(diffRow.getVp()*2, diffRow.calcScore(w));
     }
@@ -41,7 +41,7 @@ public class TestDiffRow {
     @Test
     public void TestCalcScoreValues() {
         WindowPattern w = new WindowPattern("foo", 5);
-        PublicObjective diffRow = PublicObjective.factory(3);
+        PublicObjective diffRow = PublicObjective.factory(2);
         List<Die> dice = new ArrayList<>();
         for (int i=0; i<6; i++)
             dice.add(i, new Die(Colour.WHITE));

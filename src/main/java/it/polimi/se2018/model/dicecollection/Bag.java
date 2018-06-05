@@ -33,7 +33,7 @@ public class Bag extends DiceCollection {
             addDieOfColour(Colour.BLUE);
             addDieOfColour(Colour.GREEN);
             addDieOfColour(Colour.YELLOW);
-            addDieOfColour(Colour.PURPLE);
+            addDieOfColour(Colour.MAGENTA);
         }
     }
 
@@ -52,9 +52,9 @@ public class Bag extends DiceCollection {
     @Override
     public Bag copy(){
         Bag b = new Bag();
-        for(Die x : this.bag){
+        for(Die x : this.getBag()){
 
-            b.bag.add(x.copy());
+            b.getBag().add(x.copy());
         }
         return b;
 

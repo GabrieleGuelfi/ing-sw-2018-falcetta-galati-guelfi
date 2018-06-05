@@ -58,9 +58,9 @@ public class DraftPool extends DiceCollection implements Serializable {
     @Override
     public DraftPool copy() {
         DraftPool d = new DraftPool();
-        for(Die x : this.bag){
+        for(Die x : this.getBag()){
 
-            d.bag.add(x.copy());
+            d.getBag().add(x.copy());
         }
         return d;
     }

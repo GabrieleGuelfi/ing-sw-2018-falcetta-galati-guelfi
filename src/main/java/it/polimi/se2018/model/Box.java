@@ -48,7 +48,7 @@ public class Box implements Serializable {
      */
     public Colour getColourRestriction() { return colourRestriction;}
 
-    public boolean hasAValueRestriction() {
+    public boolean hasNoValueRestriction() {
         return (this.colourRestriction==Colour.WHITE);
     }
 
