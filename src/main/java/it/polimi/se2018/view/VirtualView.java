@@ -34,4 +34,8 @@ public class VirtualView extends Observable implements Observer, ServerInterface
 
     }
 
+    public void sendToServer(Message message){
+        message.accept(this.sagradaServer);
+    }
+
 }

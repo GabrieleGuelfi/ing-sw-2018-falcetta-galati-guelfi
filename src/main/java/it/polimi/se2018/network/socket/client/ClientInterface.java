@@ -9,5 +9,6 @@ import java.rmi.RemoteException;
 public interface ClientInterface extends Remote {
 
     void notify(Message message) throws RemoteException;
+    void closeConnection() throws RemoteException;
 
 }

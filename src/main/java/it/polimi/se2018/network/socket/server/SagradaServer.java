@@ -2,10 +2,7 @@ package it.polimi.se2018.network.socket.server;
 
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.messageforserver.MessageAddClientInterface;
-import it.polimi.se2018.events.messageforserver.MessageErrorClientGathererClosed;
-import it.polimi.se2018.events.messageforserver.MessageErrorVirtualClientClosed;
-import it.polimi.se2018.events.messageforserver.MessageError;
+import it.polimi.se2018.events.messageforserver.*;
 import it.polimi.se2018.events.messageforview.MessageNickname;
 import it.polimi.se2018.network.socket.client.ClientInterface;
 import it.polimi.se2018.view.VirtualView;
@@ -71,7 +68,6 @@ public class SagradaServer implements VisitorServer, Observer{
     public static void main(String[] args){
         new SagradaServer();
     }
-
 
     protected void addClient(Socket clientConnection, String nick) {
 
@@ -161,7 +157,7 @@ public class SagradaServer implements VisitorServer, Observer{
             this.handleClientGatherer.setClientGathererActive();
             this.handleClientGatherer.interrupt();
         }
-        if (this.clients.size() == 1 && this.timer != null) {
+        if (this.clients.size() == 1 && this.timer != null && !this.gameIsStarted) {
             this.timer.stopTimer();
             out.println("not enough players");
         }
@@ -224,6 +220,21 @@ public class SagradaServer implements VisitorServer, Observer{
         }
     }
 
+    private void restartGame(){
+
+        //BE READY FOR A NEW MATCH
+        this.gameIsStarted = false;
+        this.nicknameDisconnected = new ArrayList<>();
+        for(CoupleClientNickname c : this.clients){
+
+        }
+        this.maxClients = 4;
+        this.controller = null;
+        this.handleClientGatherer.setClientGathererActive();
+        this.handleClientGatherer.interrupt();
+
+    }
+
     @Override
     public void update(Message message){
         message.accept(this);
@@ -273,6 +284,11 @@ public class SagradaServer implements VisitorServer, Observer{
         out.println(message.getNickname());
         if(this.clientGatherer != null)this.clientGatherer.stopClientGatherer();
         this.clientGatherer = new ClientGatherer(this,this.port);
+    }
+
+    @Override
+    public void visit(MessageRestartServer message){
+        this.restartGame();
     }
 
 

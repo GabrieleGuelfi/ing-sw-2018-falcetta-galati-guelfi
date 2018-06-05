@@ -42,17 +42,6 @@ public class View extends Observable implements Observer, VisitorView {
         AnsiConsole.systemInstall();
         out.println("Welcome in Sagrada!");
 
-        List<Integer> results = new ArrayList<>();
-        results.add(2);
-        results.add(5);
-        results.add(6);
-        List<String> nicknames = new ArrayList<>();
-        nicknames.add("Ale");
-        nicknames.add("Gabbo");
-        nicknames.add("FedeGal");
-
-        handleEndMatch(nicknames, results);
-
     }
 
     public static View createView() {
@@ -369,7 +358,9 @@ public class View extends Observable implements Observer, VisitorView {
 
 
     @Override
-    public void update(Message m) {
+    public void update(Message m)
+    {
+        System.out.println("MESSAGE ACCEPTED");
         m.accept(this);
     }
 
@@ -400,6 +391,8 @@ public class View extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageChooseWP message) {
+
+        System.out.println("Message choose wp visited");
         askWindowPattern(message.getFirstIndex(), message.getSecondIndex());
     }
 
