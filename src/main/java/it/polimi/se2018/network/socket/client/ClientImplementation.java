@@ -28,4 +28,6 @@ public class ClientImplementation extends Observable implements ClientInterface,
             e.printStackTrace();
         }
     }
+
+    public void closeConnection(){}
 }

@@ -11,4 +11,5 @@ public interface VisitorServer {
     void visit(MessageError message);
     void visit(MessageAddClientInterface message);
     void visit(MessageErrorClientGathererClosed message);
+    void visit(MessageRestartServer message);
 }
