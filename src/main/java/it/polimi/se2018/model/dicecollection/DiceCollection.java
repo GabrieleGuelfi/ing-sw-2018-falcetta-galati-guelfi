@@ -11,10 +11,9 @@ import java.util.*;
  * Superclass for all the collections of dice.
  *
  */
-
 public class DiceCollection implements Serializable {
 
-    protected ArrayList<Die> bag;
+    List<Die> bag;
 
     /**
      * Constructor

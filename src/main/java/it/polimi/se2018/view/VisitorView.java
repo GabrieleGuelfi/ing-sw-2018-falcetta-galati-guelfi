@@ -19,5 +19,8 @@ public interface VisitorView {
     void visit(MessageConfirmMove message);
     void visit(MessageErrorMove message);
     void visit(MessagePing message);
+    void visit(MessageRoundChanged message);
+    void visit(MessageRoundTrack message);
+    void visit(MessageEndMatch message);
 
 }

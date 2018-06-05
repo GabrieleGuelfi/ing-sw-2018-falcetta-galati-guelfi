@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -36,7 +37,7 @@ public class TestMatch {
             assertEquals(tools, match.getTools());
             assertEquals(objectives, match.getPublicObjectives());
 
-            List<Die> roundTrack = match.getRoundTrack();
+            Map<Integer, List<Die>> roundTrack = match.getRoundTrack();
 
             assertTrue(roundTrack.isEmpty());
             assertEquals(1, match.getNumRound());

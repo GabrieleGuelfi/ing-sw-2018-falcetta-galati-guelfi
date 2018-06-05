@@ -9,7 +9,9 @@ import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.view.VirtualView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // This means that, when Match ( = Model ) is modified
 // notify(ModelUpdate) is called. This message contains a copy of the new
@@ -26,7 +28,7 @@ public class Match extends Observable {
     private List<Player> activePlayers;
     private List<PublicObjective> publicObjectives;
     private List<Tool> tools;
-    private List<Die> roundTrack;
+    private Map<Integer, List<Die>> roundTrack;
     private int numRound;
     private Round round;
     private Player firstPlayerRound;
@@ -50,7 +52,7 @@ public class Match extends Observable {
         this.activePlayers = players;
         this.publicObjectives = objectives;
         this.tools = tools;
-        this.roundTrack = new ArrayList<>();
+        this.roundTrack = new HashMap<>();
         this.numRound = 1; // Human convention?
         firstPlayerRound = players.get(0);
         this.round = new Round(new DraftPool(this.bag, this.players.size()), firstPlayerRound);
@@ -143,8 +145,12 @@ public class Match extends Observable {
      * Getter for roundtrack
      * @return roundtrack of the match
      */
-    public List<Die> getRoundTrack() {
-        return this.roundTrack;
+    public Map<Integer, List<Die>> getRoundTrack() {
+        return roundTrack;
+    }
+
+    public void setRoundTrack() {
+        this.roundTrack.put(numRound, round.getDraftPool().getBag());
     }
 
     /**

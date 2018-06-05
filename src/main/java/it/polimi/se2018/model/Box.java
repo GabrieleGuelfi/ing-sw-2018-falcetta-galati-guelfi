@@ -35,6 +35,7 @@ public class Box implements Serializable {
         if(n<0 || n>6) throw new IllegalArgumentException("Invalid value restriction!");
         valueRestriction = n;
         colourRestriction = c;
+        die=null;
     }
 
     /**

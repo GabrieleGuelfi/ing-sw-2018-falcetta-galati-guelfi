@@ -15,7 +15,7 @@ public class PrivateObjective {
      */
     public PrivateObjective(Colour shade) {
         this.shade = shade;
-        this.description = "Shades of " + shade + ": Private\nSum of values on "+shade+" dice";
+        this.description = "Shades of " + shade + ": Private\nSum of values on "+shade+" dice\n";
     }
 
     /**
@@ -30,6 +30,19 @@ public class PrivateObjective {
      */
     public Colour getShade() {
         return shade;
+    }
+
+    public int calcScore(WindowPattern w) {
+        int points = 0;
+        for(int i=0; i<WindowPattern.MAX_ROW; i++) {
+            for (int j=0; j<WindowPattern.MAX_COL; j++) {
+                try {
+                    if (w.getBox(i, j).getDie().getColour() == shade)
+                        points += w.getBox(i, j).getDie().getValue();
+                } catch (IllegalArgumentException | NullPointerException e) {}
+            }
+        }
+        return points;
     }
 
 }

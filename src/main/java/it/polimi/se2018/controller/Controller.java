@@ -23,11 +23,11 @@ public class Controller implements VisitorController, Observer {
     private Match match;
     private VirtualView virtualView;
 
-    public Controller() {
-        this.match = null;
+    public Controller(List<String> nickname, VirtualView view) {
+        prepareGame(nickname, view);
     }
 
-    public void startGame(List<String> nickname, VirtualView view) {
+    private void prepareGame(List<String> nickname, VirtualView view) {
 
         List<Player> players = new ArrayList<>();
         List<PublicObjective> objectives = new ArrayList<>();
@@ -63,23 +63,22 @@ public class Controller implements VisitorController, Observer {
             view.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
         }
 
-        for(Player p: players) {
-            while(p.getWindowPattern()==null) {
-
-            }
-        }
-
-        Player firstPlayer = match.getRound().getPlayerTurn();
-        this.match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool().copy()));
-        this.match.notifyObservers(new MessageTurnChanged(firstPlayer.getNickname()));
-
-
-
         // TOOLS PART!
 
     }
 
+    private boolean areWPset() {
+        for(Player p: match.getActivePlayers()) {
+            if (p.getWindowPattern()==null) return false;
+        }
+        return true;
+    }
 
+    private void startGame() {
+        this.match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool().copy()));
+        this.match.notifyObservers(new MessageRoundChanged(match.getRound().getPlayerTurn().getNickname(), match.getNumRound()));
+        //this.match.notifyObservers(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
+    }
 
     private void givePrivateObjective(List<Player> players) {
         Random generator = new Random();
@@ -92,7 +91,7 @@ public class Controller implements VisitorController, Observer {
                 index = generator.nextInt(colours.length);
             rand.add(index);
             p.setPrivateObjective(new PrivateObjective(colours[index]));
-            virtualView.send(new MessagePrivObj(p.getNickname(), colours[index].toString()));
+            virtualView.send(new MessagePrivObj(p.getNickname(), p.getPrivateObjective().getDescription()));
         }
     }
 
@@ -103,7 +102,7 @@ public class Controller implements VisitorController, Observer {
      */
     private boolean isNearDie(WindowPattern w, int row, int column) {
         if (w.getEmptyBox() == 20) {
-            return (row == 0 || row == WindowPattern.MAX_ROW-1 || column == 0 || column == WindowPattern.MAX_COL);
+            return (row == 0 || row == WindowPattern.MAX_ROW-1 || column == 0 || column == WindowPattern.MAX_COL-1);
         }
         for(int i=row-1; i<row+2; i++ ) {
             for(int j=column-1; j<column+2; j++) {
@@ -161,8 +160,7 @@ public class Controller implements VisitorController, Observer {
     private boolean verifyNumber(WindowPattern w, int row, int column, Die die) {
 
         try {
-            if (w.getBox(row, column).getValueRestriction() != die.getValue() && w.getBox(row, column).getValueRestriction() != 0) //-1 equals to no restriction
-
+            if (w.getBox(row, column).getValueRestriction() != die.getValue() && w.getBox(row, column).getValueRestriction() != 0) //0 equals to no restriction
                 return false;
         } catch (IllegalArgumentException | NullPointerException e) {}
         try {
@@ -187,26 +185,61 @@ public class Controller implements VisitorController, Observer {
     /**
      * calculate the score of a player, based on his private objective and the three public ones
      * @param player player whose score is calculated
-     * @param p public objective of the match
      */
-    private void calcResults(Player player, List<PublicObjective> p) {
-
-        WindowPattern windowPattern = player.getWindowPattern();
+    private void calcResults(Player player) {
 
         //privateObjective
-        for(int i=0; i<WindowPattern.MAX_ROW; i++) {
-            for (int j=0; j<WindowPattern.MAX_COL; j++) {
-                try {
-                    if (windowPattern.getBox(i, j).getDie().getColour() == player.getPrivateObjective().getShade())
-                        player.addPoints(windowPattern.getBox(i, j).getDie().getValue());
-                } catch (IllegalArgumentException | NullPointerException e) {}
-            }
-        }
+        player.addPoints(player.getPrivateObjective().calcScore(player.getWindowPattern()));
 
         //publicObjectives
-        for (PublicObjective publicObjective : p) {
+        for (PublicObjective publicObjective : match.getPublicObjectives()) {
             player.addPoints(publicObjective.calcScore(player.getWindowPattern()));
         }
+
+        //favor tokens
+        player.addPoints(player.getFavorTokens());
+
+        //Empty box
+        player.addPoints(-player.getWindowPattern().getEmptyBox());
+
+    }
+
+    private Player searchNick(String nickname) {
+        for (Player p : match.getPlayers()) {
+            if (p.getNickname().equals(nickname))
+                return p;
+        }
+        return null;
+    }
+
+    private void nextTurn() {
+        try {
+            match.getRound().nextTurn(match.getPlayers());
+            match.notifyObservers(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
+        }
+        catch (IllegalStateException e) {
+            try {
+                match.setRoundTrack();
+                match.setRound();
+                match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
+                match.notifyObservers(new MessageRoundChanged(match.getFirstPlayerRound().getNickname(), match.getNumRound()));
+
+            }
+            catch (IllegalStateException e1) {
+                endMatch();
+            }
+        }
+    }
+
+    private void endMatch() {
+        List<Integer> points = new ArrayList<>();
+        List<String> nicknames = new ArrayList<>();
+        for (Player p : match.getActivePlayers()) {
+            calcResults(p);
+            points.add(p.getPoints());
+            nicknames.add(p.getNickname());
+        }
+        match.notifyObservers(new MessageEndMatch(points, nicknames));
 
     }
 
@@ -226,6 +259,7 @@ public class Controller implements VisitorController, Observer {
         if (player!=null) {
             player.setWindowPattern(HandleJSON.createWindowPattern(player.getNickname(), message.getFirstIndex(), message.getSecondIndex()));
             match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
+            if (areWPset()) startGame();
         }
         else {
             out.println("nickname non valido");
@@ -236,13 +270,9 @@ public class Controller implements VisitorController, Observer {
     public void visit(MessageMoveDie message) {
 
         Die d = match.getRound().getDraftPool().getBag().get(message.getDieFromDraftPool());
-        Player player = null;
+        Player player = searchNick(message.getNickname());
 
-        for (Player p : match.getPlayers()) {
-            if (p.getNickname().equals(message.getNickname()))
-                player = p;
-        }
-        if (player==null) {
+        if (player == null) {
             out.println("player doesn't exist");
             return;
         }
@@ -267,55 +297,33 @@ public class Controller implements VisitorController, Observer {
         if (player.isUsedTool() && player.isPlacedDie()) {
             player.setPlacedDie(false);
             player.setUsedTool(false);
-            try {
-                player.setPlacedDie(false);
-                player.setUsedTool(false);
-                match.getRound().nextTurn(match.getPlayers());
-                virtualView.send(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
-                return;
-            }
-            catch (IllegalStateException e) {
-                try {
-                    match.setRound();
-                    return;
-                }
-                catch (IllegalStateException e1) {
-                    //endMatch();
-                    return;
-                }
-            }
+            nextTurn();
         }
-        virtualView.send(new MessageConfirmMove(player.getNickname(), player.isPlacedDie(), player.isUsedTool()));
-
+        virtualView.send(new MessageConfirmMove(player.getNickname(), player.isPlacedDie(), player.isUsedTool(), true));
+        match.getRound().getDraftPool().removeDie(message.getDieFromDraftPool());
+        match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
+        match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
     }
 
     @Override
     public void visit(MessageDoNothing message) {
 
-        Player player = null;
+        Player player = searchNick(message.getNickname());
 
-        for (Player p : match.getPlayers()) {
-            if (p.getNickname().equals(message.getNickname()))
-                player = p;
-        }
-        if (player==null) {
+        if (player == null) {
             out.println("player doesn't exist");
             return;
         }
         player.setPlacedDie(false);
         player.setUsedTool(false);
-        try {
-            match.getRound().nextTurn(match.getPlayers());
-            virtualView.send(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
-        }
-        catch (IllegalStateException e) {
-            try {
-                match.setRound();
-            }
-            catch (IllegalStateException e1) {
-                //endMatch();
-            }
-        }
+        nextTurn();
+
     }
 
+    @Override
+    public void visit(MessageRequest message) {
+        Player player = searchNick(message.getNickname());
+        message.getType().performRequest(player, virtualView, match);
+        virtualView.send(new MessageConfirmMove(message.getNickname(), player.isPlacedDie(), player.isUsedTool(), false));
+    }
 }

@@ -5,15 +5,15 @@ import it.polimi.se2018.view.VisitorView;
 
 public class MessagePrivObj extends Message {
 
-    String colour;
+    private String description;
 
-    public MessagePrivObj(String nickname, String colour) {
+    public MessagePrivObj(String nickname, String description) {
         super(nickname);
-        this.colour = colour;
+        this.description = description;
     }
 
-    public String getColour() {
-        return this.colour;
+    public String getDescription() {
+        return this.description;
     }
 
     @Override

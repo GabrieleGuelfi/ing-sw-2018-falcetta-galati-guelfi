@@ -1,0 +1,25 @@
+[
+  {
+    "description": "Rows with no repeated colours",
+    "vp": 6,
+    "row": true,
+    "colour": true,
+    "set": 0
+  },
+
+  {
+    "description": "Column with no repeated colours",
+    "vp": 5,
+    "row": false,
+    "colour": true,
+    "set": 0
+  },
+
+  {
+    "description": "Rows with no repeated values",
+    "vp": 5,
+    "row": true,
+    "colour": false,
+    "set": 0
+  }
+]
