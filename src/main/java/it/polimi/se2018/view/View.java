@@ -360,7 +360,6 @@ public class View extends Observable implements Observer, VisitorView {
     @Override
     public void update(Message m)
     {
-        System.out.println("MESSAGE ACCEPTED");
         m.accept(this);
     }
 
@@ -391,8 +390,6 @@ public class View extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageChooseWP message) {
-
-        System.out.println("Message choose wp visited");
         askWindowPattern(message.getFirstIndex(), message.getSecondIndex());
     }
 

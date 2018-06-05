@@ -4,6 +4,7 @@ package it.polimi.se2018.controller;
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.messageforcontroller.*;
+import it.polimi.se2018.events.messageforserver.MessageRestartServer;
 import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.*;
 import it.polimi.se2018.model.dicecollection.*;
@@ -240,6 +241,7 @@ public class Controller implements VisitorController, Observer {
             nicknames.add(p.getNickname());
         }
         match.notifyObservers(new MessageEndMatch(points, nicknames));
+        virtualView.sendToServer(new MessageRestartServer());
 
     }
 
