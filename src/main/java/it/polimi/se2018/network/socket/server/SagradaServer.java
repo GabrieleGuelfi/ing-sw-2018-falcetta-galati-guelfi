@@ -198,12 +198,7 @@ public class SagradaServer implements VisitorServer, Observer{
     }
 
     protected void startGame() {
-        try {
-            this.clients.get(0).getVirtualClient().closeConnection();
-        }
-        catch(RemoteException e){
-            e.printStackTrace();
-        }
+
         if (this.clients.size() == 1) {
             out.println("not enough player.");
         } else {
