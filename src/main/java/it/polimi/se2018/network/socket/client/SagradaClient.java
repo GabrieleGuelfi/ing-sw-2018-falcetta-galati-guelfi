@@ -14,7 +14,7 @@ import static java.lang.System.out;
 
 public class SagradaClient {
 
-    private static final int PORT = 1111;
+    private static final int PORT = 12345;
     private static final String HOST = "localhost";
 
     private ClientImplementation client;

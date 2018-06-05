@@ -1,10 +1,7 @@
 package it.polimi.se2018.controller;
 
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.messageforcontroller.MessageDoNothing;
-import it.polimi.se2018.events.messageforcontroller.MessageMoveDie;
-import it.polimi.se2018.events.messageforcontroller.MessageRequest;
-import it.polimi.se2018.events.messageforcontroller.MessageSetWP;
+import it.polimi.se2018.events.messageforcontroller.*;
 
 public interface VisitorController {
 
@@ -12,5 +9,6 @@ public interface VisitorController {
     void visit(MessageMoveDie message);
     void visit(MessageDoNothing message);
     void visit(MessageRequest message);
+    void visit(MessageEndGame message);
 
 }

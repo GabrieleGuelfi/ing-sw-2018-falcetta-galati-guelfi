@@ -328,4 +328,10 @@ public class Controller implements VisitorController, Observer {
         message.getType().performRequest(player, virtualView, match);
         virtualView.send(new MessageConfirmMove(message.getNickname(), player.isPlacedDie(), player.isUsedTool(), false));
     }
+
+    @Override
+    public void visit(MessageEndGame message){
+        //IN THIS MESSAGE THERE IS THE NAME OF THE WINNER
+        this.endMatch();
+    }
 }

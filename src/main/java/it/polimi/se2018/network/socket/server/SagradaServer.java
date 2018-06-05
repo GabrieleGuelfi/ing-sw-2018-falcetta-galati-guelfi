@@ -2,7 +2,9 @@ package it.polimi.se2018.network.socket.server;
 
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.messageforcontroller.MessageEndGame;
 import it.polimi.se2018.events.messageforserver.*;
+import it.polimi.se2018.events.messageforview.MessageEndMatch;
 import it.polimi.se2018.events.messageforview.MessageNickname;
 import it.polimi.se2018.network.socket.client.ClientInterface;
 import it.polimi.se2018.network.socket.client.ConnectionHandlerThread;
@@ -152,15 +154,18 @@ public class SagradaServer implements VisitorServer, Observer{
         this.clients.remove(couple);
         out.println(string  + " is removed.");
 
+        if(this.gameIsStarted && this.clients.size()==1) this.virtualView.notifyObservers(new MessageEndGame(this.clients.get(0).getNickname()));
+        else {
 
-        //CONTROL TIMER AND CLIENT GATHERER
-        if (this.clients.size() < this.maxClients && gameIsStarted) {
-            this.handleClientGatherer.setClientGathererActive();
-            this.handleClientGatherer.interrupt();
-        }
-        if (this.clients.size() == 1 && this.timer != null && !this.gameIsStarted) {
-            this.timer.stopTimer();
-            out.println("not enough players");
+            //CONTROL TIMER AND CLIENT GATHERER
+            if (this.clients.size() < this.maxClients && gameIsStarted) {
+                this.handleClientGatherer.setClientGathererActive();
+                this.handleClientGatherer.interrupt();
+            }
+            if (this.clients.size() == 1 && this.timer != null && !this.gameIsStarted) {
+                this.timer.stopTimer();
+                out.println("not enough players");
+            }
         }
     }
 
@@ -226,9 +231,22 @@ public class SagradaServer implements VisitorServer, Observer{
         //BE READY FOR A NEW MATCH
         this.gameIsStarted = false;
         this.nicknameDisconnected = new ArrayList<>();
-        for(CoupleClientNickname c : this.clients){
 
+        //CLOSE ALL CONNECTION
+        for(CoupleClientNickname c : this.clients){
+            try {
+                c.getVirtualClient().closeConnection();
+            }
+            catch(RemoteException e){
+                e.printStackTrace();
+            }
         }
+
+        //REMOVE ALL CLIENTS
+        for(int i = 0; i < this.clients.size(); i++){
+            this.clients.remove(this.clients.get(i));
+        }
+
         this.maxClients = 4;
         this.controller = null;
         this.handleClientGatherer.setClientGathererActive();

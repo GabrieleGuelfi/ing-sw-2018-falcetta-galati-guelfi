@@ -1,7 +1,9 @@
 package it.polimi.se2018.view;
 
 import it.polimi.se2018.events.Message;
+import it.polimi.se2018.events.messageforcontroller.MessageDoNothing;
 import it.polimi.se2018.network.socket.client.ClientInterface;
+import it.polimi.se2018.network.socket.client.ConnectionHandlerThread;
 import it.polimi.se2018.network.socket.server.*;
 import it.polimi.se2018.utils.*;
 
@@ -22,7 +24,9 @@ public class VirtualView extends Observable implements Observer, ServerInterface
 
     public void send(Message message){
         try {
-            this.sagradaServer.searchVirtualClient(message.getNickname()).notify(message);
+            ClientInterface clientInterface =this.sagradaServer.searchVirtualClient(message.getNickname());
+            if(clientInterface == null) (new ConnectionHandlerThread(this, new MessageDoNothing(message.getNickname()))).start();
+            else clientInterface.notify(message);
         }
         catch(RemoteException e){
             e.printStackTrace();
