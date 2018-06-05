@@ -195,7 +195,7 @@ public class View extends Observable implements Observer, VisitorView {
 
         out.println( ansi().eraseScreen() );
         out.println( ansi().fg(RED).a("End of the match!").reset());
-        out.println("The winner is... " + nicknames.get(0) + "!\n");
+        out.println("The winner is... " + resultsSorted.keySet().toArray()[0] + "!\n");
         out.println("Full classification: ");
 
 
