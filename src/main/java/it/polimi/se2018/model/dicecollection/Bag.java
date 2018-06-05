@@ -33,7 +33,7 @@ public class Bag extends DiceCollection {
             addDieOfColour(Colour.BLUE);
             addDieOfColour(Colour.GREEN);
             addDieOfColour(Colour.YELLOW);
-            addDieOfColour(Colour.PURPLE);
+            addDieOfColour(Colour.MAGENTA);
         }
     }
 

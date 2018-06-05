@@ -69,7 +69,7 @@ public class TestDiceCollection {
 
         Die die1 = new Die(Colour.BLUE);
         Die die2 = new Die(Colour.GREEN);
-        Die die3 = new Die(Colour.PURPLE);
+        Die die3 = new Die(Colour.MAGENTA);
 
         die1.setRandomValue();
         die2.setRandomValue();

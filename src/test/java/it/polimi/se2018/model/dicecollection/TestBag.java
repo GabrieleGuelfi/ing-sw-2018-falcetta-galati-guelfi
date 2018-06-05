@@ -41,7 +41,7 @@ public class TestBag {
             if (die.getColour() == Colour.GREEN) greenDice++;
             if (die.getColour() == Colour.RED) redDice++;
             if (die.getColour() == Colour.YELLOW) yellowDice++;
-            if (die.getColour() == Colour.PURPLE) purpleDice++;
+            if (die.getColour() == Colour.MAGENTA) purpleDice++;
         }
 
         assertEquals(sameColourDices, greenDice);

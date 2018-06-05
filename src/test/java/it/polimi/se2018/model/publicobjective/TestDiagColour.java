@@ -15,7 +15,7 @@ public class TestDiagColour {
         PublicObjective diagColour = PublicObjective.factory(9);
 
         w.putDice(new Die(Colour.YELLOW), 0, 0);
-        w.putDice(new Die(Colour.PURPLE), 0, 1);
+        w.putDice(new Die(Colour.MAGENTA), 0, 1);
         w.putDice(new Die(Colour.YELLOW), 0, 2);
         w.putDice(new Die(Colour.RED), 0, 3);
 
