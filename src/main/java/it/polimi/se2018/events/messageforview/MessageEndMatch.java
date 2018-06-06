@@ -4,7 +4,6 @@ import it.polimi.se2018.events.Message;
 import it.polimi.se2018.view.VisitorView;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MessageEndMatch extends Message {

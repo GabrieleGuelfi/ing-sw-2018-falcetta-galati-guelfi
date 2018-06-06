@@ -22,11 +22,23 @@ public class Controller implements VisitorController, Observer {
     private Match match;
     private VirtualView virtualView;
 
+    /**
+     * Constructor of the class
+     * @param nickname List of nickname of the player
+     * @param view virtualView used to send message
+     */
     public Controller(List<String> nickname, VirtualView view) {
-        prepareGame(nickname, view);
+        this.virtualView = view;
+        view.register(this);
+
+        prepareGame(nickname);
     }
 
-    private void prepareGame(List<String> nickname, VirtualView view) {
+    /**
+     * prepare all utilities to start a match
+     * @param nickname List of nickname of the player
+     */
+    private void prepareGame(List<String> nickname) {
 
         List<Player> players = new ArrayList<>();
         List<PublicObjective> objectives = new ArrayList<>();
@@ -35,9 +47,7 @@ public class Controller implements VisitorController, Observer {
         List<Integer> rand = new ArrayList<>();
         int index;
 
-        this.virtualView = view;
 
-        view.register(this);
 
         for (String p : nickname) {
             Player player = new Player(p);
@@ -55,17 +65,20 @@ public class Controller implements VisitorController, Observer {
         givePrivateObjective(players);
 
         // Create the match...
-        this.match = new Match(new Bag(), players, objectives, tools, view);
+        this.match = new Match(new Bag(), players, objectives, tools, virtualView);
 
         for(String player: nickname) {
             List<Integer> patterns = HandleJSON.chooseWP(player);
-            view.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
+            virtualView.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
         }
 
         // TOOLS PART!
 
     }
 
+    /**
+     * @return true if all players chosen their window pattern
+     */
     private boolean areWPset() {
         for(Player p: match.getActivePlayers()) {
             if (p.getWindowPattern()==null) return false;
@@ -73,12 +86,19 @@ public class Controller implements VisitorController, Observer {
         return true;
     }
 
+    /**
+     * start a game with first round
+     */
     private void startGame() {
         this.match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool().copy()));
         this.match.notifyObservers(new MessageRoundChanged(match.getRound().getPlayerTurn().getNickname(), match.getNumRound()));
         //this.match.notifyObservers(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
     }
 
+    /**
+     * set a private objective for all players
+     * @param players List of all players for this match
+     */
     private void givePrivateObjective(List<Player> players) {
         Random generator = new Random();
         List<Integer> rand = new ArrayList<>();
@@ -96,7 +116,9 @@ public class Controller implements VisitorController, Observer {
 
     /**
      * Verify if there is another Die near the position chosen by user
-     * performed by user
+     * @param w window pattern of the user
+     * @param row chosen by user
+     * @param column chosen by user
      * @return true if there is another die near
      */
     private boolean isNearDie(WindowPattern w, int row, int column) {
@@ -120,7 +142,10 @@ public class Controller implements VisitorController, Observer {
 
     /**
      * verify if there is another Die with the same colour near, or if there is colourRestriction in the Box
-     * @param
+     * @param w window pattern of the user
+     * @param row chosen by user
+     * @param column chosen by user
+     * @param die which the player want to place
      * @return false if Die break colour restriction
      */
     private boolean verifyColor(WindowPattern w, int row, int column, Die die) {
@@ -150,10 +175,10 @@ public class Controller implements VisitorController, Observer {
 
     /**
      * verify if there is another Die with the same number near, or if there is numberRestriction in the Box
-     * @param w
-     * @param row
-     * @param column
-     * @param die
+     * @param w window pattern of the user
+     * @param row chosen by user
+     * @param column chosen by user
+     * @param die which the player want to place
      * @return false if Die break number restriction
      */
     private boolean verifyNumber(WindowPattern w, int row, int column, Die die) {
@@ -181,6 +206,10 @@ public class Controller implements VisitorController, Observer {
         return true;
     }
 
+    /**
+     * @param nickname of a player that controller search
+     * @return Player with the nickname
+     */
     private Player searchNick(String nickname) {
         for (Player p : match.getPlayers()) {
             if (p.getNickname().equals(nickname))
@@ -189,6 +218,9 @@ public class Controller implements VisitorController, Observer {
         return null;
     }
 
+    /**
+     * verify if there is another turn for this round, or another round for this match
+     */
     private void nextTurn() {
         try {
             match.getRound().nextTurn(match.getPlayers());
@@ -233,6 +265,12 @@ public class Controller implements VisitorController, Observer {
         
     }
 
+    /**
+     * decide which player of p1 and p2 win on each other
+     * @param p1 player one
+     * @param p2 player two
+     * @return true if p1 win on p2
+     */
     private boolean manageTie(Player p1, Player p2) {
             if (p1.getPrivateObjective().calcScore(p1.getWindowPattern())>p2.getPrivateObjective().calcScore(p2.getWindowPattern()))
                 return true;
@@ -246,6 +284,9 @@ public class Controller implements VisitorController, Observer {
             return turnP1<i;
     }
 
+    /**
+     * end a match with more than a player
+     */
     private void endMatch() {
         List<Integer> points = new ArrayList<>();
         List<String> nicknames = new ArrayList<>();
@@ -272,6 +313,18 @@ public class Controller implements VisitorController, Observer {
         match.notifyObservers(new MessageEndMatch(results));
         virtualView.sendToServer(new MessageRestartServer());
 
+    }
+
+    /**
+     * end a match with only one player
+     * @param player winner
+     */
+    private void endMatch(Player player) {
+        Map<String , Integer> results = new HashMap<>();
+        calcResults(player);
+        results.put(player.getNickname(), player.getPoints());
+        match.notifyObservers(new MessageEndMatch(results));
+        virtualView.sendToServer(new MessageRestartServer());
     }
 
     @Override
@@ -361,6 +414,6 @@ public class Controller implements VisitorController, Observer {
     @Override
     public void visit(MessageEndGame message){
         //IN THIS MESSAGE THERE IS THE NAME OF THE WINNER
-        this.endMatch();
+        this.endMatch(searchNick(message.getNickname()));
     }
 }

@@ -20,7 +20,6 @@ import java.util.*;
 import org.fusesource.jansi.AnsiConsole;
 
 import static java.lang.System.*;
-import static java.util.stream.Collectors.toMap;
 import static org.fusesource.jansi.Ansi.*;
 import static org.fusesource.jansi.Ansi.Color.*;
 

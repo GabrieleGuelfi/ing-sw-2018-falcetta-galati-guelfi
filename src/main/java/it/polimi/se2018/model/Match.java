@@ -13,11 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// This means that, when Match ( = Model ) is modified
-// notify(ModelUpdate) is called. This message contains a copy of the new
-// Match, with all the new objects. This can be changed, if we decide to
-// update only the objects modified.
-
 /**
  * @author Alessandro Falcetta
  */
@@ -69,9 +64,7 @@ public class Match extends Observable {
         }
         if(!publicObjDescriptions.isEmpty()) notifyObservers(new MessagePublicObj(publicObjDescriptions, publicObjPoints));
         //notifyObservers(new MessageTool());
-        //notifyObservers(new MessageRound());
-        // All the Observers will be notified with this message (ie: View will be notified!)
-        // We should use this.copy(), however.
+        
     }
 
     public Player getFirstPlayerRound() {
