@@ -3,25 +3,21 @@ package it.polimi.se2018.events.messageforview;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.view.VisitorView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MessageEndMatch extends Message {
 
-    private List<Integer> points;
-    private List<String> nicknames;
+    private Map<String , Integer> results = new HashMap<>();
 
-    public MessageEndMatch(List<Integer> points, List<String> nicknames) {
+    public MessageEndMatch(Map<String , Integer> results) {
         super();
-        this.points = points;
-        this.nicknames = nicknames;
+        this.results = results;
     }
 
-    public List<Integer> getPoints() {
-        return points;
-    }
-
-    public List<String> getNicknames() {
-        return nicknames;
+    public Map<String, Integer> getResults() {
+        return results;
     }
 
     @Override

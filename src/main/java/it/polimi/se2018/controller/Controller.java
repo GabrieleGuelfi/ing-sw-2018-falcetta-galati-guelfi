@@ -13,9 +13,7 @@ import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.utils.Observer;
 import it.polimi.se2018.view.VirtualView;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static java.lang.System.*;
 
@@ -183,28 +181,6 @@ public class Controller implements VisitorController, Observer {
         return true;
     }
 
-    /**
-     * calculate the score of a player, based on his private objective and the three public ones
-     * @param player player whose score is calculated
-     */
-    private void calcResults(Player player) {
-
-        //privateObjective
-        player.addPoints(player.getPrivateObjective().calcScore(player.getWindowPattern()));
-
-        //publicObjectives
-        for (PublicObjective publicObjective : match.getPublicObjectives()) {
-            player.addPoints(publicObjective.calcScore(player.getWindowPattern()));
-        }
-
-        //favor tokens
-        player.addPoints(player.getFavorTokens());
-
-        //Empty box
-        player.addPoints(-player.getWindowPattern().getEmptyBox());
-
-    }
-
     private Player searchNick(String nickname) {
         for (Player p : match.getPlayers()) {
             if (p.getNickname().equals(nickname))
@@ -232,15 +208,68 @@ public class Controller implements VisitorController, Observer {
         }
     }
 
+    /**
+     * calculate the score of a player, based on his private objective and the three public ones
+     * @param player player whose score is calculated
+     */
+    private void calcResults(Player player) {
+
+        //privateObjective
+        player.addPoints(player.getPrivateObjective().calcScore(player.getWindowPattern()));
+
+        //publicObjectives
+        for (PublicObjective publicObjective : match.getPublicObjectives()) {
+            player.addPoints(publicObjective.calcScore(player.getWindowPattern()));
+        }
+
+        //favor tokens
+        player.addPoints(player.getFavorTokens());
+
+        //Empty box
+        player.addPoints(-player.getWindowPattern().getEmptyBox());
+
+        if(player.getPoints()<0)
+            player.addPoints(-player.getPoints());
+        
+    }
+
+    private boolean manageTie(Player p1, Player p2) {
+            if (p1.getPrivateObjective().calcScore(p1.getWindowPattern())>p2.getPrivateObjective().calcScore(p2.getWindowPattern()))
+                return true;
+            if (p1.getFavorTokens()>p2.getFavorTokens())
+                return true;
+            int i = match.getActivePlayers().indexOf(match.getFirstPlayerRound());
+            int turnP1 = match.getActivePlayers().indexOf(p1);
+            int turnP2 = match.getActivePlayers().indexOf(p2);
+            if ((turnP1>=i && turnP2>=i) || (turnP1<i && turnP2<i))
+                return turnP1>turnP2;
+            return turnP1<i;
+    }
+
     private void endMatch() {
         List<Integer> points = new ArrayList<>();
         List<String> nicknames = new ArrayList<>();
+        Map<String , Integer> results = new HashMap<>();
+        int i;
         for (Player p : match.getActivePlayers()) {
             calcResults(p);
-            points.add(p.getPoints());
-            nicknames.add(p.getNickname());
+            boolean found = false;
+            for (i=0; i<points.size() && !found; i++) {
+                if (p.getPoints()>points.get(i))
+                    found = true;
+                else if (p.getPoints()==points.get(i))
+                    found = manageTie(p, searchNick(nicknames.get(i)));
+            }
+            if (i==0) i=1;
+            points.add(i-1, p.getPoints());
+            nicknames.add(i-1, p.getNickname());
         }
-        match.notifyObservers(new MessageEndMatch(points, nicknames));
+        i = 0;
+        for(String playerNickname: nicknames) {
+            results.put(playerNickname, points.get(i));
+            i++;
+        }
+        match.notifyObservers(new MessageEndMatch(results));
         virtualView.sendToServer(new MessageRestartServer());
 
     }

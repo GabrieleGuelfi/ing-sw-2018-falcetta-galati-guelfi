@@ -178,8 +178,9 @@ public class View extends Observable implements Observer, VisitorView {
         manageTurn(nickname);
     }
 
-    private void handleEndMatch(List<String> nicknames, List<Integer> points) {
+    private void handleEndMatch(Map<String , Integer> results) {
 
+        /*
         Map<String , Integer> results = new HashMap<>();
         Map<String , Integer> resultsSorted;
 
@@ -192,20 +193,20 @@ public class View extends Observable implements Observer, VisitorView {
         resultsSorted = results.entrySet().stream()
                 .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        */
 
         out.println( ansi().eraseScreen() );
         out.println( ansi().fg(RED).a("End of the match!").reset());
-        out.println("The winner is... " + resultsSorted.keySet().toArray()[0] + "!\n");
+        out.println("The winner is... " + results.keySet().toArray()[0] + "!\n");
         out.println("Full classification: ");
 
 
-        i = 1;
+        int i = 1;
 
-        for (String playerNickname: resultsSorted.keySet()) {
-            out.println( i +") " + playerNickname + " with " + resultsSorted.get(playerNickname) + " points");
+        for (String playerNickname: results.keySet()) {
+            out.println( i +") " + playerNickname + " with " + results.get(playerNickname) + " points");
             i++;
         }
-
 
     }
 
@@ -435,7 +436,7 @@ public class View extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageEndMatch message) {
-        handleEndMatch(message.getNicknames(), message.getPoints());
+        handleEndMatch(message.getResults());
     }
 
 }
