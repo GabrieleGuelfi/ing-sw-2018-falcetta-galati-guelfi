@@ -92,7 +92,7 @@ public class TestPlayer {
         PrivateObjective po = new PrivateObjective(Colour.BLUE);
         player.setPrivateObjective(po);
         assertEquals(Colour.BLUE, po.getShade());
-        //assertEquals("foo", po.getDescription());
+        //assertEquals("foo", po.getName());
         assertEquals(po, player.getPrivateObjective());
     }
 
@@ -120,7 +120,7 @@ public class TestPlayer {
         assertEquals(player.getNickname(), player1.getNickname());
 
         // Implement copy() for private objective: if tested, it will verify the following conditions
-        //assertEquals(player.getPrivateObjective().getDescription(), player1.getPrivateObjective().getDescription());
+        //assertEquals(player.getPrivateObjective().getName(), player1.getPrivateObjective().getName());
         //assertEquals(player.getPrivateObjective().getShade(), player1.getPrivateObjective().getShade());
         assertNotEquals(player.getPrivateObjective(), player1.getPrivateObjective());
         assertEquals(player.getWindowPattern().getDifficulty(), player1.getWindowPattern().getDifficulty());

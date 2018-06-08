@@ -12,6 +12,7 @@ public interface VisitorView {
     void visit(MessageNickname message);
     void visit(MessagePrivObj message);
     void visit(MessagePublicObj message);
+    void visit(MessageTool message);
     void visit(MessageChooseWP message);
     void visit(MessageWPChanged message);
     void visit(MessageTurnChanged message);
@@ -22,5 +23,7 @@ public interface VisitorView {
     void visit(MessageRoundChanged message);
     void visit(MessageRoundTrack message);
     void visit(MessageEndMatch message);
+    void visit(MessageToolOrder message);
+    void visit(MessageAskMove message);
 
 }

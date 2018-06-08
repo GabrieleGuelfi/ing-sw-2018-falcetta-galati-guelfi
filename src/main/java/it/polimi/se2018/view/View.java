@@ -27,13 +27,11 @@ public class View extends Observable implements Observer, VisitorView {
 
     private static final int MAX_ROW = 4;
     private static final int MAX_COL = 5;
+    private static final int MAX_DP = 9;
 
     private static View view;
     private Scanner scanner;
     private String nickname;
-
-    private DraftPool currentDraftPool;
-    private WindowPattern currentWindowPattern;
 
     private View() {
         scanner = new Scanner(System.in);
@@ -85,6 +83,13 @@ public class View extends Observable implements Observer, VisitorView {
         out.println("\nPublic objectives: ");
         for(int i=0; i<descriptions.size(); i++) {
             out.println(i+1 + ") " + descriptions.get(i) + " VP: " + points.get(i));
+        }
+    }
+
+    private void showTools(List<String> names) {
+        out.println("\nTools: ");
+        for(int i=0; i<names.size(); i++) {
+            out.println(i+1 + ") " + names.get(i));
         }
     }
 
@@ -140,40 +145,32 @@ public class View extends Observable implements Observer, VisitorView {
         else {
             out.println("Your window pattern is now: ");
             printWindowPattern(wp);
-            this.currentWindowPattern = wp;
         }
     }
 
     private void manageTurn(String playerTurn) {
         if(playerTurn.equals(this.nickname)) {
             out.println( ansi().fg(RED).a("\nIt's your turn!\n").reset() );
-            askMove(false, false);
         } else {
             out.println("\n" + playerTurn + " is now playing...\n");
         }
     }
 
-    private void handleErrorMove(String reason, boolean hasMovedDie, boolean hasUsedTool) {
+    private void handleErrorMove(String reason) {
         out.println("\nYour move has been rejected for this reason: " + reason);
         out.println("Try again...");
-        askMove(hasMovedDie, hasUsedTool);
     }
 
-    private void handleSuccessMove(boolean hasMovedDie, boolean hasUsedTool, boolean movePerformed) {
-        if (movePerformed)
-            out.println("\nSuccess! Your move has been accomplished.");
-        if (hasMovedDie&&hasUsedTool) {
-            out.println("\nYour turn is over.");
-            return;
-        }
-        askMove(hasMovedDie, hasUsedTool);
+    private void handleSuccessMove(boolean isThereAnotherMove) {
+        out.println("\nSuccess! Your move has been accomplished.");
+        if(!isThereAnotherMove) out.println("\nYour turn is over.\n");
     }
 
-    private void handleRoundChanged(String nickname, int round) {
+    private void handleRoundChanged(String nickname, int round, DraftPool draftPool) {
         out.println();
         out.println("_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|  ROUND " + round + " |-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|\n");
         out.println("Draftpool for this round: ");
-        printDraftPool(currentDraftPool);
+        printDraftPool(draftPool);
         manageTurn(nickname);
     }
 
@@ -209,10 +206,15 @@ public class View extends Observable implements Observer, VisitorView {
 
     }
 
-    private void askMove(boolean hasMovedDie, boolean hasUsedTool) {
+    private void askMove(boolean hasMovedDie, boolean hasUsedTool, WindowPattern windowPattern, DraftPool draftPool) {
 
         boolean moveDieOk = true;
         boolean moveToolOk = true;
+
+        out.println("\nCurrently, this is your windows pattern:");
+        printWindowPattern(windowPattern);
+        out.println("\nCurrently, this is the draftpool:");
+        printDraftPool(draftPool);
 
         //out.println( ansi().eraseScreen() );
         out.println("\n\nPlease, select your move: ");
@@ -239,7 +241,7 @@ public class View extends Observable implements Observer, VisitorView {
         if (choice==4) notifyObservers(new MessageDoNothing(this.nickname));
 
         if(!moveDieOk || !moveToolOk) {
-            askMove(hasMovedDie, hasUsedTool);
+            askMove(hasMovedDie, hasUsedTool, windowPattern, draftPool);
         }
 
     }
@@ -257,13 +259,9 @@ public class View extends Observable implements Observer, VisitorView {
     }
 
     private boolean moveDie() {
-        out.println("\nCurrently, this is your windows pattern:");
-        printWindowPattern(currentWindowPattern);
-        out.println("\nCurrently, this is the draftpool:");
-        printDraftPool(currentDraftPool);
 
         out.println("\nChoose a die from draftpool (0 to escape):");
-        int dieToMove = chooseBetween(0, currentDraftPool.size());
+        int dieToMove = chooseBetween(0, MAX_DP);
         if(dieToMove==0) return false;
 
         out.println("\nWhere do you want to place it? (0 to escape)");
@@ -283,7 +281,52 @@ public class View extends Observable implements Observer, VisitorView {
 
     private boolean useTool() {
         out.println("Please, select the tool you want to use");
+        int choice = chooseBetween(1, 3);
+        notifyObservers(new MessageRequestUseOfTool(nickname, choice-1));
         return true;
+    }
+
+    private void handleToolUse(MessageToolOrder message) {
+
+        int i;
+        List<Integer> diceFromDp = new ArrayList<>();
+        Map<Integer, Integer> diceFromWp = new HashMap<>();
+        List<Integer> diceFromRoundtrack = new ArrayList<>();
+        Map<Integer, Integer> positionsInWp = new HashMap<>();
+        int newValue = 0;
+        boolean plusOne = false;
+
+        for(i=0; i<message.getDiceFromDp(); i++) {
+            out.println("Choose dice from draftpool");
+            int n = chooseBetween(1, 9);
+            diceFromDp.add(n-1);
+        }
+
+        for(i=0; i<message.getDiceFromWp(); i++) {
+            out.println("Choose dice from window pattern");
+            out.print("Row: ");
+            int x = chooseBetween(1, MAX_ROW);
+            out.print("\nColum: ");
+            int y = chooseBetween(1, MAX_COL);
+            diceFromWp.put(x-1, y-1);
+        }
+
+        if(message.isAskPlusOrMinusOne()) {
+            out.println("Do you want to add or remove 1?");
+            out.println("1) Add");
+            out.println("2) Remove");
+            int choice = chooseBetween(1,2);
+            if (choice==1) plusOne=true;
+            else plusOne=false;
+        }
+
+        for(i=0; i<message.getNewValue(); i++) {
+            out.println("Choose the new value: ");
+            newValue = chooseBetween(1, 6)-1;
+        }
+
+        notifyObservers(new MessageToolResponse(nickname, diceFromDp, diceFromWp, diceFromRoundtrack, positionsInWp, newValue, plusOne));
+
     }
 
     private void printWindowPattern(WindowPattern wp) {
@@ -369,6 +412,11 @@ public class View extends Observable implements Observer, VisitorView {
     }
 
     @Override
+    public void visit(MessageTool message) {
+        showTools(message.getNames());
+    }
+
+    @Override
     public void visit(MessageError message) {
         out.println("This is a message error!");
     }
@@ -405,17 +453,17 @@ public class View extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageDPChanged message) {
-        currentDraftPool = message.getDraftPool();
+        printDraftPool(message.getDraftPool());
     }
 
     @Override
     public void visit(MessageConfirmMove message) {
-        handleSuccessMove(message.hasPlacedDie(), message.hasUsedTool(), message.isMovePerformed());
+        handleSuccessMove(message.isThereAnotherMove());
     }
 
     @Override
     public void visit(MessageErrorMove message) {
-        handleErrorMove(message.getReason(), message.hasPlacedDie(), message.hasUsedTool());
+        handleErrorMove(message.getReason());
     }
 
     @Override
@@ -425,7 +473,7 @@ public class View extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageRoundChanged message) {
-        handleRoundChanged(message.getNickname(), message.getNumRound());
+        handleRoundChanged(message.getNickname(), message.getNumRound(), message.getDraftPool());
     }
 
     @Override
@@ -436,6 +484,16 @@ public class View extends Observable implements Observer, VisitorView {
     @Override
     public void visit(MessageEndMatch message) {
         handleEndMatch(message.getResults());
+    }
+
+    @Override
+    public void visit(MessageToolOrder message) {
+        handleToolUse(message);
+    }
+
+    @Override
+    public void visit(MessageAskMove message) {
+        askMove(message.isHasMovedDie(), message.isHasUsedTool(), message.getWindowPattern(), message.getDraftPool());
     }
 
 }
