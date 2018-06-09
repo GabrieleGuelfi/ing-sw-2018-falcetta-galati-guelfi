@@ -211,10 +211,14 @@ public class View extends Observable implements Observer, VisitorView {
         boolean moveDieOk = true;
         boolean moveToolOk = true;
 
-        out.println("\nCurrently, this is your windows pattern:");
-        printWindowPattern(windowPattern);
-        out.println("\nCurrently, this is the draftpool:");
-        printDraftPool(draftPool);
+        if (windowPattern!=null) {
+            out.println("\nCurrently, this is your windows pattern:");
+            printWindowPattern(windowPattern);
+        }
+        if (draftPool!=null) {
+            out.println("\nCurrently, this is the draftpool:");
+            printDraftPool(draftPool);
+        }
 
         //out.println( ansi().eraseScreen() );
         out.println("\n\nPlease, select your move: ");

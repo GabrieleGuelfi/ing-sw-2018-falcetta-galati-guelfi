@@ -74,7 +74,7 @@ public abstract class Tool {
         return true;
     }
 
-    void finishToolMove(Player player, Controller controller, Match match) {
+    boolean finishToolMove(Player player, Controller controller, Match match) {
         this.isBeingUsed = false;
         if(this.used) player.removeFavorTokens(2);
         else {
@@ -92,8 +92,7 @@ public abstract class Tool {
         }
 
         virtualView.send(new MessageConfirmMove(player.getNickname(), isThereAnotherMove));
-        if(!isThereAnotherMove) controller.nextTurn();
-        else virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
+        return isThereAnotherMove;
 
     }
 
@@ -109,7 +108,7 @@ public abstract class Tool {
         return isBeingUsed;
     }
 
-    public abstract void use(MessageToolResponse message, Match match, Player player, Controller controller);
+    public abstract boolean use(MessageToolResponse message, Match match, Player player, Controller controller);
 
     public abstract void requestOrders(Player player);
 

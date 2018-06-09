@@ -30,66 +30,16 @@ public abstract class PublicObjective {
 
     static {
         final List<Command> pubObj = new ArrayList<>();
-        pubObj.add(new Command() {
-            @Override
-            public PublicObjective create() {
-                return new DiffRow("Rows with no repeated colors", 6, true);
-            }
-        });
-        pubObj.add(new Command() {
-            @Override
-            public PublicObjective create() {
-                return new DiffColumn("Column with no repeated colours", 5, true);
-            }
-        });
-        pubObj.add(new Command() {
-            @Override
-            public PublicObjective create() {
-                return new DiffRow("Rows with no repeated values", 5, false);
-            }
-        });
-        pubObj.add(new Command() {
-            @Override
-            public PublicObjective create() {
-                return new DiffColumn("Column with no repeated values", 4, false);
-            }
-        });
-        pubObj.add(new Command() {
-            @Override
-            public PublicObjective create() {
-                return new SetShades("Sets of 1 & 2 values anywhere", 2, 1);
-            }
-        });
-        pubObj.add(new Command() {
-            @Override
-            public PublicObjective create() {
-                return new SetShades("Sets of 3 & 4 values anywhere", 2, 3);
-            }
-        });
-        pubObj.add(new Command() {
-            @Override
-            public PublicObjective create() {
-                return new SetShades("Sets of 5 & 6 values anywhere", 2, 5);
-            }
-        });
-        pubObj.add(new Command() {
-            @Override
-            public PublicObjective create() {
-                return new DiffEverywhere("Sets of one of each value anywhere", 5, false);
-            }
-        });
-        pubObj.add(new Command() {
-            @Override
-            public PublicObjective create() {
-                return new DiagColour("Count of diagonally adjacent same color dice");
-            }
-        });
-        pubObj.add(new Command() {
-            @Override
-            public PublicObjective create() {
-                return new DiffEverywhere("Sets of one of each color anywhere", 4, true);
-            }
-        });
+        pubObj.add(() -> new DiffRow("Rows with no repeated colors", 6, true));
+        pubObj.add(() -> new DiffColumn("Column with no repeated colours", 5, true));
+        pubObj.add(() -> new DiffRow("Rows with no repeated values", 5, false));
+        pubObj.add(() -> new DiffColumn("Column with no repeated values", 4, false));
+        pubObj.add(() -> new SetShades("Sets of 1 & 2 values anywhere", 2, 1));
+        pubObj.add(() -> new SetShades("Sets of 3 & 4 values anywhere", 2, 3));
+        pubObj.add(() -> new SetShades("Sets of 5 & 6 values anywhere", 2, 5));
+        pubObj.add(() -> new DiffEverywhere("Sets of one of each value anywhere", 5, false));
+        pubObj.add(() -> new DiagColour("Count of diagonally adjacent same color dice"));
+        pubObj.add(() -> new DiffEverywhere("Sets of one of each color anywhere", 4, true));
         PUBOBJ = Collections.unmodifiableList(pubObj);
     }
 

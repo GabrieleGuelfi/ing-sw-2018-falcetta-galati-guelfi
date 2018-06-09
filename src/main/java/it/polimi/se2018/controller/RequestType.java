@@ -1,9 +1,7 @@
 package it.polimi.se2018.controller;
 
-import it.polimi.se2018.events.messageforview.MessagePrivObj;
-import it.polimi.se2018.events.messageforview.MessagePublicObj;
-import it.polimi.se2018.events.messageforview.MessageRoundTrack;
-import it.polimi.se2018.events.messageforview.MessageWPChanged;
+import it.polimi.se2018.controller.tool.Tool;
+import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
@@ -22,7 +20,10 @@ public enum RequestType {
 
         @Override
         public void performRequest(Player player, VirtualView virtualView, Match match) {
-
+            List<String> names = new ArrayList<>();
+            for (Tool t : match.getTools())
+                names.add(t.getName());
+            virtualView.send(new MessageTool(player.getNickname(), names));
         }
     },
     PRIVATE{

@@ -47,13 +47,13 @@ public class Controller implements VisitorController, Observer {
         List<Integer> rand = new ArrayList<>();
         int index;
 
-
-
+        //set players
         for (String p : nickname) {
             Player player = new Player(p);
             players.add(player);
         }
 
+        //Public Objectives
         for (int i=0; i<3; i++) {
             index = generator.nextInt(10);
             while (rand.contains(index))
@@ -62,6 +62,7 @@ public class Controller implements VisitorController, Observer {
             objectives.add(PublicObjective.factory(index));
         }
 
+        //Tools
         for (int i=0; i<1; i++) {
             index = generator.nextInt(3);
             while (rand.contains(index))
@@ -73,6 +74,7 @@ public class Controller implements VisitorController, Observer {
             tools.add(tool);
         }
 
+        //Private Objective
         givePrivateObjective(players);
 
         // Create the match...
@@ -82,8 +84,6 @@ public class Controller implements VisitorController, Observer {
             List<Integer> patterns = HandleJSON.chooseWP(player);
             virtualView.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
         }
-
-        // TOOLS PART!
 
     }
 
@@ -104,8 +104,7 @@ public class Controller implements VisitorController, Observer {
         this.match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool().copy()));
         this.match.notifyObservers(new MessageRoundChanged(match.getRound().getPlayerTurn().getNickname(), match.getNumRound(), match.getRound().getDraftPool()));
         Player player = match.getRound().getPlayerTurn();
-        virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
-        //this.match.notifyObservers(new MessageTurnChanged(match.getRound().getPlayerTurn().getNickname()));
+        virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), null));
     }
 
     /**
@@ -234,7 +233,7 @@ public class Controller implements VisitorController, Observer {
     /**
      * verify if there is another turn for this round, or another round for this match
      */
-    public void nextTurn() {
+    private void nextTurn() {
         try {
             match.getRound().nextTurn(match.getPlayers());
             Player player = match.getRound().getPlayerTurn();
@@ -247,7 +246,7 @@ public class Controller implements VisitorController, Observer {
                 match.setRound();
                 match.notifyObservers(new MessageRoundChanged(match.getFirstPlayerRound().getNickname(), match.getNumRound(), match.getRound().getDraftPool()));
                 Player player = match.getRound().getPlayerTurn();
-                virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
+                virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), null));
 
             }
             catch (IllegalStateException e1) {
@@ -417,7 +416,7 @@ public class Controller implements VisitorController, Observer {
         match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
 
         if(!isThereAnotherMove) nextTurn();
-        else virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
+        else virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
 
     }
 
@@ -439,19 +438,25 @@ public class Controller implements VisitorController, Observer {
     public void visit(MessageRequest message) {
         Player player = searchNick(message.getNickname());
         message.getType().performRequest(player, virtualView, match);
-        virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
+        virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
     }
 
     @Override
     public void visit(MessageEndGame message){
         //IN THIS MESSAGE THERE IS THE NAME OF THE WINNER
         this.endMatch(searchNick(message.getNickname()));
+
     }
 
     @Override
     public void visit(MessageToolResponse message) {
+        Player player = searchNick(message.getNickname());
         for(Tool tool: match.getTools()) {
-            if(tool.isBeingUsed()) tool.use(message, this.match, searchNick(message.getNickname()), this);
+            if(tool.isBeingUsed())
+                if (tool.use(message, this.match, player, this))
+                    virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
+                else
+                    nextTurn();
         }
     }
 

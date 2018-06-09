@@ -21,8 +21,8 @@ public class DieMover extends Tool {
     }
 
     @Override
-    public void use(MessageToolResponse message, Match match, Player player, Controller controller) {
-
+    public boolean use(MessageToolResponse message, Match match, Player player, Controller controller) {
+        return true;
     }
 
     @Override

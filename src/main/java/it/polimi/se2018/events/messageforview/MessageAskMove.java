@@ -20,6 +20,14 @@ public class MessageAskMove extends Message {
         this.draftPool = draftPool;
     }
 
+    public MessageAskMove(String nickname, boolean hasUsedTool, boolean hasMovedDie) {
+        super(nickname);
+        this.hasUsedTool = hasUsedTool;
+        this.hasMovedDie = hasMovedDie;
+        windowPattern = null;
+        draftPool = null;
+    }
+
     public DraftPool getDraftPool() {
         return draftPool;
     }

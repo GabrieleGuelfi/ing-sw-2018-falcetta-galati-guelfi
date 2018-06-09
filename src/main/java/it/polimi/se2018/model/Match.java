@@ -53,10 +53,8 @@ public class Match extends Observable {
         firstPlayerRound = players.get(0);
         this.round = new Round(new DraftPool(this.bag, this.players.size()), firstPlayerRound);
 
-
-
         register(view);
-        //notifyObservers(new MessageTool()); // EXAMPLE: here Model throws a ModelUpdate.
+
         List<String> publicObjDescriptions = new ArrayList<>();
         List<Integer> publicObjPoints = new ArrayList<>();
         for(PublicObjective p: objectives) {
@@ -70,9 +68,6 @@ public class Match extends Observable {
             toolsNames.add(t.getName());
         }
         if(!toolsNames.isEmpty()) notifyObservers(new MessageTool(toolsNames));
-
-
-        //notifyObservers(new MessageTool());
 
     }
 
