@@ -2,6 +2,7 @@ package it.polimi.se2018.model;
 
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.messageforview.MessagePublicObj;
+import it.polimi.se2018.events.messageforview.MessageTool;
 import it.polimi.se2018.model.dicecollection.Bag;
 import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
@@ -63,6 +64,14 @@ public class Match extends Observable {
             publicObjPoints.add(p.getVp());
         }
         if(!publicObjDescriptions.isEmpty()) notifyObservers(new MessagePublicObj(publicObjDescriptions, publicObjPoints));
+
+        List<String> toolsNames = new ArrayList<>();
+        for(Tool t: tools) {
+            toolsNames.add(t.getName());
+        }
+        if(!toolsNames.isEmpty()) notifyObservers(new MessageTool(toolsNames));
+
+
         //notifyObservers(new MessageTool());
 
     }
