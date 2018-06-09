@@ -353,11 +353,18 @@ public class Controller implements VisitorController, Observer {
     @Override
     public void visit(MessageMoveDie message) {
 
-        Die d = match.getRound().getDraftPool().getBag().get(message.getDieFromDraftPool());
         Player player = searchNick(message.getNickname());
 
         if (player == null) {
             out.println("player doesn't exist");
+            return;
+        }
+        Die d;
+        try {
+             d = match.getRound().getDraftPool().getBag().get(message.getDieFromDraftPool());
+        }
+        catch (IndexOutOfBoundsException e) {
+            virtualView.send(new MessageErrorMove(message.getNickname(), "Inexistent die in draftpool!", player.isPlacedDie(), player.isUsedTool()));
             return;
         }
         if (player.isPlacedDie()) {
@@ -401,7 +408,6 @@ public class Controller implements VisitorController, Observer {
         player.setPlacedDie(false);
         player.setUsedTool(false);
         nextTurn();
-
     }
 
     @Override

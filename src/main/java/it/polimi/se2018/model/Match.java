@@ -64,7 +64,7 @@ public class Match extends Observable {
         }
         if(!publicObjDescriptions.isEmpty()) notifyObservers(new MessagePublicObj(publicObjDescriptions, publicObjPoints));
         //notifyObservers(new MessageTool());
-        
+
     }
 
     public Player getFirstPlayerRound() {
