@@ -11,12 +11,12 @@ public class MessageToolResponse extends Message {
     private boolean confirmUse;
     private int diceFromDp;
     private List<Integer[]> positionsInWp;
-    private Map<Integer, Integer> diceFromWp;
+    private List<Integer[]> diceFromWp;
     private List<Integer> diceFromRoundtrack;
     private int newValue;
     private boolean plusOne;
 
-    public MessageToolResponse(String nickname, int diceFromDp, Map<Integer, Integer> diceFromWp, List<Integer> diceFromRoundtrack, List<Integer[]> positionsInWp, int newValue, boolean plusOne) {
+    public MessageToolResponse(String nickname, int diceFromDp, List<Integer[]> diceFromWp, List<Integer> diceFromRoundtrack, List<Integer[]> positionsInWp, int newValue, boolean plusOne) {
         super(nickname);
         this.confirmUse = true;
         this.diceFromDp = diceFromDp;
@@ -36,7 +36,7 @@ public class MessageToolResponse extends Message {
         return diceFromDp;
     }
 
-    public Map<Integer, Integer> getDiceFromWp() {
+    public List<Integer[]> getDiceFromWp() {
         return diceFromWp;
     }
 

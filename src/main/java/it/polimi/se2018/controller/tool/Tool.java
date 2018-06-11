@@ -75,7 +75,7 @@ public abstract class Tool {
     }
 
     void finishToolMove(Player player) {
-        this.isBeingUsed = false;
+
         if(this.used) player.removeFavorTokens(2);
         else {
             this.used = true;
@@ -83,16 +83,8 @@ public abstract class Tool {
         }
 
         player.setUsedTool(true);
-        boolean isThereAnotherMove = false;
 
-        if(!player.isPlacedDie()) isThereAnotherMove = true;
-        else {
-            player.setPlacedDie(false);
-            player.setUsedTool(false);
-        }
-
-        virtualView.send(new MessageConfirmMove(player.getNickname(), isThereAnotherMove));
-        //return isThereAnotherMove;
+        virtualView.send(new MessageConfirmMove(player.getNickname(), !player.isPlacedDie()));
 
     }
 

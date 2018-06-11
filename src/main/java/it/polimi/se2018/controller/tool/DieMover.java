@@ -2,6 +2,7 @@ package it.polimi.se2018.controller.tool;
 
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.messageforcontroller.MessageToolResponse;
+import it.polimi.se2018.events.messageforserver.MessageError;
 import it.polimi.se2018.events.messageforview.MessageErrorMove;
 import it.polimi.se2018.events.messageforview.MessageToolOrder;
 import it.polimi.se2018.model.Die;
@@ -15,7 +16,7 @@ public class DieMover extends Tool {
     private boolean respectValue;
     private boolean respectRoundtrack;
 
-    public DieMover(String name, int numberOfDice, boolean respectColour, boolean respectValue, boolean respectRoundtrack) {
+    DieMover(String name, int numberOfDice, boolean respectColour, boolean respectValue, boolean respectRoundtrack) {
         super(name);
         this.numberOfDice = numberOfDice;
         this.respectColour = respectColour;
@@ -26,12 +27,15 @@ public class DieMover extends Tool {
     @Override
     public boolean use(MessageToolResponse message, Match match, Player player, Controller controller) {
 
-        if(!verifyDiceInDraftpool(message.getDiceFromDp(), match.getRound().getDraftPool().size())) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "Invalid choice of die from draftpool"));
-            return false;
-        }
+        int originalRow = message.getDiceFromWp().get(0)[0];
+        int originalColumn = message.getDiceFromWp().get(0)[1];
 
-        Die die = match.getRound().getDraftPool().getBag().get(message.getDiceFromDp());
+        Die die = player.getWindowPattern().getBox(originalRow, originalColumn).getDie();
+
+        if (die==null) {
+            virtualView.send(new MessageErrorMove( player.getNickname(), "No die in this position!"));
+            return true;
+        }
 
         int row = 0;
         int column = 0;
@@ -39,23 +43,31 @@ public class DieMover extends Tool {
         if(respectColour||respectValue) {
             row = message.getPositionsInWp().get(0)[0];
             column = message.getPositionsInWp().get(0)[1];
+            player.getWindowPattern().putDice(null, originalRow, originalColumn);
+            player.getWindowPattern().addEmptyBox();
             if(!controller.isNearDie(player.getWindowPattern(), row, column)) {
                 virtualView.send(new MessageErrorMove(player.getNickname(), "Violated near dice restriction"));
-                return false;
+                player.getWindowPattern().putDice(die, originalRow, originalColumn);
+                player.getWindowPattern().decreaseEmptyBox();
+                return true;
             }
         }
 
         if(respectColour) {
             if(!controller.verifyColor(player.getWindowPattern(), row, column, die)) {
                 virtualView.send(new MessageErrorMove(player.getNickname(), "Violated colour restriction"));
-                return false;
+                player.getWindowPattern().putDice(die, originalRow, originalColumn);
+                player.getWindowPattern().decreaseEmptyBox();
+                return true;
             }
         }
 
         if(respectValue) {
             if(!controller.verifyNumber(player.getWindowPattern(), row, column, die)) {
                 virtualView.send(new MessageErrorMove(player.getNickname(), "Violated value restriction"));
-                return false;
+                player.getWindowPattern().putDice(die, originalRow, originalColumn);
+                player.getWindowPattern().decreaseEmptyBox();
+                return true;
             }
         }
 
@@ -70,7 +82,7 @@ public class DieMover extends Tool {
     @Override
     public void requestOrders(Player player, Match match) {
         if(!canUseTool(player)) return;
-        virtualView.send(new MessageToolOrder(player.getNickname(), 1, 1));
+        virtualView.send(new MessageToolOrder(player.getNickname(), 0, 1,  1));
         this.isBeingUsed = true;
     }
 }

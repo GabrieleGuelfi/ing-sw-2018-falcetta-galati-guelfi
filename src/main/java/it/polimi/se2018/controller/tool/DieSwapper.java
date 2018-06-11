@@ -7,7 +7,7 @@ import it.polimi.se2018.model.Player;
 
 public class DieSwapper extends Tool {
 
-    public DieSwapper(String name) {
+    DieSwapper(String name) {
         super(name);
     }
 

@@ -18,9 +18,10 @@ public class MessageToolOrder extends Message {
         this.askPlusOrMinusOne = askPlusOrMinusOne;
     }
 
-    public MessageToolOrder(String nickname, int diceFromDp, int positionInWp) {
+        public MessageToolOrder(String nickname, int diceFromDp, int diceFromWp, int positionInWp) {
         super(nickname);
         this.diceFromDp = diceFromDp;
+        this.diceFromWp = diceFromWp;
         this.positionInWp = positionInWp;
     }
 

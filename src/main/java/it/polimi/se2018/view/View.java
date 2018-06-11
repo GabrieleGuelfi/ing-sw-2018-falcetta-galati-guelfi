@@ -279,7 +279,7 @@ public class View extends Observable implements Observer, VisitorView {
 
         int i;
         int diceFromDp = 0;
-        Map<Integer, Integer> diceFromWp = new HashMap<>();
+        List<Integer[]> diceFromWp = new ArrayList<>();
         List<Integer> diceFromRoundtrack = new ArrayList<>();
         List<Integer[]> positionsInWp = new ArrayList<>();
         int newValue = 0;
@@ -297,24 +297,25 @@ public class View extends Observable implements Observer, VisitorView {
         }
 
         for(i=0; i<message.getDiceFromWp(); i++) {
-            out.println("Choose dice from window pattern (0 to abort)");
+            out.println("\nChoose dice from window pattern (0 to abort)");
             out.print("Row: ");
             int x = chooseBetween(0, MAX_ROW);
             if (x==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
             }
-            out.print("\nColumn: ");
+            out.print("Column: ");
             int y = chooseBetween(0, MAX_COL);
             if (y==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
             }
-            diceFromWp.put(x-1, y-1);
+            Integer[] positions = { x-1, y-1 };
+            diceFromWp.add(positions);
         }
 
         for(i=0; i<message.getPositionInWp(); i++) {
-            out.println("Choose position in window pattern (0 to abort)");
+            out.println("\nChoose position in window pattern (0 to abort)");
             out.print("Row: ");
             int x = chooseBetween(0, MAX_ROW);
             if (x==0) {
@@ -355,6 +356,29 @@ public class View extends Observable implements Observer, VisitorView {
         }
 
         notifyObservers(new MessageToolResponse(nickname, diceFromDp, diceFromWp, diceFromRoundtrack, positionsInWp, newValue, plusOne));
+
+    }
+
+    private void forceMove(Die die, WindowPattern windowPattern) {
+        out.print("You had to place this die: ");
+        for (Color color : Color.values()) {
+            if (color.toString().equals(die.getColour().toString())) {
+                out.println(ansi().fg(color).a("[" + die.getValue() + "] ").reset());
+            }
+        }
+
+        printWindowPattern(windowPattern);
+        int column=0;
+        int row=0;
+        while(column == 0) {
+            out.print("Row: ");
+            row = chooseBetween(1, MAX_ROW);
+
+            out.print("Column (0 to undo row choice): ");
+            column = chooseBetween(0, MAX_COL);
+        }
+
+        notifyObservers(new MessageForcedMove(this.nickname, row-1, column-1));
 
     }
 
@@ -530,6 +554,10 @@ public class View extends Observable implements Observer, VisitorView {
         askMove(message.isHasMovedDie(), message.isHasUsedTool(), message.getWindowPattern(), message.getDraftPool());
     }
 
+    @Override
+    public void visit(MessageForceMove message) {
+        forceMove(message.getDie(), message.getWindowPattern());
+    }
 }
 
 

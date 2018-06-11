@@ -10,7 +10,7 @@ public class DiePlacer extends Tool {
     private boolean respectDistance;
     private boolean takeFromBag;
 
-    public DiePlacer(String name, boolean respectDistance, boolean takeFromBag) {
+    DiePlacer(String name, boolean respectDistance, boolean takeFromBag) {
         super(name);
     }
 

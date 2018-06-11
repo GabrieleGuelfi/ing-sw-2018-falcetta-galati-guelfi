@@ -62,10 +62,14 @@ public class WindowPattern implements Serializable {
 
     }
 
+    public void addEmptyBox() {
+        emptyBox++;
+    }
+
     /**
      * decrease by one the number of empty box
      */
-    private void decreaseEmptyBox(){
+    public void decreaseEmptyBox(){
         emptyBox = emptyBox - 1;
     }
 

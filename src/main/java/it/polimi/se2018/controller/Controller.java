@@ -4,6 +4,7 @@ package it.polimi.se2018.controller;
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.messageforcontroller.*;
+import it.polimi.se2018.events.messageforcontroller.MessageForcedMove;
 import it.polimi.se2018.events.messageforserver.MessageRestartServer;
 import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.*;
@@ -459,10 +460,14 @@ public class Controller implements VisitorController, Observer {
                     virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
                     return;
                 } else { // User wants to use the controller: use it...
-                    tool.use(message, match, player, this);
-                    tool.setBeingUsed(false); // ... in everycase set being used goes to false
-                    if(player.isPlacedDie() && player.isUsedTool()) nextTurn(); // no matter if use returns true or false; this should always work
-                    else virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
+                    if (tool.use(message, match, player, this)) {
+                        tool.setBeingUsed(false); // ... in everycase set being used goes to false
+                        if (player.isPlacedDie() && player.isUsedTool())
+                            nextTurn(); // no matter if use returns true or false; this should always work
+                        else
+                            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
+                    }
+                    tool.setBeingUsed(false);
                 }
             }
         }
@@ -471,5 +476,39 @@ public class Controller implements VisitorController, Observer {
     @Override
     public void visit(MessageRequestUseOfTool message) {
         match.getTools().get(message.getNumberOfTool()).requestOrders(searchNick(message.getNickname()), match);
+    }
+
+    @Override
+    public void visit(MessageForcedMove message) {
+        Player player = searchNick(message.getNickname());
+        Die d = null;
+        for (Die die: match.getRound().getDraftPool().getBag())
+            if (die.isPlacing())
+                d = die;
+        if (!isNearDie(player.getWindowPattern(), message.getRow(), message.getColumn())) {
+            virtualView.send(new MessageErrorMove(player.getNickname(), "No dice near the position"));
+            virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern()));
+            return;
+        }
+        if (!verifyNumber(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
+            virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Value Restriction!"));
+            virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern()));
+            return;
+        }
+        if (!verifyColor(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
+            virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Colour Restriction!"));
+            virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern()));
+            return;
+        }
+        player.getWindowPattern().putDice(d, message.getRow(), message.getColumn());
+        player.setPlacedDie(false);
+        player.setUsedTool(false);
+        virtualView.send(new MessageConfirmMove(player.getNickname(), false));
+        match.getRound().getDraftPool().removeDie(match.getRound().getDraftPool().getBag().indexOf(d));
+        match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
+        match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
+
+        nextTurn();
+
     }
 }

@@ -12,6 +12,7 @@ public class Die implements Serializable {
     private Colour colour;
     private int value;
     private Random generator;
+    private boolean placing;
 
     /**
      * Costructor
@@ -21,6 +22,7 @@ public class Die implements Serializable {
         colour = c;
         value = -1;
         generator = new Random();
+        placing = false;
     }
 
     /**
@@ -34,6 +36,14 @@ public class Die implements Serializable {
       * @return colour
      */
     public Colour getColour(){ return colour;}
+
+    public boolean isPlacing() {
+        return placing;
+    }
+
+    public void setPlacing(boolean placing) {
+        this.placing = placing;
+    }
 
     /**
      * Sets a given value to the die
