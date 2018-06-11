@@ -176,21 +176,6 @@ public class View extends Observable implements Observer, VisitorView {
 
     private void handleEndMatch(Map<String , Integer> results) {
 
-        /*
-        Map<String , Integer> results = new HashMap<>();
-        Map<String , Integer> resultsSorted;
-
-        int i = 0;
-        for(String playerNickname: nicknames) {
-            results.put(playerNickname, points.get(i));
-            i++;
-        }
-
-        resultsSorted = results.entrySet().stream()
-                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-        */
-
         out.println( ansi().eraseScreen() );
         out.println( ansi().fg(RED).a("End of the match!").reset());
         out.println("The winner is... " + results.keySet().toArray()[0] + "!\n");
@@ -293,40 +278,80 @@ public class View extends Observable implements Observer, VisitorView {
     private void handleToolUse(MessageToolOrder message) {
 
         int i;
-        List<Integer> diceFromDp = new ArrayList<>();
+        int diceFromDp = 0;
         Map<Integer, Integer> diceFromWp = new HashMap<>();
         List<Integer> diceFromRoundtrack = new ArrayList<>();
-        Map<Integer, Integer> positionsInWp = new HashMap<>();
+        List<Integer[]> positionsInWp = new ArrayList<>();
         int newValue = 0;
         boolean plusOne = false;
 
+
         for(i=0; i<message.getDiceFromDp(); i++) {
-            out.println("Choose dice from draftpool");
-            int n = chooseBetween(1, 9);
-            diceFromDp.add(n-1);
+            out.println("Choose die from draftpool (0 to abort)");
+            int n = chooseBetween(0, 9);
+            if (n==0) {
+                notifyObservers(new MessageToolResponse(nickname));
+                return;
+            }
+           diceFromDp = n-1;
         }
 
         for(i=0; i<message.getDiceFromWp(); i++) {
-            out.println("Choose dice from window pattern");
+            out.println("Choose dice from window pattern (0 to abort)");
             out.print("Row: ");
-            int x = chooseBetween(1, MAX_ROW);
-            out.print("\nColum: ");
-            int y = chooseBetween(1, MAX_COL);
+            int x = chooseBetween(0, MAX_ROW);
+            if (x==0) {
+                notifyObservers(new MessageToolResponse(nickname));
+                return;
+            }
+            out.print("\nColumn: ");
+            int y = chooseBetween(0, MAX_COL);
+            if (y==0) {
+                notifyObservers(new MessageToolResponse(nickname));
+                return;
+            }
             diceFromWp.put(x-1, y-1);
         }
 
+        for(i=0; i<message.getPositionInWp(); i++) {
+            out.println("Choose position in window pattern (0 to abort)");
+            out.print("Row: ");
+            int x = chooseBetween(0, MAX_ROW);
+            if (x==0) {
+                notifyObservers(new MessageToolResponse(nickname));
+                return;
+            }
+            out.print("Column: ");
+            int y = chooseBetween(0, MAX_COL);
+            if (y==0) {
+                notifyObservers(new MessageToolResponse(nickname));
+                return;
+            }
+            Integer[] positions = { x-1, y-1 };
+            positionsInWp.add(positions);
+        }
+
         if(message.isAskPlusOrMinusOne()) {
-            out.println("Do you want to add or remove 1?");
+            out.println("Do you want to add or remove 1? (0 to abort)");
             out.println("1) Add");
             out.println("2) Remove");
-            int choice = chooseBetween(1,2);
+            int choice = chooseBetween(0,2);
+            if (choice==0) {
+                notifyObservers(new MessageToolResponse(nickname));
+                return;
+            }
             if (choice==1) plusOne=true;
             else plusOne=false;
         }
 
         for(i=0; i<message.getNewValue(); i++) {
-            out.println("Choose the new value: ");
-            newValue = chooseBetween(1, 6)-1;
+            out.println("Choose the new value: (0 to escape)");
+            newValue = chooseBetween(0, 6);
+            if (newValue==0) {
+                notifyObservers(new MessageToolResponse(nickname));
+                return;
+            }
+            newValue--;
         }
 
         notifyObservers(new MessageToolResponse(nickname, diceFromDp, diceFromWp, diceFromRoundtrack, positionsInWp, newValue, plusOne));
@@ -367,9 +392,14 @@ public class View extends Observable implements Observer, VisitorView {
 
     private void printBoxWithDie(Box box) {
         Colour dieColour = box.getDie().getColour();
+        Colour boxColour = box.getColourRestriction();
         for (Color color : Color.values()) {
-            if (color.toString().equals(dieColour.toString())) {
-                out.print(ansi().fg(color).a("[" + box.getDie().getValue() + "] ").reset());
+            if (color.toString().equals(boxColour.toString())) {
+                out.print(ansi().fg(color).a("[").reset());
+                for (Color colorForDie : Color.values()) {
+                    if(colorForDie.toString().equals(dieColour.toString())) out.print(ansi().fg(colorForDie).a(box.getDie().getValue()).reset());
+                }
+                out.print(ansi().fg(color).a("] ").reset());
             }
         }
     }
@@ -457,7 +487,7 @@ public class View extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageDPChanged message) {
-        printDraftPool(message.getDraftPool());
+        //printDraftPool(message.getDraftPool());
     }
 
     @Override

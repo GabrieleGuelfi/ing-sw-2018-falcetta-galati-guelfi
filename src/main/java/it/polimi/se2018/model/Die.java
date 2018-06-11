@@ -51,7 +51,9 @@ public class Die implements Serializable {
      * Rolls the die
      * Sets a random value between 1 and 6
     */
-    public void setRandomValue() { value = generator.nextInt(6) + 1;}
+    public void setRandomValue() {
+        value = generator.nextInt(6) + 1;
+    }
 
     /**
      * @return Copy of this Object
