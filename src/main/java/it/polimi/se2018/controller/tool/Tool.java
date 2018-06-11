@@ -74,9 +74,10 @@ public abstract class Tool {
         return true;
     }
 
-    boolean finishToolMove(Player player, Controller controller, Match match) {
+    boolean finishToolMove(Player player, Match match) {
         this.isBeingUsed = false;
-        if(this.used) player.removeFavorTokens(2);
+        if(this.used)
+            player.removeFavorTokens(2);
         else {
             this.used = true;
             player.removeFavorTokens(1);
@@ -85,7 +86,8 @@ public abstract class Tool {
         player.setUsedTool(true);
         boolean isThereAnotherMove = false;
 
-        if(!player.isPlacedDie()) isThereAnotherMove = true;
+        if(!player.isPlacedDie())
+            isThereAnotherMove = true;
         else {
             player.setPlacedDie(false);
             player.setUsedTool(false);
@@ -108,7 +110,7 @@ public abstract class Tool {
         return isBeingUsed;
     }
 
-    public abstract boolean use(MessageToolResponse message, Match match, Player player, Controller controller);
+    public abstract boolean use(MessageToolResponse message, Match match, Player player);
 
     public abstract void requestOrders(Player player);
 

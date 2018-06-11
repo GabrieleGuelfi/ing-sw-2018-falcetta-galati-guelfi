@@ -453,7 +453,7 @@ public class Controller implements VisitorController, Observer {
         Player player = searchNick(message.getNickname());
         for(Tool tool: match.getTools()) {
             if(tool.isBeingUsed())
-                if (tool.use(message, this.match, player, this))
+                if (tool.use(message, this.match, player))
                     virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
                 else
                     nextTurn();

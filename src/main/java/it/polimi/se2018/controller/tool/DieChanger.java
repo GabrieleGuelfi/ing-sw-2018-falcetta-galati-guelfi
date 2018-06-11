@@ -1,8 +1,6 @@
 package it.polimi.se2018.controller.tool;
 
-import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.messageforcontroller.MessageToolResponse;
-import it.polimi.se2018.events.messageforview.MessageConfirmMove;
 import it.polimi.se2018.events.messageforview.MessageDPChanged;
 import it.polimi.se2018.events.messageforview.MessageErrorMove;
 import it.polimi.se2018.events.messageforview.MessageToolOrder;
@@ -26,10 +24,10 @@ public class DieChanger extends Tool {
 
 
     @Override
-    public boolean use(MessageToolResponse message, Match match, Player player, Controller controller) {
+    public boolean use(MessageToolResponse message, Match match, Player player) {
         if(message.getDiceFromDp().get(0)<0 || message.getDiceFromDp().get(0)>match.getRound().getDraftPool().size()-1) {
             virtualView.send(new MessageErrorMove(player.getNickname(), "Invalid choice of die from draftpool", player.isPlacedDie(), player.isUsedTool()));
-            return false;
+            return true;
         }
         if(mixAllDice)
             for (Die d : match.getRound().getDraftPool().getBag())
@@ -38,11 +36,11 @@ public class DieChanger extends Tool {
             Die die = match.getRound().getDraftPool().getBag().get(message.getDiceFromDp().get(0));
             if (die.getValue()==6 && message.getPlusOne()) {
                 virtualView.send(new MessageErrorMove(player.getNickname(), "Can't add 1 to a die with value 6", player.isPlacedDie(), player.isUsedTool()));
-                return false;
+                return true;
             }
             if (die.getValue()==1 && !message.getPlusOne()) {
                 virtualView.send(new MessageErrorMove(player.getNickname(), "Can't remove 1 to a die with value 1", player.isPlacedDie(), player.isUsedTool()));
-                return false;
+                return true;
             }
 
             if(message.getPlusOne()) {
@@ -53,7 +51,7 @@ public class DieChanger extends Tool {
 
         }
         match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
-        return finishToolMove(player, controller, match);
+        return finishToolMove(player, match);
     }
 
     @Override

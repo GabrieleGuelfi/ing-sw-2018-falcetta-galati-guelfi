@@ -15,7 +15,7 @@ public class DiePlacer extends Tool {
     }
 
     @Override
-    public boolean use(MessageToolResponse message, Match match, Player player, Controller controller) {
+    public boolean use(MessageToolResponse message, Match match, Player player) {
         return true;
     }
 

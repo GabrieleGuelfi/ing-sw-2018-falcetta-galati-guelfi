@@ -45,7 +45,7 @@ public class Die implements Serializable {
             throw new IllegalArgumentException("Value not allowed!");
         }
         value = n;
-        }
+    }
 
     /**
      * Rolls the die
@@ -54,7 +54,6 @@ public class Die implements Serializable {
     public void setRandomValue() { value = generator.nextInt(6) + 1;}
 
     /**
-     *
      * @return Copy of this Object
      */
     public Die copy(){
