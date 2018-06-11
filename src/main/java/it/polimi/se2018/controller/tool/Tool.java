@@ -74,7 +74,7 @@ public abstract class Tool {
         return true;
     }
 
-    void finishToolMove(Player player, Controller controller, Match match) {
+    void finishToolMove(Player player) {
         this.isBeingUsed = false;
         if(this.used) player.removeFavorTokens(2);
         else {

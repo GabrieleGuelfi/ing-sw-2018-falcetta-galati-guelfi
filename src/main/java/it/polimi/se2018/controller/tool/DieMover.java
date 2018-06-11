@@ -62,7 +62,7 @@ public class DieMover extends Tool {
         player.getWindowPattern().putDice(die, row, column);
         match.getRound().getDraftPool().getBag().remove(die);
 
-        finishToolMove(player, controller, match);
+        finishToolMove(player);
 
         return true;
     }

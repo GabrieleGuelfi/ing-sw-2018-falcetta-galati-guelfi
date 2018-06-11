@@ -75,7 +75,7 @@ public class DieChanger extends Tool {
         }
 
         match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
-        finishToolMove(player, controller, match);
+        finishToolMove(player);
         return true;
     }
 
