@@ -62,13 +62,14 @@ public class Controller implements VisitorController, Observer {
             objectives.add(PublicObjective.factory(index));
         }
 
+        rand = new ArrayList<>();
+
         //Tools
-        for (int i=0; i<1; i++) {
-            index = generator.nextInt(3);
+        for (int i=0; i<3; i++) {
+            index = generator.nextInt(6);
             while (rand.contains(index))
-                index = generator.nextInt(3);
+                index = generator.nextInt(6);
             rand.add(index);
-            index = 0; // TESTING; this line force the controller to create Grozing Pliers
             Tool tool = Tool.factory(index);
             tool.setVirtualView(this.virtualView);
             tools.add(tool);
@@ -133,7 +134,7 @@ public class Controller implements VisitorController, Observer {
      * @param column chosen by user
      * @return true if there is another die near
      */
-    private boolean isNearDie(WindowPattern w, int row, int column) {
+    public boolean isNearDie(WindowPattern w, int row, int column) {
         if (w.getEmptyBox() == 20) {
             return (row == 0 || row == WindowPattern.MAX_ROW-1 || column == 0 || column == WindowPattern.MAX_COL-1);
         }
@@ -160,7 +161,7 @@ public class Controller implements VisitorController, Observer {
      * @param die which the player want to place
      * @return false if Die break colour restriction
      */
-    private boolean verifyColor(WindowPattern w, int row, int column, Die die) {
+    public boolean verifyColor(WindowPattern w, int row, int column, Die die) {
 
         try {
             if (w.getBox(row, column).getColourRestriction() != die.getColour() && w.getBox(row, column).getColourRestriction() != Colour.WHITE)
@@ -193,7 +194,7 @@ public class Controller implements VisitorController, Observer {
      * @param die which the player want to place
      * @return false if Die break number restriction
      */
-    private boolean verifyNumber(WindowPattern w, int row, int column, Die die) {
+    public boolean verifyNumber(WindowPattern w, int row, int column, Die die) {
 
         try {
             if (w.getBox(row, column).getValueRestriction() != die.getValue() && w.getBox(row, column).getValueRestriction() != 0) //0 equals to no restriction
@@ -379,26 +380,26 @@ public class Controller implements VisitorController, Observer {
              d = match.getRound().getDraftPool().getBag().get(message.getDieFromDraftPool());
         }
         catch (IndexOutOfBoundsException e) {
-            virtualView.send(new MessageErrorMove(message.getNickname(), "Inexistent die in draftpool!", player.isPlacedDie(), player.isUsedTool()));
+            virtualView.send(new MessageErrorMove(message.getNickname(), "Inexistent die in draftpool!"));
             return;
         }
         if (player.isPlacedDie()) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "Die already placed in this turn", player.isPlacedDie(), player.isUsedTool()));
+            virtualView.send(new MessageErrorMove(player.getNickname(), "Die already placed in this turn"));
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
             return;
         }
         if (!isNearDie(player.getWindowPattern(), message.getRow(), message.getColumn())) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "No dice near the position", player.isPlacedDie(), player.isUsedTool()));
+            virtualView.send(new MessageErrorMove(player.getNickname(), "No dice near the position"));
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
             return;
         }
         if (!verifyNumber(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Value Restriction!", player.isPlacedDie(), player.isUsedTool()));
+            virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Value Restriction!"));
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
             return;
         }
         if (!verifyColor(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Colour Restriction!", player.isPlacedDie(), player.isUsedTool()));
+            virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Colour Restriction!"));
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
             return;
         }
@@ -452,16 +453,23 @@ public class Controller implements VisitorController, Observer {
     public void visit(MessageToolResponse message) {
         Player player = searchNick(message.getNickname());
         for(Tool tool: match.getTools()) {
-            if(tool.isBeingUsed())
-                if (tool.use(message, this.match, player, this))
+            if(tool.isBeingUsed()) {
+                if (!message.isConfirmUse()) { // User decided to abort the use of the tool; set beingUsed false and ask again the move
+                    tool.setBeingUsed(false);
                     virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
-                else
-                    nextTurn();
+                    return;
+                } else { // User wants to use the controller: use it...
+                    tool.use(message, match, player, this);
+                    tool.setBeingUsed(false); // ... in everycase set being used goes to false
+                    if(player.isPlacedDie() && player.isUsedTool()) nextTurn(); // no matter if use returns true or false; this should always work
+                    else virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
+                }
+            }
         }
     }
 
     @Override
     public void visit(MessageRequestUseOfTool message) {
-        match.getTools().get(message.getNumberOfTool()).requestOrders(searchNick(message.getNickname()));
+        match.getTools().get(message.getNumberOfTool()).requestOrders(searchNick(message.getNickname()), match);
     }
 }

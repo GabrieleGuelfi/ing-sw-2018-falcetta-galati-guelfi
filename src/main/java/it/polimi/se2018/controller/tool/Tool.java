@@ -38,9 +38,9 @@ public abstract class Tool {
         final List<Command> tools = new ArrayList<>();
 
         tools.add(() -> new DieChanger("Grozing Pliers", false, true, false));
-        tools.add(() -> new DieChanger("Flux Brush", false, false, false));
+        tools.add(() -> new DieChanger("Glazing Hammer", false, false, true));
         tools.add(() -> new DieChanger("Grinding Stone", true, false, false));
-        tools.add(() -> new DieChanger("Glazing Hammer", true, false, true));
+        tools.add(() -> new DieChanger("Flux Brush", false, false, false));
         tools.add(() -> new DieMover("Eglomise Brush", 1, false, true, false));
         tools.add(() -> new DieMover("Copper Foil Burnisher", 1, true, false, false));
         tools.add(() -> new DieMover("Lathekin", 2, true, true, false));
@@ -48,7 +48,6 @@ public abstract class Tool {
         tools.add(() -> new DiePlacer("Cork-backed Straightedge", true, false));
         tools.add(() -> new DiePlacer("Flux Remover", false, true));
         tools.add(() -> new DieSwapper("Lens Cutter"));
-
 
         TOOLS = Collections.unmodifiableList(tools);
     }
@@ -68,13 +67,14 @@ public abstract class Tool {
 
     boolean canUseTool(Player player) {
         if((this.used && player.getFavorTokens()<2) || (player.getFavorTokens()<1)) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "Not enough favor tokens", player.isPlacedDie(), player.isUsedTool()));
+            virtualView.send(new MessageErrorMove(player.getNickname(), "Not enough favor tokens"));
+            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
             return false;
         }
         return true;
     }
 
-    boolean finishToolMove(Player player, Controller controller, Match match) {
+    void finishToolMove(Player player, Controller controller, Match match) {
         this.isBeingUsed = false;
         if(this.used) player.removeFavorTokens(2);
         else {
@@ -92,8 +92,17 @@ public abstract class Tool {
         }
 
         virtualView.send(new MessageConfirmMove(player.getNickname(), isThereAnotherMove));
-        return isThereAnotherMove;
+        //return isThereAnotherMove;
 
+    }
+
+    boolean verifyDiceInDraftpool(int positionInDraftpool, int draftpoolSize) {
+        if(positionInDraftpool<0 || positionInDraftpool>(draftpoolSize-1)) return false;
+        else return true;
+    }
+
+    public void setBeingUsed(boolean beingUsed) {
+        isBeingUsed = beingUsed;
     }
 
     public String getName() {
@@ -110,7 +119,7 @@ public abstract class Tool {
 
     public abstract boolean use(MessageToolResponse message, Match match, Player player, Controller controller);
 
-    public abstract void requestOrders(Player player);
+    public abstract void requestOrders(Player player, Match match);
 
     }
 

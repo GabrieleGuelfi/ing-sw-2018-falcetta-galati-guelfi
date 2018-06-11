@@ -12,11 +12,16 @@ public class MessageToolOrder extends Message {
     private int diceFromRoundtrack = 0;
     private int newValue = 0;
 
-    public MessageToolOrder(String nickname, int diceFromDp, int positionInWp, boolean askPlusOrMinusOne) {
+    public MessageToolOrder(String nickname, int diceFromDp, boolean askPlusOrMinusOne) {
+        super(nickname);
+        this.diceFromDp = diceFromDp;
+        this.askPlusOrMinusOne = askPlusOrMinusOne;
+    }
+
+    public MessageToolOrder(String nickname, int diceFromDp, int positionInWp) {
         super(nickname);
         this.diceFromDp = diceFromDp;
         this.positionInWp = positionInWp;
-        this.askPlusOrMinusOne = askPlusOrMinusOne;
     }
 
     public MessageToolOrder(String nickname, int diceFromDp, int diceFromWp, int xInWp, int yInWp, int diceFromRoundtrack, int newValue) {
@@ -38,6 +43,10 @@ public class MessageToolOrder extends Message {
 
     public int getDiceFromWp() {
         return diceFromWp;
+    }
+
+    public int getPositionInWp() {
+        return positionInWp;
     }
 
     public int getDiceFromRoundtrack() {

@@ -8,15 +8,17 @@ import java.util.Map;
 
 public class MessageToolResponse extends Message {
 
-    private List<Integer> diceFromDp;
+    private boolean confirmUse;
+    private int diceFromDp;
+    private List<Integer[]> positionsInWp;
     private Map<Integer, Integer> diceFromWp;
     private List<Integer> diceFromRoundtrack;
-    private Map<Integer, Integer> positionsInWp;
     private int newValue;
     private boolean plusOne;
 
-    public MessageToolResponse(String nickname, List<Integer> diceFromDp, Map<Integer, Integer> diceFromWp, List<Integer> diceFromRoundtrack, Map<Integer, Integer> positionsInWp, int newValue, boolean plusOne) {
+    public MessageToolResponse(String nickname, int diceFromDp, Map<Integer, Integer> diceFromWp, List<Integer> diceFromRoundtrack, List<Integer[]> positionsInWp, int newValue, boolean plusOne) {
         super(nickname);
+        this.confirmUse = true;
         this.diceFromDp = diceFromDp;
         this.diceFromWp = diceFromWp;
         this.diceFromRoundtrack = diceFromRoundtrack;
@@ -25,7 +27,12 @@ public class MessageToolResponse extends Message {
         this.plusOne = plusOne;
     }
 
-    public List<Integer> getDiceFromDp() {
+    public MessageToolResponse(String nickname) {
+        super(nickname);
+        this.confirmUse = false;
+    }
+
+    public int getDiceFromDp() {
         return diceFromDp;
     }
 
@@ -37,7 +44,7 @@ public class MessageToolResponse extends Message {
         return diceFromRoundtrack;
     }
 
-    public Map<Integer, Integer> getPositionsInWp() {
+    public List<Integer[]> getPositionsInWp() {
         return positionsInWp;
     }
 
@@ -47,6 +54,10 @@ public class MessageToolResponse extends Message {
 
     public boolean getPlusOne() {
         return plusOne;
+    }
+
+    public boolean isConfirmUse() {
+        return confirmUse;
     }
 
     @Override

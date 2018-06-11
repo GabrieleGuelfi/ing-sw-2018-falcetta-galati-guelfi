@@ -17,7 +17,7 @@ public class DieSwapper extends Tool {
     }
 
     @Override
-    public void requestOrders(Player player) {
+    public void requestOrders(Player player, Match match) {
 
     }
 }
