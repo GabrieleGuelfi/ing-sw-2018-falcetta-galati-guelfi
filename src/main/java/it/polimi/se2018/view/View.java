@@ -226,7 +226,7 @@ public class View extends Observable implements Observer, VisitorView {
         }
         if (choice==2 && !hasMovedDie) moveDieOk = moveDie();
         if ((choice==2 && hasMovedDie)||(choice==3 && !hasMovedDie && !hasUsedTool)) moveToolOk = useTool();
-        if (choice==3 && (hasMovedDie || hasUsedTool)) notifyObservers(new MessageDoNothing(this.nickname));
+        if (choice==3 && (hasMovedDie || hasUsedTool) || choice==2 && (!hasMovedDie&&!hasUsedTool)) notifyObservers(new MessageDoNothing(this.nickname));
         if (choice==4) notifyObservers(new MessageDoNothing(this.nickname));
 
         if(!moveDieOk || !moveToolOk) {
@@ -294,6 +294,12 @@ public class View extends Observable implements Observer, VisitorView {
                 return;
             }
            diceFromDp = n-1;
+        }
+
+        if(message.getDiceFromWp()>1) {
+            out.println("\nMultiple dice selection. Please, select:");
+            out.println("1) ALL the dice you want to move");
+            out.println("2) The position for them, respectively");
         }
 
         for(i=0; i<message.getDiceFromWp(); i++) {

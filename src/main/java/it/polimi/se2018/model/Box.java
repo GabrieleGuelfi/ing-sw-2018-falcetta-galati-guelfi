@@ -57,7 +57,7 @@ public class Box implements Serializable {
      * @param d is the die to place in this box
      */
     public void setDie(Die d){
-        if (die == null) //else throw exception? verify this here or in another class(tool can move die in pattern)?
+        //if (die == null) //else throw exception? verify this here or in another class(tool can move die in pattern)?
             die = d;
     }
 

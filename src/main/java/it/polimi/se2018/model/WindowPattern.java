@@ -63,7 +63,7 @@ public class WindowPattern implements Serializable {
     }
 
     public void addEmptyBox() {
-        emptyBox++;
+        emptyBox = emptyBox + 1;
     }
 
     /**

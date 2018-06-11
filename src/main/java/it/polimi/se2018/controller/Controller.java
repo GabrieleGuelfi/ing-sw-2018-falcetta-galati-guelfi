@@ -65,6 +65,11 @@ public class Controller implements VisitorController, Observer {
 
         rand = new ArrayList<>();
 
+        // TEST
+        Tool testTool2 = Tool.factory(7);
+        testTool2.setVirtualView(this.virtualView);
+        tools.add(testTool2);
+
         //Tools
         for (int i=0; i<3; i++) {
             index = generator.nextInt(6);
@@ -459,15 +464,27 @@ public class Controller implements VisitorController, Observer {
                     tool.setBeingUsed(false);
                     virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
                     return;
-                } else { // User wants to use the controller: use it...
+                } else { // User wants to use the tool: use it...
                     if (tool.use(message, match, player, this)) {
                         tool.setBeingUsed(false); // ... in everycase set being used goes to false
-                        if (player.isPlacedDie() && player.isUsedTool())
+                        if (player.isPlacedDie() && player.isUsedTool()) {
+                            player.setPlacedDie(false);
+                            player.setUsedTool(false);
                             nextTurn(); // no matter if use returns true or false; this should always work
+                        }
                         else
                             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
                     }
+
                     tool.setBeingUsed(false);
+                    boolean toolSixInUse = false;
+                    for (Die die: match.getRound().getDraftPool().getBag())
+                        if (die.isPlacing()) toolSixInUse=true;
+
+                    if(!toolSixInUse) {
+                        nextTurn();
+                    }
+
                 }
             }
         }
