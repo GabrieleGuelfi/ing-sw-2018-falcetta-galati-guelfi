@@ -13,17 +13,15 @@ public class MessageToolResponse extends Message {
     private List<Integer[]> positionsInWp;
     private List<Integer[]> diceFromWp;
     private List<Integer> diceFromRoundtrack;
-    private int newValue;
     private boolean plusOne;
 
-    public MessageToolResponse(String nickname, int diceFromDp, List<Integer[]> diceFromWp, List<Integer> diceFromRoundtrack, List<Integer[]> positionsInWp, int newValue, boolean plusOne) {
+    public MessageToolResponse(String nickname, int diceFromDp, List<Integer[]> diceFromWp, List<Integer> diceFromRoundtrack, List<Integer[]> positionsInWp, boolean plusOne) {
         super(nickname);
         this.confirmUse = true;
         this.diceFromDp = diceFromDp;
         this.diceFromWp = diceFromWp;
         this.diceFromRoundtrack = diceFromRoundtrack;
         this.positionsInWp = positionsInWp;
-        this.newValue = newValue;
         this.plusOne = plusOne;
     }
 
@@ -46,10 +44,6 @@ public class MessageToolResponse extends Message {
 
     public List<Integer[]> getPositionsInWp() {
         return positionsInWp;
-    }
-
-    public int getNewValue() {
-        return newValue;
     }
 
     public boolean getPlusOne() {

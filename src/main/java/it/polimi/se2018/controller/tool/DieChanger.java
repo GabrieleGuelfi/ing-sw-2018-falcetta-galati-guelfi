@@ -83,8 +83,7 @@ public class DieChanger extends Tool {
             }
             if (found) {
                 die.setPlacing(true);
-                player.setPlacedDie(true);
-                virtualView.send(new MessageForceMove(player.getNickname(), die, player.getWindowPattern()));
+                virtualView.send(new MessageForceMove(player.getNickname(), die, player.getWindowPattern(), false, true));
                 if(this.used) player.removeFavorTokens(2);
                 else {
                     this.used = true;

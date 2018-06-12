@@ -7,11 +7,13 @@ public class MessageForcedMove extends Message {
 
     private int row;
     private int column;
+    private int newValue;
 
-    public MessageForcedMove(String nickname, int row, int column) {
+    public MessageForcedMove(String nickname, int row, int column, int newValue) {
         super(nickname);
         this.row = row;
         this.column = column;
+        this.newValue = newValue;
     }
 
     public int getColumn() {
@@ -20,6 +22,10 @@ public class MessageForcedMove extends Message {
 
     public int getRow() {
         return row;
+    }
+
+    public int getNewValue() {
+        return newValue;
     }
 
     @Override

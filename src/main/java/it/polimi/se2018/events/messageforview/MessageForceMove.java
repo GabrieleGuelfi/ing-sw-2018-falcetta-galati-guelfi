@@ -9,11 +9,15 @@ public class MessageForceMove extends Message {
 
     private Die die;
     private WindowPattern windowPattern;
+    private boolean newValue;
+    private boolean placedDie;
 
-    public MessageForceMove(String nickname, Die die, WindowPattern windowPattern) {
+    public MessageForceMove(String nickname, Die die, WindowPattern windowPattern, boolean newValue, boolean placedDie) {
         super(nickname);
         this.die = die;
         this.windowPattern = windowPattern;
+        this.newValue = newValue;
+        this.placedDie = placedDie;
     }
 
     public WindowPattern getWindowPattern() {
@@ -22,6 +26,14 @@ public class MessageForceMove extends Message {
 
     public Die getDie() {
         return die;
+    }
+
+    public boolean isNewValue() {
+        return newValue;
+    }
+
+    public boolean isPlacedDie() {
+        return placedDie;
     }
 
     @Override
