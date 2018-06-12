@@ -23,7 +23,6 @@ public class DiePlacer extends Tool {
     @Override
     public boolean use(MessageToolResponse message, Match match, Player player, Controller controller) {
 
-        System.out.println("Sono in use del tool");
         Die die = match.getRound().getDraftPool().getBag().get(message.getDiceFromDp());
 
         if(!takeFromBag && !respectDistance) {
@@ -60,7 +59,7 @@ public class DiePlacer extends Tool {
 
         if(!canUseTool(player)) return;
         if(!respectDistance && !takeFromBag) {
-            if(match.getRound().getNumTurn() >= match.getPlayers().size()) {
+            if(match.getRound().getNumTurn() > match.getPlayers().size()) {
                 virtualView.send(new MessageErrorMove(player.getNickname(), "You can't use this tool in your second turn!"));
                 virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
                 return;

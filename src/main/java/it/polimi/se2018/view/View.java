@@ -225,9 +225,10 @@ public class View extends Observable implements Observer, VisitorView {
             requestInformation();
         }
         if (choice==2 && !hasMovedDie) moveDieOk = moveDie();
-        if ((choice==2 && hasMovedDie)||(choice==3 && !hasMovedDie && !hasUsedTool)) moveToolOk = useTool();
-        if (choice==3 && (hasMovedDie || hasUsedTool) || choice==2 && (!hasMovedDie&&!hasUsedTool)) notifyObservers(new MessageDoNothing(this.nickname));
+        if ((choice==2 && hasMovedDie && !hasUsedTool)||(choice==3 && !hasMovedDie && !hasUsedTool)) moveToolOk = useTool();
+        if (choice==3 && (hasMovedDie || hasUsedTool)) notifyObservers(new MessageDoNothing(this.nickname));
         if (choice==4) notifyObservers(new MessageDoNothing(this.nickname));
+        if (choice==2 && hasMovedDie && hasUsedTool) notifyObservers(new MessageDoNothing(this.nickname));
 
         if(!moveDieOk || !moveToolOk) {
             askMove(hasMovedDie, hasUsedTool, windowPattern, draftPool);

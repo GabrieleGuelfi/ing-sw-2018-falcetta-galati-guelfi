@@ -66,15 +66,15 @@ public class Controller implements VisitorController, Observer {
         rand = new ArrayList<>();
 
         // TEST
-        Tool testTool2 = Tool.factory(7);
-        testTool2.setVirtualView(this.virtualView);
-        tools.add(testTool2);
+        //Tool testTool2 = Tool.factory(7);
+        //testTool2.setVirtualView(this.virtualView);
+        //tools.add(testTool2);
 
         //Tools
         for (int i=0; i<3; i++) {
-            index = generator.nextInt(6);
+            index = generator.nextInt(7);
             while (rand.contains(index))
-                index = generator.nextInt(6);
+                index = generator.nextInt(7);
             rand.add(index);
             Tool tool = Tool.factory(index);
             tool.setVirtualView(this.virtualView);
