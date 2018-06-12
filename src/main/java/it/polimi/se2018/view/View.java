@@ -400,7 +400,7 @@ public class View extends Observable implements Observer, VisitorView {
             else plusOne=false;
         }
 
-        notifyObservers(new MessageToolResponse(nickname, diceFromDp, diceFromWp, diceFromRoundtrack, positionsInWp, newValue, plusOne));
+        notifyObservers(new MessageToolResponse(nickname, diceFromDp, diceFromWp, diceFromRoundtrack, positionsInWp, plusOne));
 
     }
 
