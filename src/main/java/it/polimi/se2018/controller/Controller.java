@@ -72,9 +72,9 @@ public class Controller implements VisitorController, Observer {
 
         //Tools
         for (int i=0; i<3; i++) {
-            index = generator.nextInt(7);
+            index = generator.nextInt(8);
             while (rand.contains(index))
-                index = generator.nextInt(7);
+                index = generator.nextInt(8);
             rand.add(index);
             Tool tool = Tool.factory(index);
             tool.setVirtualView(this.virtualView);
@@ -457,35 +457,40 @@ public class Controller implements VisitorController, Observer {
 
     @Override
     public void visit(MessageToolResponse message) {
+
         Player player = searchNick(message.getNickname());
-        for(Tool tool: match.getTools()) {
-            if(tool.isBeingUsed()) {
-                if (!message.isConfirmUse()) { // User decided to abort the use of the tool; set beingUsed false and ask again the move
-                    tool.setBeingUsed(false);
+        Tool toolInUse = null;
+        boolean canProceed;
+
+        for(Tool tool: match.getTools())
+            if(tool.isBeingUsed()) toolInUse = tool;
+
+        if(toolInUse==null) return;
+
+        if(!message.isConfirmUse()) {
+            toolInUse.setBeingUsed(false);
+            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
+        } else {
+
+            canProceed = toolInUse.use(message, match, player, this);
+
+            if(canProceed) {
+                toolInUse.setBeingUsed(false);
+                if(player.isPlacedDie() && player.isUsedTool()) {
+                    player.setPlacedDie(false);
+                    player.setUsedTool(false);
+                    nextTurn();
+                } else
                     virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
-                    return;
-                } else { // User wants to use the tool: use it...
-                    if (tool.use(message, match, player, this)) {
-                        tool.setBeingUsed(false); // ... in everycase set being used goes to false
-                        if (player.isPlacedDie() && player.isUsedTool()) {
-                            player.setPlacedDie(false);
-                            player.setUsedTool(false);
-                            nextTurn(); // no matter if use returns true or false; this should always work
-                        }
-                        else
-                            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
-                    }
+            } else {
 
-                    tool.setBeingUsed(false);
-                    boolean toolSixInUse = false;
-                    for (Die die: match.getRound().getDraftPool().getBag())
-                        if (die.isPlacing()) toolSixInUse=true;
+                toolInUse.setBeingUsed(false);
+                boolean toolSixInUse = false;
+                for (Die die: match.getRound().getDraftPool().getBag())
+                    if (die.isPlacing()) toolSixInUse=true;
 
-                    if(!toolSixInUse) {
-                        nextTurn();
-                    }
+                if(!toolSixInUse) nextTurn();
 
-                }
             }
         }
     }
