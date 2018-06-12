@@ -41,16 +41,17 @@ public class VirtualClient extends Observable implements ClientInterface, Runnab
         }
          catch(IOException e){
 
-             this.notifyObservers(new MessageErrorVirtualClientClosed(this));
-             out.println("MessageErrorVirtualClientClosed send.\n");
-             try {
-                 this.inputStream.close();
-             }
-             catch(IOException ex){
-                 ex.printStackTrace();
-             }
-             Thread.currentThread().interrupt();
-
+            if(loop) {
+                this.notifyObservers(new MessageErrorVirtualClientClosed(this));
+                out.println("MessageErrorVirtualClientClosed send.\n");
+                try {
+                    this.clientConnection.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } finally {
+                    Thread.currentThread().interrupt();
+                }
+            }
          }
 
     }
@@ -76,12 +77,15 @@ public class VirtualClient extends Observable implements ClientInterface, Runnab
 
     @Override
     public void closeConnection() {
+        loop = false;
         try {
-            this.inputStream.close();
+            this.clientConnection.close();
         }
         catch(IOException e){
             e.printStackTrace();
         }
-        Thread.currentThread().interrupt();
+        finally {
+            Thread.currentThread().interrupt();
+        }
     }
 }

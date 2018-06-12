@@ -9,6 +9,7 @@ import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.Box;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.dicecollection.DraftPool;
+import it.polimi.se2018.network.socket.client.SagradaClient;
 import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.WindowPattern;
@@ -33,22 +34,12 @@ public class View extends Observable implements Observer, VisitorView {
     private Scanner scanner;
     private String nickname;
 
-    private View() {
+    public View() {
         scanner = new Scanner(System.in);
         System.setProperty("jansi.passthrough", "true");
         AnsiConsole.systemInstall();
         out.println("Welcome in Sagrada!");
 
-    }
-
-    public static View createView() {
-        if (view == null) {
-            view = new View();
-            return view;
-        }
-        else {
-            return view;
-        }
     }
 
     public int askConnection() {
@@ -174,13 +165,16 @@ public class View extends Observable implements Observer, VisitorView {
         manageTurn(nickname);
     }
 
-    private void handleEndMatch(Map<String , Integer> results) {
+    private void handleEndMatch(Map<String , Integer> results, boolean isLastPlayer) {
 
         out.println( ansi().eraseScreen() );
+        if(isLastPlayer) {
+            out.println("Match is terminated because all other players have disconnected.\n");
+        }
+
         out.println( ansi().fg(RED).a("End of the match!").reset());
         out.println("The winner is... " + results.keySet().toArray()[0] + "!\n");
         out.println("Full classification: ");
-
 
         int i = 1;
 
@@ -188,6 +182,14 @@ public class View extends Observable implements Observer, VisitorView {
             out.println( i +") " + playerNickname + " with " + results.get(playerNickname) + " points");
             i++;
         }
+
+        out.println("\nDo you want to play again?");
+        out.println("1) Yes");
+        out.println("2) No");
+
+        int choice = chooseBetween(1, 2);
+        if(choice==1) SagradaClient.newConnection(this.nickname);
+        else SagradaClient.closeClient();
 
     }
 
@@ -548,7 +550,7 @@ public class View extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageEndMatch message) {
-        handleEndMatch(message.getResults());
+        handleEndMatch(message.getResults(), message.isLastPlayer());
     }
 
     @Override

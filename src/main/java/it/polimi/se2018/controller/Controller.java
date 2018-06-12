@@ -332,7 +332,7 @@ public class Controller implements VisitorController, Observer {
             results.put(playerNickname, points.get(i));
             i++;
         }
-        match.notifyObservers(new MessageEndMatch(results));
+        match.notifyObservers(new MessageEndMatch(results, false));
         virtualView.sendToServer(new MessageRestartServer());
 
     }
@@ -345,7 +345,7 @@ public class Controller implements VisitorController, Observer {
         Map<String , Integer> results = new HashMap<>();
         calcResults(player);
         results.put(player.getNickname(), player.getPoints());
-        match.notifyObservers(new MessageEndMatch(results));
+        match.notifyObservers(new MessageEndMatch(results, true));
         virtualView.sendToServer(new MessageRestartServer());
     }
 

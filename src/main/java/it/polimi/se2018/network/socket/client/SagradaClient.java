@@ -17,46 +17,52 @@ public class SagradaClient {
     private static final int PORT = 1111;
     private static final String HOST = "localhost";
 
-    private ClientImplementation client;
-    private ServerInterface server;
-    private View view;
+    private static ClientImplementation client;
+    private static ServerInterface server;
+    private static View view;
+    private static ClientInterface remoteRef=null;
 
-    private void connectThroughSocket() {
-        String nickname = view.askNickname();
+    private static void connectThroughSocket(String nickname) {
         server = new NetworkHandler(HOST, PORT, client);
         client.addServer(server);
         view.notifyObservers(new Message(nickname));
     }
 
-    private void connectThroughRmi() {
-        String nickname = view.askNickname();
+    private static void connectThroughRmi(String nickname) {
         try {
             server = (ServerInterface) Naming.lookup("//localhost/RemoteServer");
-            ClientInterface remoteRef =  (ClientInterface) UnicastRemoteObject.exportObject(client, 0);
+            if(remoteRef==null) remoteRef =  (ClientInterface) UnicastRemoteObject.exportObject(client, 0);
             server.addClient(remoteRef, nickname);
-        } catch (RemoteException e) {
+        } catch (RemoteException | NotBoundException | MalformedURLException e) {
             e.printStackTrace();
-        } catch (NotBoundException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        finally {
+        } finally {
             client.addServer(server); }
 
     }
 
+    public static void newConnection(String nickname) {
+
+        int choice = view.askConnection();
+        if(choice==1) connectThroughSocket(nickname);
+        else connectThroughRmi(nickname);
+
+    }
+
+    public static void closeClient() {
+
+        System.exit(0);
+
+    }
+
     public SagradaClient() {
-        view = View.createView();
+        view = new View();
         client = new ClientImplementation();
 
         view.register(client);
         client.register(view);
 
-        int choice = view.askConnection();
+        newConnection(view.askNickname());
 
-        if(choice==1) connectThroughSocket();
-        else connectThroughRmi();
     }
 
 

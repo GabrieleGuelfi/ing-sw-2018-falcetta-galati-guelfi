@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class NetworkHandler extends Thread implements ServerInterface {
 
@@ -60,7 +61,7 @@ public class NetworkHandler extends Thread implements ServerInterface {
             outputStream.writeObject(message);
             outputStream.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("\nYou are now disconnected from the server.");
         }
     }
 

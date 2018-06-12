@@ -14,8 +14,10 @@ import static java.lang.System.*;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.rmi.Naming;
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import it.polimi.se2018.utils.Observer;
@@ -27,6 +29,7 @@ public class SagradaServer implements VisitorServer, Observer{
     private VirtualView virtualView;
     private Controller controller;
     private ClientGatherer clientGatherer;
+    private Registry rmiRegistry;
     private ServerTimer timer;
     private boolean gameIsStarted;
     private final int time;
@@ -51,7 +54,7 @@ public class SagradaServer implements VisitorServer, Observer{
 
         //INITIALIZE REMOTE SERVER
         try{
-            LocateRegistry.createRegistry(1099);
+            rmiRegistry = LocateRegistry.createRegistry(1099);
             RemoteServer remoteServer = new RemoteServer();
             remoteServer.register(this);
             ServerInterface serverInterface =  (ServerInterface) UnicastRemoteObject.exportObject(remoteServer, 0);
@@ -242,13 +245,18 @@ public class SagradaServer implements VisitorServer, Observer{
             }
         }
 
+
         //REMOVE ALL CLIENTS
-        for(int i = 0; i < this.clients.size(); i++){
+        /*for(int i = 0; i < this.clients.size(); i++){
             this.clients.remove(this.clients.get(i));
-        }
+        } */
+        this.clients = new ArrayList<>();
 
         this.maxClients = 4;
         this.controller = null;
+
+        this.virtualView = new VirtualView(this); // Errors if this isn't done.
+
         this.handleClientGatherer.setClientGathererActive();
         this.handleClientGatherer.interrupt();
 
