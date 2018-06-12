@@ -95,8 +95,8 @@ public class DieMover extends Tool {
     @Override
     public void requestOrders(Player player, Match match) {
         if(!canUseTool(player)) return;
-        if(!(respectValue&&respectColour)) virtualView.send(new MessageToolOrder(player.getNickname(), 0, 1,  1));
-        else virtualView.send(new MessageToolOrder(player.getNickname(), 0, 2, 2));
+        if(!(respectValue&&respectColour)) virtualView.send(new MessageToolOrder(player.getNickname(), 0, 1,  1, 0));
+        else virtualView.send(new MessageToolOrder(player.getNickname(), 0, 2, 2, 0));
         this.isBeingUsed = true;
     }
 }

@@ -73,9 +73,10 @@ public class Controller implements VisitorController, Observer {
 
         //Tools
         for (int i=0; i<3; i++) {
-            index = generator.nextInt(8);
+            index = generator.nextInt(11);
+            index = 10;
             while (rand.contains(index))
-                index = generator.nextInt(8);
+                index = generator.nextInt(11);
             rand.add(index);
             Tool tool = Tool.factory(index);
             tool.setVirtualView(this.virtualView);
@@ -509,30 +510,45 @@ public class Controller implements VisitorController, Observer {
         for (Die die: match.getRound().getDraftPool().getBag())
             if (die.isPlacing())
                 d = die;
-        if (!isNearDie(player.getWindowPattern(), message.getRow(), message.getColumn())) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "No dice near the position"));
-            virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern()));
-            return;
-        }
-        if (!verifyNumber(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Value Restriction!"));
-            virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern()));
-            return;
-        }
-        if (!verifyColor(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Colour Restriction!"));
-            virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern()));
-            return;
-        }
-        player.getWindowPattern().putDice(d, message.getRow(), message.getColumn());
-        player.setPlacedDie(false);
-        player.setUsedTool(false);
-        virtualView.send(new MessageConfirmMove(player.getNickname(), false));
-        match.getRound().getDraftPool().removeDie(match.getRound().getDraftPool().getBag().indexOf(d));
-        match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
-        match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
 
-        nextTurn();
+        if (message.getNewValue()!=0)
+            d.setValue(message.getNewValue());
+
+        if (message.getRow()!=-1) {
+            boolean error = false;
+            if (!isNearDie(player.getWindowPattern(), message.getRow(), message.getColumn())) {
+                error=true;
+                virtualView.send(new MessageErrorMove(player.getNickname(), "No dice near the position"));
+
+            }
+            if (!verifyNumber(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
+                error=true;
+                virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Value Restriction!"));
+            }
+            if (!verifyColor(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
+                error=true;
+                virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Colour Restriction!"));
+            }
+            if (error) {
+                if (message.getNewValue() == 0) {
+                    virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern(), false, true));
+                    return;
+                } else {
+                    virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern(), false, player.isPlacedDie()));
+                    return;
+                }
+            }
+            match.getRound().getDraftPool().removeDie(match.getRound().getDraftPool().getBag().indexOf(d));
+            player.getWindowPattern().putDice(d, message.getRow(), message.getColumn());
+            match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
+            match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
+            player.setPlacedDie(false);
+            player.setUsedTool(false);
+            virtualView.send(new MessageConfirmMove(player.getNickname(), false));
+            nextTurn();
+            return;
+        }
+        virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
 
     }
 }

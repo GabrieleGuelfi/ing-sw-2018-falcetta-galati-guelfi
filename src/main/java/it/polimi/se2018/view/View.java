@@ -40,6 +40,7 @@ public class View extends Observable implements Observer, VisitorView {
     private static final String ROW = "row";
     private static final String COLUMN = "column";
 
+    private static View view;
     private Scanner scanner;
     private String nickname;
 
@@ -75,7 +76,6 @@ public class View extends Observable implements Observer, VisitorView {
         askStrings = (JSONObject) strings.get(3);
         printStrings = (JSONObject) strings.get(4);
     }
-
 
     public int askConnection() {
         out.println(introductionStrings.get("askConnection"));
@@ -371,6 +371,24 @@ public class View extends Observable implements Observer, VisitorView {
             positionsInWp.add(positions);
         }
 
+        for(i=0; i<message.getDiceFromRoundtrack(); i++) {
+            out.println("\nChoose die from Roundtrack (0 to abort)");
+            out.print("Turn: ");
+            int x = chooseBetween(0, 9);
+            if (x==0) {
+                notifyObservers(new MessageToolResponse(nickname));
+                return;
+            }
+            diceFromRoundtrack.add(x);
+            out.print("Die: ");
+            int y = chooseBetween(0, 9);
+            if (y==0) {
+                notifyObservers(new MessageToolResponse(nickname));
+                return;
+            }
+            diceFromRoundtrack.add(y-1);
+        }
+
         if(message.isAskPlusOrMinusOne()) {
             out.println(askStrings.get("addOrRemove"));
             int choice = chooseBetween(0,2);
@@ -382,29 +400,39 @@ public class View extends Observable implements Observer, VisitorView {
             else plusOne=false;
         }
 
-        for(i=0; i<message.getNewValue(); i++) {
-            out.println(askStrings.get("newValue"));
-            newValue = chooseBetween(0, 6);
-            if (newValue==0) {
-                notifyObservers(new MessageToolResponse(nickname));
-                return;
-            }
-            newValue--;
-        }
-
         notifyObservers(new MessageToolResponse(nickname, diceFromDp, diceFromWp, diceFromRoundtrack, positionsInWp, newValue, plusOne));
 
     }
 
-    private void forceMove(Die die, WindowPattern windowPattern) {
-        out.print(askStrings.get("placeThisDie"));
+    private void forceMove(Die die, WindowPattern windowPattern, boolean chooseNewValue, boolean placedDie) {
+        int newValue=0;
+
+        if (chooseNewValue)
+            out.print("Choose the new value of the die: ");
+        else
+            out.print("You had to place this die: ");
         for (Color color : Color.values()) {
             if (color.toString().equals(die.getColour().toString())) {
                 out.println(ansi().fg(color).a("[" + die.getValue() + "] ").reset());
             }
         }
-
         printWindowPattern(windowPattern);
+        if (chooseNewValue) {
+            out.println("Choose the new value: ");
+            newValue = chooseBetween(1, 6);
+        }
+
+        if (!placedDie) {
+            out.println("Do you want to place this die?\n1) Yes\n2) No ");
+            int choice = chooseBetween(1, 2);
+            if (choice == 1)
+                out.println("Choose position: ");
+            else
+                notifyObservers(new MessageForcedMove(this.nickname, -1, -1, newValue));
+        }
+        else
+            notifyObservers(new MessageForcedMove(this.nickname, -1, -1, newValue));
+
         int column=0;
         int row=0;
         while(column == 0) {
@@ -415,7 +443,7 @@ public class View extends Observable implements Observer, VisitorView {
             column = chooseBetween(0, MAX_COL);
         }
 
-        notifyObservers(new MessageForcedMove(this.nickname, row-1, column-1));
+        notifyObservers(new MessageForcedMove(this.nickname, row-1, column-1, newValue));
 
     }
 
@@ -593,7 +621,7 @@ public class View extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageForceMove message) {
-        forceMove(message.getDie(), message.getWindowPattern());
+        forceMove(message.getDie(), message.getWindowPattern(), message.isNewValue(), message.isPlacedDie());
     }
 }
 
