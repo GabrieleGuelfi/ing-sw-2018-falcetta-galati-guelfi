@@ -1,5 +1,6 @@
 package it.polimi.se2018.model;
 
+import it.polimi.se2018.utils.HandleJSON;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -89,7 +90,8 @@ public class TestPlayer {
     @Test
     public void testGetPrivateObjective() {
         Player player = new Player("foo");
-        PrivateObjective po = new PrivateObjective(Colour.BLUE);
+        PrivateObjective po = HandleJSON.createPrivateObjective(Colour.BLUE);
+        //PrivateObjective po = new PrivateObjective(Colour.BLUE);
         player.setPrivateObjective(po);
         assertEquals(Colour.BLUE, po.getShade());
         //assertEquals("foo", po.getName());
@@ -101,7 +103,8 @@ public class TestPlayer {
     public void testCopy() {
         Player player = new Player("foo");
 
-        PrivateObjective po = new PrivateObjective(Colour.BLUE);
+        PrivateObjective po = HandleJSON.createPrivateObjective(Colour.BLUE);
+        //PrivateObjective po = new PrivateObjective(Colour.BLUE);
         WindowPattern wp = new WindowPattern(null,10);
 
         player.setPrivateObjective(po);

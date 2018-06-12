@@ -2,6 +2,7 @@ package it.polimi.se2018.utils;
 
 import it.polimi.se2018.model.Box;
 import it.polimi.se2018.model.Colour;
+import it.polimi.se2018.model.PrivateObjective;
 import it.polimi.se2018.model.WindowPattern;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -96,4 +97,24 @@ public final class HandleJSON {
         windowPattern.put(nickname, choice);
         return rand;
     }
+
+    public static PrivateObjective createPrivateObjective(Colour shade) {
+
+        InputStream in = HandleJSON.class.getResourceAsStream("/fileutils/privateObjective");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        JSONParser parser = new JSONParser();
+        Object obj = null;
+        try {
+            obj = parser.parse(reader);
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        JSONArray strings = (JSONArray) obj;
+        JSONObject descriptions = (JSONObject) strings.get(0);
+
+        return new PrivateObjective(shade, descriptions.get(shade.toString()).toString());
+
+    }
+
+
 }

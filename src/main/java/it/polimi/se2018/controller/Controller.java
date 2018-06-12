@@ -13,6 +13,7 @@ import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.utils.Observer;
 import it.polimi.se2018.view.VirtualView;
+import org.json.simple.JSONObject;
 
 import java.util.*;
 
@@ -128,7 +129,8 @@ public class Controller implements VisitorController, Observer {
             while (rand.contains(index) || colours[index].equals(Colour.WHITE))
                 index = generator.nextInt(colours.length);
             rand.add(index);
-            p.setPrivateObjective(new PrivateObjective(colours[index]));
+            p.setPrivateObjective(HandleJSON.createPrivateObjective(colours[index]));
+            //p.setPrivateObjective(new PrivateObjective(colours[index]));
             virtualView.send(new MessagePrivObj(p.getNickname(), p.getPrivateObjective().getDescription()));
         }
     }
