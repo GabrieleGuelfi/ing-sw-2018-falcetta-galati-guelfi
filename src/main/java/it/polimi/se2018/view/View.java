@@ -335,7 +335,21 @@ public class View extends Observable implements Observer, VisitorView {
             out.println(askStrings.get("multipleDice"));
         }
 
-        for(i=0; i<message.getDiceFromWp(); i++) {
+        int requestedDiceFromWp = message.getDiceFromWp();
+        int requestedPositionInWp = message.getPositionInWp();
+
+        if(message.isCanReduceDiceFromWP()) {
+            out.println("How many dice do you want to move? (0 to escape)");
+            int choice = chooseBetween(0, 2);
+            if(choice==0) {
+                notifyObservers(new MessageToolResponse(nickname));
+                return;
+            }
+            requestedDiceFromWp = choice;
+            requestedPositionInWp = choice;
+        }
+
+        for(i=0; i<requestedDiceFromWp; i++) {
             out.println(askStrings.get("diceFromWp"));
             out.print(askStrings.get(ROW));
             int x = chooseBetween(0, MAX_ROW);
@@ -353,7 +367,7 @@ public class View extends Observable implements Observer, VisitorView {
             diceFromWp.add(positions);
         }
 
-        for(i=0; i<message.getPositionInWp(); i++) {
+        for(i=0; i<requestedPositionInWp; i++) {
             out.println(askStrings.get("askPositionInWp"));
             out.print(askStrings.get(ROW));
             int x = chooseBetween(0, MAX_ROW);

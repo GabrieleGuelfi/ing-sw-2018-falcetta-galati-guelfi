@@ -41,9 +41,10 @@ public abstract class Tool {
         tools.add(() -> new DieChanger("Glazing Hammer", false, false, true));
         tools.add(() -> new DieChanger("Grinding Stone", true, false, false));
         tools.add(() -> new DieChanger("Flux Brush", false, false, false));
-        tools.add(() -> new DieMover("Eglomise Brush", 1, false, true ));
-        tools.add(() -> new DieMover("Copper Foil Burnisher", 1, true, false));
-        tools.add(() -> new DieMover("Lathekin", 2, true, true));
+        tools.add(() -> new DieMover("Eglomise Brush", 1, false, true, false ));
+        tools.add(() -> new DieMover("Copper Foil Burnisher", 1, true, false, false));
+        tools.add(() -> new DieMover("Lathekin", 2, true, true, false));
+        tools.add(() -> new DieMover("Tap Wheel", 2, true, true, true));
         tools.add(() -> new DiePlacer("Running Pliers", false, false ));
         tools.add(() -> new DiePlacer("Cork-backed Straightedge", true, false));
         tools.add(() -> new DiePlacer("Flux Remover", false, true));

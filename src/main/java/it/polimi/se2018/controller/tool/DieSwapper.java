@@ -31,7 +31,7 @@ public class DieSwapper extends Tool {
             match.getRoundTrack().get(message.getDiceFromRoundtrack().get(0)).add(dieDp);
             match.getRound().getDraftPool().addDie(dieTrack);
         }
-        catch (NullPointerException e) {
+        catch (NullPointerException | IndexOutOfBoundsException e) {
             virtualView.send(new MessageErrorMove(player.getNickname(), "No dice in this position"));
             return true;
         }

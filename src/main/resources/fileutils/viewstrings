@@ -12,7 +12,7 @@
       "publicObjective": "\nPublic objectives: ",
       "tools": "\nTools: ",
       "roundtrackEmpty": "\nRound Track empty! This is the First Turn!",
-      "roundtrack:": "\nRound Track: ",
+      "roundtrack": "\nRound Track: ",
       "otherPlayerWP": "'s windowpattern is now: ",
       "myWP": "Your window pattern is now: "
     },
