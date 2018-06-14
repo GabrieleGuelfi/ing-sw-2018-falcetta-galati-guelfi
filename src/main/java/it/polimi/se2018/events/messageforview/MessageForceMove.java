@@ -11,13 +11,15 @@ public class MessageForceMove extends Message {
     private WindowPattern windowPattern;
     private boolean newValue;
     private boolean placedDie;
+    private boolean canChoose;
 
-    public MessageForceMove(String nickname, Die die, WindowPattern windowPattern, boolean newValue, boolean placedDie) {
+    public MessageForceMove(String nickname, Die die, WindowPattern windowPattern, boolean newValue, boolean placedDie, boolean canChoose) {
         super(nickname);
         this.die = die;
         this.windowPattern = windowPattern;
         this.newValue = newValue;
         this.placedDie = placedDie;
+        this.canChoose = canChoose;
     }
 
     public WindowPattern getWindowPattern() {
@@ -34,6 +36,10 @@ public class MessageForceMove extends Message {
 
     public boolean isPlacedDie() {
         return placedDie;
+    }
+
+    public boolean isCanChoose() {
+        return canChoose;
     }
 
     @Override

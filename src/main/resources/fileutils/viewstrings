@@ -4,7 +4,7 @@
       "askConnection": "Please, choose method connection beetween:\n1) Socket\n2) RMI",
       "askNickname": "Please, choose your nickname",
       "nicknameIsOk": "\nAll settled! Wait for the game to begin...",
-      "nicknameNotOk": "\nNickname already used: choose another one)"
+      "nicknameNotOk": "\nNickname already used: choose another one"
     },
 
     {

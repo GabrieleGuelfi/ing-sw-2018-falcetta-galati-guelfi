@@ -66,15 +66,10 @@ public class Controller implements VisitorController, Observer {
 
         rand = new ArrayList<>();
 
-        // TEST
-        Tool testTool2 = Tool.factory(7);
-        testTool2.setVirtualView(this.virtualView);
-        tools.add(testTool2);
-
         //Tools
         for (int i=0; i<3; i++) {
             index = generator.nextInt(11);
-            index = 6;
+            index = 11;
             while (rand.contains(index))
                 index = generator.nextInt(11);
             rand.add(index);
@@ -488,11 +483,11 @@ public class Controller implements VisitorController, Observer {
             } else {
 
                 toolInUse.setBeingUsed(false);
-                boolean toolSixInUse = false;
+                boolean toolStillInUse = false;
                 for (Die die: match.getRound().getDraftPool().getBag())
-                    if (die.isPlacing()) toolSixInUse=true;
+                    if (die.isPlacing()) toolStillInUse=true;
 
-                if(!toolSixInUse) nextTurn();
+                if(!toolStillInUse) nextTurn();
 
             }
         }
@@ -519,7 +514,6 @@ public class Controller implements VisitorController, Observer {
             if (!isNearDie(player.getWindowPattern(), message.getRow(), message.getColumn())) {
                 error=true;
                 virtualView.send(new MessageErrorMove(player.getNickname(), "No dice near the position"));
-
             }
             if (!verifyNumber(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
                 error=true;
@@ -530,25 +524,37 @@ public class Controller implements VisitorController, Observer {
                 virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Colour Restriction!"));
             }
             if (error) {
-                if (message.getNewValue() == 0) {
-                    virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern(), false, true));
+                if (message.isChosen()) {
+                    virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern(), false, player.isPlacedDie(), true));
                     return;
                 } else {
-                    virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern(), false, player.isPlacedDie()));
+                    virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern(), false, player.isPlacedDie(), false));
                     return;
                 }
             }
-            match.getRound().getDraftPool().removeDie(match.getRound().getDraftPool().getBag().indexOf(d));
+            match.getRound().getDraftPool().getBag().remove(d);
             player.getWindowPattern().putDice(d, message.getRow(), message.getColumn());
             match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
             match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
+            player.setPlacedDie(true);
+
+        }
+        d.setPlacing(false);
+        boolean isThereAnotherMove = true;
+        player.setUsedTool(true);
+        if (player.isUsedTool() && player.isPlacedDie()) {
             player.setPlacedDie(false);
             player.setUsedTool(false);
-            virtualView.send(new MessageConfirmMove(player.getNickname(), false));
-            nextTurn();
+            isThereAnotherMove = false;
+        }
+        virtualView.send(new MessageConfirmMove(player.getNickname(), isThereAnotherMove));
+        if (isThereAnotherMove) {
+            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
             return;
         }
-        virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
+        player.setPlacedDie(false);
+        player.setUsedTool(false);
+        nextTurn();
 
     }
 }

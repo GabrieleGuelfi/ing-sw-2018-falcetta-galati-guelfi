@@ -8,12 +8,25 @@ public class MessageForcedMove extends Message {
     private int row;
     private int column;
     private int newValue;
+    private boolean chosen;
 
     public MessageForcedMove(String nickname, int row, int column, int newValue) {
         super(nickname);
         this.row = row;
         this.column = column;
         this.newValue = newValue;
+    }
+
+    public MessageForcedMove(String nickname, int row, int column, int newValue, boolean chosen) {
+        super(nickname);
+        this.row = row;
+        this.column = column;
+        this.newValue = newValue;
+        this.chosen = chosen;
+    }
+
+    public boolean isChosen() {
+        return chosen;
     }
 
     public int getColumn() {

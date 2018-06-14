@@ -418,7 +418,7 @@ public class View extends Observable implements Observer, VisitorView {
 
     }
 
-    private void forceMove(Die die, WindowPattern windowPattern, boolean chooseNewValue, boolean placedDie) {
+    private void forceMove(Die die, WindowPattern windowPattern, boolean chooseNewValue, boolean placedDie, boolean canChoose) {
         int newValue=0;
 
         if (chooseNewValue)
@@ -436,16 +436,20 @@ public class View extends Observable implements Observer, VisitorView {
             newValue = chooseBetween(1, 6);
         }
 
-        if (!placedDie) {
+        if (!placedDie && canChoose) {
             out.println("Do you want to place this die?\n1) Yes\n2) No ");
             int choice = chooseBetween(1, 2);
             if (choice == 1)
                 out.println("Choose position: ");
-            else
-                notifyObservers(new MessageForcedMove(this.nickname, -1, -1, newValue));
+            else {
+                notifyObservers(new MessageForcedMove(this.nickname, -1, -1, newValue, true));
+                return;
+            }
         }
-        else
-            notifyObservers(new MessageForcedMove(this.nickname, -1, -1, newValue));
+        else if (placedDie && canChoose) {
+            notifyObservers(new MessageForcedMove(this.nickname, -1, -1, newValue, true));
+            return;
+        }
 
         int column=0;
         int row=0;
@@ -457,7 +461,7 @@ public class View extends Observable implements Observer, VisitorView {
             column = chooseBetween(0, MAX_COL);
         }
 
-        notifyObservers(new MessageForcedMove(this.nickname, row-1, column-1, newValue));
+        notifyObservers(new MessageForcedMove(this.nickname, row-1, column-1, newValue, canChoose));
 
     }
 
@@ -635,7 +639,7 @@ public class View extends Observable implements Observer, VisitorView {
 
     @Override
     public void visit(MessageForceMove message) {
-        forceMove(message.getDie(), message.getWindowPattern(), message.isNewValue(), message.isPlacedDie());
+        forceMove(message.getDie(), message.getWindowPattern(), message.isNewValue(), message.isPlacedDie(), message.isCanChoose());
     }
 }
 

@@ -2,7 +2,6 @@ package it.polimi.se2018.controller.tool;
 
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.messageforcontroller.MessageToolResponse;
-import it.polimi.se2018.events.messageforserver.MessageError;
 import it.polimi.se2018.events.messageforview.MessageAskMove;
 import it.polimi.se2018.events.messageforview.MessageErrorMove;
 import it.polimi.se2018.events.messageforview.MessageForceMove;
@@ -10,7 +9,6 @@ import it.polimi.se2018.events.messageforview.MessageToolOrder;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
-import it.polimi.se2018.model.WindowPattern;
 
 import java.util.Random;
 
@@ -36,9 +34,10 @@ public class DiePlacer extends Tool {
             match.getBag().addDie(die);
             Random generator = new Random();
             Die d = match.getBag().removeDie(generator.nextInt(match.getBag().getBag().size()));
+            match.getRound().getDraftPool().addDie(d);
             d.setRandomValue();
             d.setPlacing(true);
-            virtualView.send(new MessageForceMove(player.getNickname(), d, player.getWindowPattern(), true, player.isPlacedDie()));
+            virtualView.send(new MessageForceMove(player.getNickname(), d, player.getWindowPattern(), true, player.isPlacedDie(), true));
         }
         else {
             int row = message.getPositionsInWp().get(0)[0];
@@ -67,7 +66,7 @@ public class DiePlacer extends Tool {
 
                 return true;
             }
-            if (!takeFromBag && !respectDistance) {
+            if (!takeFromBag) {
 
                 if (!controller.isNearDie(player.getWindowPattern(), row, column)) {
                     virtualView.send(new MessageErrorMove(player.getNickname(), "Violated near dice restriction"));
@@ -89,10 +88,10 @@ public class DiePlacer extends Tool {
                 player.setPlacedDie(true);
                 finishToolMove(player);
 
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     @Override
