@@ -58,15 +58,8 @@
                   <Text fx:id="textPublicObjective" strokeType="OUTSIDE" strokeWidth="0.0" />
                   <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                      <children>
-                        <ImageView fx:id="publicObjective1" fitHeight="100.0" fitWidth="72.0">
-                           <viewport>
-                              <Rectangle2D height="100.0" minX="72.0" minY="100.0" width="72.0" />
-                           </viewport>
-                        </ImageView>
-                        <ImageView fx:id="publicObjective2" fitHeight="100.0" fitWidth="72.0" layoutX="10.0" layoutY="10.0">
-                           <viewport>
-                              <Rectangle2D height="100.0" minX="72.0" minY="100.0" width="72.0" />
-                           </viewport></ImageView>
+                        <ImageView fx:id="publicObjective1" fitHeight="100.0" fitWidth="72.0" />
+                        <ImageView fx:id="publicObjective2" fitHeight="100.0" fitWidth="72.0" layoutX="10.0" layoutY="10.0" />
                      </children>
                      <padding>
                         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
@@ -84,18 +77,9 @@
                   <Text fx:id="textTool" strokeType="OUTSIDE" strokeWidth="0.0" />
                   <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                      <children>
-                        <ImageView fx:id="tool1" fitHeight="100.0" fitWidth="72.0">
-                           <viewport>
-                              <Rectangle2D height="100.0" minX="72.0" minY="100.0" width="72.0" />
-                           </viewport></ImageView>
-                        <ImageView fx:id="tool2" fitHeight="100.0" fitWidth="72.0" layoutX="10.0" layoutY="10.0">
-                           <viewport>
-                              <Rectangle2D height="100.0" minX="72.0" minY="100.0" width="72.0" />
-                           </viewport></ImageView>
-                        <ImageView fx:id="tool3" fitHeight="100.0" fitWidth="72.0" layoutX="102.0" layoutY="15.0">
-                           <viewport>
-                              <Rectangle2D height="100.0" minX="72.0" minY="100.0" width="72.0" />
-                           </viewport></ImageView>
+                        <ImageView fx:id="tool1" fitHeight="100.0" fitWidth="72.0" />
+                        <ImageView fx:id="tool2" fitHeight="100.0" fitWidth="72.0" layoutX="10.0" layoutY="10.0" />
+                        <ImageView fx:id="tool3" fitHeight="100.0" fitWidth="72.0" layoutX="102.0" layoutY="15.0" />
                      </children>
                      <padding>
                         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
@@ -108,51 +92,15 @@
             </VBox>
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
                <children>
-                  <ImageView fx:id="draftpool1" fitHeight="50.0" fitWidth="50.0">
-                     <viewport>
-                        <Rectangle2D height="72.0" minX="72.0" minY="72.0" width="72.0" />
-                     </viewport>
-                  </ImageView>
-                  <ImageView fx:id="draftpool2" fitHeight="50.0" fitWidth="50.0" layoutX="10.0" layoutY="10.0">
-                     <viewport>
-                        <Rectangle2D height="72.0" minX="72.0" minY="72.0" width="72.0" />
-                     </viewport>
-                  </ImageView>
-                  <ImageView fx:id="draftpool3" fitHeight="50.0" fitWidth="50.0" layoutX="10.0" layoutY="10.0">
-                     <viewport>
-                        <Rectangle2D height="72.0" minX="72.0" minY="72.0" width="72.0" />
-                     </viewport>
-                  </ImageView>
-                  <ImageView fx:id="draftpool4" fitHeight="50.0" fitWidth="50.0" layoutX="154.0" layoutY="10.0">
-                     <viewport>
-                        <Rectangle2D height="72.0" minX="72.0" minY="72.0" width="72.0" />
-                     </viewport>
-                  </ImageView>
-                  <ImageView fx:id="draftpool5" fitHeight="50.0" fitWidth="50.0" layoutX="20.0" layoutY="20.0">
-                     <viewport>
-                        <Rectangle2D height="72.0" minX="72.0" minY="72.0" width="72.0" />
-                     </viewport>
-                  </ImageView>
-                  <ImageView fx:id="draftpool6" fitHeight="50.0" fitWidth="50.0" layoutX="298.0" layoutY="10.0">
-                     <viewport>
-                        <Rectangle2D height="72.0" minX="72.0" minY="72.0" width="72.0" />
-                     </viewport>
-                  </ImageView>
-                  <ImageView fx:id="draftpool7" fitHeight="50.0" fitWidth="50.0" layoutX="370.0" layoutY="10.0">
-                     <viewport>
-                        <Rectangle2D height="72.0" minX="72.0" minY="72.0" width="72.0" />
-                     </viewport>
-                  </ImageView>
-                  <ImageView fx:id="draftpool8" fitHeight="50.0" fitWidth="50.0" layoutX="442.0" layoutY="10.0">
-                     <viewport>
-                        <Rectangle2D height="72.0" minX="72.0" minY="72.0" width="72.0" />
-                     </viewport>
-                  </ImageView>
-                  <ImageView fx:id="draftpool9" fitHeight="50.0" fitWidth="50.0" layoutX="514.0" layoutY="10.0">
-                     <viewport>
-                        <Rectangle2D height="72.0" minX="72.0" minY="72.0" width="72.0" />
-                     </viewport>
-                  </ImageView>
+                  <ImageView fx:id="draftpool1" fitHeight="50.0" fitWidth="50.0" />
+                  <ImageView fx:id="draftpool2" fitHeight="50.0" fitWidth="50.0" layoutX="10.0" layoutY="10.0" />
+                  <ImageView fx:id="draftpool3" fitHeight="50.0" fitWidth="50.0" layoutX="10.0" layoutY="10.0" />
+                  <ImageView fx:id="draftpool4" fitHeight="50.0" fitWidth="50.0" layoutX="154.0" layoutY="10.0" />
+                  <ImageView fx:id="draftpool5" fitHeight="50.0" fitWidth="50.0" layoutX="20.0" layoutY="20.0" />
+                  <ImageView fx:id="draftpool6" fitHeight="50.0" fitWidth="50.0" layoutX="298.0" layoutY="10.0" />
+                  <ImageView fx:id="draftpool7" fitHeight="50.0" fitWidth="50.0" layoutX="370.0" layoutY="10.0" />
+                  <ImageView fx:id="draftpool8" fitHeight="50.0" fitWidth="50.0" layoutX="442.0" layoutY="10.0" />
+                  <ImageView fx:id="draftpool9" fitHeight="50.0" fitWidth="50.0" layoutX="514.0" layoutY="10.0" />
                </children>
             </HBox>
             <VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.columnIndex="5">
@@ -179,11 +127,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                         </GridPane>
-                        <ImageView fx:id="windowpatternPlayer1" fitHeight="135.0" fitWidth="200.0">
-                           <viewport>
-                              <Rectangle2D height="270.0" minX="200.0" minY="135.0" width="400.0" />
-                           </viewport>
-                        </ImageView>
+                        <ImageView fx:id="windowpatternPlayer1" fitHeight="135.0" fitWidth="200.0" />
                      </children>
                   </Pane>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" />
@@ -208,7 +152,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                         </GridPane>
-                        <ImageView fx:id="windowpatternPlayer2" fitHeight="135.0" fitWidth="200.0">
+                        <ImageView fx:id="windowpatternPlayer2" fitHeight="135.0">
                            <viewport>
                               <Rectangle2D height="270.0" minX="200.0" minY="135.0" width="400.0" />
                            </viewport>
@@ -237,11 +181,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                         </GridPane>
-                        <ImageView fx:id="windowpatternPlayer3" fitHeight="135.0" fitWidth="200.0">
-                           <viewport>
-                              <Rectangle2D height="270.0" minX="200.0" minY="135.0" width="400.0" />
-                           </viewport>
-                        </ImageView>
+                        <ImageView fx:id="windowpatternPlayer3" fitHeight="135.0" fitWidth="200.0" />
                      </children>
                   </Pane>
                </children>
@@ -276,11 +216,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                         </GridPane>
-                        <ImageView fx:id="windowpatternClient" fitHeight="270.0" fitWidth="400.0">
-                           <viewport>
-                              <Rectangle2D height="270.0" minX="400.0" minY="270.0" width="400.0" />
-                           </viewport>
-                        </ImageView>
+                        <ImageView fx:id="windowpatternClient" fitHeight="270.0" fitWidth="400.0" />
                      </children>
                   </Pane>
                   <Pane prefHeight="200.0" prefWidth="150.0" />
@@ -305,26 +241,10 @@
             <RowConstraints maxHeight="1.7976931348623157E308" minHeight="100.0" prefHeight="100.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ImageView fx:id="image4" fitHeight="270.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2">
-               <viewport>
-                  <Rectangle2D height="270.0" minX="400.0" minY="270.0" width="400.0" />
-               </viewport>
-            </ImageView>
-            <ImageView fx:id="image1" fitHeight="270.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <viewport>
-                  <Rectangle2D height="270.0" minX="400.0" minY="270.0" width="400.0" />
-               </viewport>
-            </ImageView>
-            <ImageView fx:id="image2" fitHeight="270.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
-               <viewport>
-                  <Rectangle2D height="270.0" minX="400.0" minY="270.0" width="400.0" />
-               </viewport>
-            </ImageView>
-            <ImageView fx:id="image3" fitHeight="270.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
-               <viewport>
-                  <Rectangle2D height="270.0" minX="400.0" minY="270.0" width="400.0" />
-               </viewport>
-            </ImageView>
+            <ImageView fx:id="image4" fitHeight="270.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <ImageView fx:id="image1" fitHeight="270.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ImageView fx:id="image2" fitHeight="270.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <ImageView fx:id="image3" fitHeight="270.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
       <GridPane fx:id="gridPane" prefHeight="1080.0" prefWidth="1920.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -346,7 +266,7 @@
                      <children>
                         <Text fx:id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose connection" />
                         <Text fx:id="errorText" strokeType="OUTSIDE" strokeWidth="0.0" />
-                        <RadioButton fx:id="radioBtnA" mnemonicParsing="false" onAction="#handleRadioBtnA" text="Socket" />
+                        <RadioButton fx:id="radioBtnA" mnemonicParsing="false" onAction="#handleRadioBtnA" selected="true" text="Socket" />
                         <RadioButton fx:id="radioBtnB" mnemonicParsing="false" onAction="#handleRadioBtnB" text="RMI" />
                         <TextField fx:id="textField" disable="true" maxWidth="100.0" minWidth="100.0" opacity="0.0" prefWidth="100.0" />
                         <Pane prefHeight="30.0" prefWidth="200.0" />

@@ -463,6 +463,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
                 this.news.setText("Wait...");
 
                 //INITIALIZE CLIENT WINDOW PATTERN
+
                 this.windowPattern.add(new ImageView[4][5]);
                 for(int i = 0; i < 4; i++){
                     for(int j = 0; j < 5 ; j++){
@@ -472,9 +473,8 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
 
                 this.nickname.add(nicknamePlayer);
 
-                this.buttonEndTurn.setOnMouseClicked(e ->{
-                    notifyObservers(new MessageDoNothing(nicknamePlayer));
-                });
+                this.buttonEndTurn.setOnMouseClicked(e -> notifyObservers(new MessageDoNothing(nicknamePlayer)));
+
 
             }
             else{
@@ -517,27 +517,18 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
         first = message.getFirstIndex();
         second = message.getSecondIndex();
         out.println(first+"second"+second);
-        List<WindowPattern> windowPatterns = new ArrayList<>();
-
-        out.println("\nYou have to choose the window pattern between these four: \n");
-        windowPatterns.add(HandleJSON.createWindowPattern(null, first, 0));
-        windowPatterns.add(HandleJSON.createWindowPattern(null, first, 1));
-        windowPatterns.add(HandleJSON.createWindowPattern(null, second, 0));
-        windowPatterns.add(HandleJSON.createWindowPattern(null, second, 1));
-        for (WindowPattern wp : windowPatterns) {
-            out.print(windowPatterns.indexOf(wp) + 1 + ") ");
 
             for (ImageView w : chooseWindowPattern) {
-                //String path = "/images/windowPattern/";
-               /*
+                String path = "/images/windowPattern/";
+
                if(chooseWindowPattern.indexOf(w) < 2){
                     path = path + first + (chooseWindowPattern.indexOf(w) + 1) + ".jpg";
                 }
                 else{
                     path = path + second + (chooseWindowPattern.indexOf(w) - 1) + ".jpg";
                 }
-                */
-                w.setImage(new Image(ViewGui.class.getResourceAsStream("/images/windowPattern/41.jpg")));
+
+                w.setImage(new Image(path));
                 w.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
@@ -547,6 +538,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
                         int i = chooseWindowPattern.indexOf((ImageView) event.getSource());
 
                         for (ImageView imageView : chooseWindowPattern) {
+                            imageView.setImage(null);
                             imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
                         }
 
@@ -560,7 +552,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
                     }
                 });
             }
-        }
+
     }
 
 
