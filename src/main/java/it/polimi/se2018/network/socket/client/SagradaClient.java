@@ -2,7 +2,8 @@ package it.polimi.se2018.network.socket.client;
 
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.network.socket.server.ServerInterface;
-import it.polimi.se2018.view.View;
+import it.polimi.se2018.utils.Observer;
+import it.polimi.se2018.view.*;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -11,6 +12,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import static java.lang.System.out;
+import static javafx.application.Application.launch;
 
 public class SagradaClient {
 
@@ -19,13 +21,14 @@ public class SagradaClient {
 
     private static ClientImplementation client;
     private static ServerInterface server;
-    private static View view;
+    private static ViewInterface view;
     private static ClientInterface remoteRef=null;
+    private String nick;
 
     private static void connectThroughSocket(String nickname) {
         server = new NetworkHandler(HOST, PORT, client);
         client.addServer(server);
-        view.notifyObservers(new Message(nickname));
+        view.notifyObserver(new Message(nickname));
     }
 
     private static void connectThroughRmi(String nickname) {
@@ -42,7 +45,11 @@ public class SagradaClient {
 
     public static void newConnection(String nickname) {
 
-        int choice = view.askConnection();
+        int choice;
+        do{
+            choice = view.askConnection();
+        }while (choice == 0);
+        out.println("Connessione presa");
         if(choice==1) connectThroughSocket(nickname);
         else connectThroughRmi(nickname);
 
@@ -54,20 +61,25 @@ public class SagradaClient {
 
     }
 
-    public SagradaClient() {
-        view = new View();
+    public SagradaClient(ViewInterface viewInterface) {
+        view = viewInterface;
         client = new ClientImplementation();
 
-        view.register(client);
-        client.register(view);
+        view.addObserver(client);
+        client.register((Observer) view);
+        nick = view.askNickname();
 
-        newConnection(view.askNickname());
+        newConnection(nick);
 
+    }
+
+    public void setView(ViewInterface v){
+        view = v;
     }
 
 
     public static void main(String[] args) {
-        new SagradaClient();
+       launch(ViewGame.class, args);
     }
 
 

@@ -24,7 +24,7 @@ import static java.lang.System.*;
 import static org.fusesource.jansi.Ansi.*;
 import static org.fusesource.jansi.Ansi.Color.*;
 
-public class View extends Observable implements Observer, VisitorView {
+public class View extends Observable implements Observer, VisitorView, ViewInterface {
 
     private static final int MAX_ROW = 4;
     private static final int MAX_COL = 5;
@@ -567,6 +567,11 @@ public class View extends Observable implements Observer, VisitorView {
     public void visit(MessageForceMove message) {
         forceMove(message.getDie(), message.getWindowPattern());
     }
+
+    public void addObserver(Observer observer){
+        this.register(observer);
+    }
+    public void notifyObserver(Message message){}
 }
 
 

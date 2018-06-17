@@ -46,7 +46,7 @@ public abstract class PublicObjective {
     /**
      * Create the right type of Public Objective
      * @param n identify the ten type of Objective
-     * @return a new PublicObjective of the right type
+     * @return a new publicObjective of the right type
      */
     public static PublicObjective factory(int n) {
 
