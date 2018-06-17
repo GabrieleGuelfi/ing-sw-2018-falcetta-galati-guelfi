@@ -13,6 +13,7 @@ import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.utils.Observer;
 import it.polimi.se2018.view.VirtualView;
+import org.json.simple.JSONObject;
 
 import java.util.*;
 
@@ -65,16 +66,11 @@ public class Controller implements VisitorController, Observer {
 
         rand = new ArrayList<>();
 
-        // TEST
-        //Tool testTool2 = Tool.factory(7);
-        //testTool2.setVirtualView(this.virtualView);
-        //tools.add(testTool2);
-
         //Tools
         for (int i=0; i<3; i++) {
-            index = generator.nextInt(8);
+            index = generator.nextInt(11);
             while (rand.contains(index))
-                index = generator.nextInt(8);
+                index = generator.nextInt(11);
             rand.add(index);
             Tool tool = Tool.factory(index);
             tool.setVirtualView(this.virtualView);
@@ -128,7 +124,8 @@ public class Controller implements VisitorController, Observer {
             while (rand.contains(index) || colours[index].equals(Colour.WHITE))
                 index = generator.nextInt(colours.length);
             rand.add(index);
-            p.setPrivateObjective(new PrivateObjective(colours[index]));
+            p.setPrivateObjective(HandleJSON.createPrivateObjective(colours[index]));
+            //p.setPrivateObjective(new PrivateObjective(colours[index]));
             virtualView.send(new MessagePrivObj(p.getNickname(), p.getPrivateObjective().getDescription()));
         }
     }
@@ -485,11 +482,11 @@ public class Controller implements VisitorController, Observer {
             } else {
 
                 toolInUse.setBeingUsed(false);
-                boolean toolSixInUse = false;
+                boolean toolStillInUse = false;
                 for (Die die: match.getRound().getDraftPool().getBag())
-                    if (die.isPlacing()) toolSixInUse=true;
+                    if (die.isPlacing()) toolStillInUse=true;
 
-                if(!toolSixInUse) nextTurn();
+                if(!toolStillInUse) nextTurn();
 
             }
         }
@@ -507,29 +504,55 @@ public class Controller implements VisitorController, Observer {
         for (Die die: match.getRound().getDraftPool().getBag())
             if (die.isPlacing())
                 d = die;
-        if (!isNearDie(player.getWindowPattern(), message.getRow(), message.getColumn())) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "No dice near the position"));
-            virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern()));
+
+        if (message.getNewValue()!=0)
+            d.setValue(message.getNewValue());
+
+        if (message.getRow()!=-1) {
+            boolean error = false;
+            if (!isNearDie(player.getWindowPattern(), message.getRow(), message.getColumn())) {
+                error=true;
+                virtualView.send(new MessageErrorMove(player.getNickname(), "No dice near the position"));
+            }
+            if (!verifyNumber(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
+                error=true;
+                virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Value Restriction!"));
+            }
+            if (!verifyColor(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
+                error=true;
+                virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Colour Restriction!"));
+            }
+            if (error) {
+                if (message.isChosen()) {
+                    virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern(), false, player.isPlacedDie(), true));
+                    return;
+                } else {
+                    virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern(), false, player.isPlacedDie(), false));
+                    return;
+                }
+            }
+            match.getRound().getDraftPool().getBag().remove(d);
+            player.getWindowPattern().putDice(d, message.getRow(), message.getColumn());
+            match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
+            match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
+            player.setPlacedDie(true);
+
+        }
+        d.setPlacing(false);
+        boolean isThereAnotherMove = true;
+        player.setUsedTool(true);
+        if (player.isUsedTool() && player.isPlacedDie()) {
+            player.setPlacedDie(false);
+            player.setUsedTool(false);
+            isThereAnotherMove = false;
+        }
+        virtualView.send(new MessageConfirmMove(player.getNickname(), isThereAnotherMove));
+        if (isThereAnotherMove) {
+            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
             return;
         }
-        if (!verifyNumber(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Value Restriction!"));
-            virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern()));
-            return;
-        }
-        if (!verifyColor(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "Violated Colour Restriction!"));
-            virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern()));
-            return;
-        }
-        player.getWindowPattern().putDice(d, message.getRow(), message.getColumn());
         player.setPlacedDie(false);
         player.setUsedTool(false);
-        virtualView.send(new MessageConfirmMove(player.getNickname(), false));
-        match.getRound().getDraftPool().removeDie(match.getRound().getDraftPool().getBag().indexOf(d));
-        match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
-        match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
-
         nextTurn();
 
     }

@@ -13,9 +13,11 @@ public class PrivateObjective {
      * constructor of the class
      * @param shade which colour of die give pints
      */
-    public PrivateObjective(Colour shade) {
+    public PrivateObjective(Colour shade, String description) {
+
         this.shade = shade;
-        this.description = "Shades of " + shade + ": Private\nSum of values on "+shade+" dice\n";
+        //this.description = "Shades of " + shade + ": Private\nSum of values on "+shade+" dice\n";
+        this.description = description;
     }
 
     /**

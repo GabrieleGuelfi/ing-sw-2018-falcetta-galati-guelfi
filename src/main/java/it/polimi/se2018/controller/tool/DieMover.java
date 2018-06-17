@@ -13,18 +13,21 @@ import it.polimi.se2018.model.WindowPattern;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DieMover extends Tool {
 
     private int numberOfDice;
     private boolean respectColour;
     private boolean respectValue;
+    private boolean respectRoundtrack;
 
-    DieMover(String name, int numberOfDice, boolean respectColour, boolean respectValue) {
+    DieMover(String name, int numberOfDice, boolean respectColour, boolean respectValue, boolean respectRoundtrack) {
         super(name);
         this.numberOfDice = numberOfDice;
         this.respectColour = respectColour;
         this.respectValue = respectValue;
+        this.respectRoundtrack = respectRoundtrack;
     }
 
     @Override
@@ -35,10 +38,45 @@ public class DieMover extends Tool {
         List<Die> localDice = new ArrayList<>();
         int row;
         int column;
+        int localNumberOfDice = this.numberOfDice;
+
+        if(respectRoundtrack) {
+            try{
+                int x = message.getDiceFromWp().get(1)[0];
+            }
+            catch (IndexOutOfBoundsException e){
+                localNumberOfDice = 1;
+            }
+
+            Die firstDie = player.getWindowPattern().getBox(message.getDiceFromWp().get(0)[0], message.getDiceFromWp().get(0)[1]).getDie();
+            if(firstDie==null) {
+                virtualView.send(new MessageErrorMove(player.getNickname(), "No die in this position!"));
+                return true;
+            }
+            boolean foundInRT = false;
+
+            for (Map.Entry<Integer, List<Die>> entry : match.getRoundTrack().entrySet()) {
+                for(Die d: entry.getValue())
+                    if(d.getColour().equals(firstDie.getColour())) foundInRT = true;
+            }
+
+            if(!foundInRT) {
+                virtualView.send(new MessageErrorMove(player.getNickname(), "No die of this colour in roundtrack!"));
+                return true;
+            }
+            if(localNumberOfDice>1) {
+                Die secondDie = player.getWindowPattern().getBox(message.getDiceFromWp().get(1)[0], message.getDiceFromWp().get(1)[1]).getDie();
+                if(!secondDie.getColour().equals(firstDie.getColour())) {
+                    virtualView.send(new MessageErrorMove(player.getNickname(), "Dice have different colours!"));
+                    return true;
+                }
+            }
+
+        }
 
         WindowPattern localWindowPattern = player.getWindowPattern().copy();
 
-        for(int i=0; i<numberOfDice; i++) {
+        for(int i=0; i<localNumberOfDice; i++) {
             originalRows.add(message.getDiceFromWp().get(i)[0]);
             originalColumns.add(message.getDiceFromWp().get(i)[1]);
             localDice.add(localWindowPattern.getBox(originalRows.get(i), originalColumns.get(i)).getDie());
@@ -46,7 +84,7 @@ public class DieMover extends Tool {
             localWindowPattern.addEmptyBox();
         }
 
-        for(int i=0; i<numberOfDice; i++){
+        for(int i=0; i<localNumberOfDice; i++){
 
             if (localDice.get(i)==null) {
                 virtualView.send(new MessageErrorMove( player.getNickname(), "No die in this position!"));
@@ -73,16 +111,17 @@ public class DieMover extends Tool {
 
             localWindowPattern.putDice(localDice.get(i), row, column);
 
-
         }
 
-        for(int i=0; i<numberOfDice; i++) {
-            row = message.getPositionsInWp().get(i)[0];
-            column = message.getPositionsInWp().get(i)[1];
-            player.getWindowPattern().getBox(row, column).setDie(localDice.get(i));
+        for(int i=0; i<localNumberOfDice; i++) {
             player.getWindowPattern().getBox(originalRows.get(i), originalColumns.get(i)).setDie(null);
         }
 
+        for(int i=0; i<localNumberOfDice; i++) {
+            row = message.getPositionsInWp().get(i)[0];
+            column = message.getPositionsInWp().get(i)[1];
+            player.getWindowPattern().getBox(row, column).setDie(localDice.get(i));
+        }
 
         finishToolMove(player);
         match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
@@ -95,8 +134,9 @@ public class DieMover extends Tool {
     @Override
     public void requestOrders(Player player, Match match) {
         if(!canUseTool(player)) return;
-        if(!(respectValue&&respectColour)) virtualView.send(new MessageToolOrder(player.getNickname(), 0, 1,  1));
-        else virtualView.send(new MessageToolOrder(player.getNickname(), 0, 2, 2));
+        if(!(respectValue&&respectColour)) virtualView.send(new MessageToolOrder(player.getNickname(), 0, 1,  1, 0));
+        else if(!respectRoundtrack) virtualView.send(new MessageToolOrder(player.getNickname(), 0, 2, 2, 0));
+        else virtualView.send(new MessageToolOrder(player.getNickname(),2, 2, true));
         this.isBeingUsed = true;
     }
 }

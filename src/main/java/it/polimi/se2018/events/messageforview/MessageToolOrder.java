@@ -10,7 +10,14 @@ public class MessageToolOrder extends Message {
     private int positionInWp = 0;
     private boolean askPlusOrMinusOne = false;
     private int diceFromRoundtrack = 0;
-    private int newValue = 0;
+    private boolean canReduceDiceFromWP;
+
+    public MessageToolOrder(String nickname, int diceFromWp, int positionInWp, boolean canReduceDiceFromWP) {
+        super(nickname);
+        this.diceFromWp = diceFromWp;
+        this.positionInWp = positionInWp;
+        this.canReduceDiceFromWP = canReduceDiceFromWP;
+    }
 
     public MessageToolOrder(String nickname, int diceFromDp, boolean askPlusOrMinusOne) {
         super(nickname);
@@ -18,19 +25,12 @@ public class MessageToolOrder extends Message {
         this.askPlusOrMinusOne = askPlusOrMinusOne;
     }
 
-        public MessageToolOrder(String nickname, int diceFromDp, int diceFromWp, int positionInWp) {
+    public MessageToolOrder(String nickname, int diceFromDp, int diceFromWp, int positionInWp, int diceFromRoundtrack) {
         super(nickname);
         this.diceFromDp = diceFromDp;
         this.diceFromWp = diceFromWp;
         this.positionInWp = positionInWp;
-    }
-
-    public MessageToolOrder(String nickname, int diceFromDp, int diceFromWp, int xInWp, int yInWp, int diceFromRoundtrack, int newValue) {
-        super(nickname);
-        this.diceFromDp = diceFromDp;
-        this.diceFromWp = diceFromWp;
         this.diceFromRoundtrack = diceFromRoundtrack;
-        this.newValue = newValue;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class MessageToolOrder extends Message {
         return this.askPlusOrMinusOne;
     }
 
-    public int getNewValue() {
-        return newValue;
+    public boolean isCanReduceDiceFromWP() {
+        return canReduceDiceFromWP;
     }
 }

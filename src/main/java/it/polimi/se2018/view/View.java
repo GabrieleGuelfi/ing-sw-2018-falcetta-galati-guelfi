@@ -16,9 +16,17 @@ import it.polimi.se2018.model.WindowPattern;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 import org.fusesource.jansi.AnsiConsole;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import static java.lang.System.*;
 import static org.fusesource.jansi.Ansi.*;
@@ -29,56 +37,81 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     private static final int MAX_ROW = 4;
     private static final int MAX_COL = 5;
     private static final int MAX_DP = 9;
+    private static final String ROW = "row";
+    private static final String COLUMN = "column";
 
     private static View view;
     private Scanner scanner;
     private String nickname;
 
+    private JSONObject introductionStrings;
+    private JSONObject stateUpdateStrings;
+    private JSONObject handleStrings;
+    private JSONObject askStrings;
+    private JSONObject printStrings;
+
     public View() {
         scanner = new Scanner(System.in);
+        initializeJSON();
         System.setProperty("jansi.passthrough", "true");
         AnsiConsole.systemInstall();
-        out.println("Welcome in Sagrada!");
+        out.println(introductionStrings.get("welcome"));
 
     }
 
+    private void initializeJSON() {
+        InputStream in = HandleJSON.class.getResourceAsStream("/fileutils/viewstrings");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        JSONParser parser = new JSONParser();
+        Object obj = null;
+        try {
+            obj = parser.parse(reader);
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        JSONArray strings = (JSONArray) obj;
+        introductionStrings = (JSONObject) strings.get(0);
+        stateUpdateStrings = (JSONObject) strings.get(1);
+        handleStrings = (JSONObject) strings.get(2);
+        askStrings = (JSONObject) strings.get(3);
+        printStrings = (JSONObject) strings.get(4);
+    }
+
     public int askConnection() {
-        out.println("Choose method connection between:");
-        out.println("1) Socket");
-        out.println("2) RMI");
+        out.println(introductionStrings.get("askConnection"));
         return chooseBetween(1,2);
     }
 
     public String askNickname() {
-        out.println("Please, choose your nickname");
+        out.println(introductionStrings.get("askNickname"));
         this.nickname = scanner.nextLine();
         return this.nickname;
     }
 
     private void nicknameConfirmation(MessageNickname nicknameMessage) {
         if (nicknameMessage.getBoolean()) {
-            out.println("\nAll settled! Wait for the game to begin...");
+            out.println(introductionStrings.get("nicknameIsOk"));
         }
         else {
-            out.println("\nNickname already used: choose another one");
+            out.println(introductionStrings.get("nicknameNotOk"));
             askNickname();
             notifyObservers(new Message(nickname));
         }
     }
 
     private void showPrivateObjective(String description) {
-        out.println("\nYour private objective is:\n" + description);
+        out.println(stateUpdateStrings.get("privateObjective") + description);
     }
 
     private void showPublicObjective(List<String> descriptions, List<Integer> points) {
-        out.println("\nPublic objectives: ");
+        out.println(stateUpdateStrings.get("publicObjective"));
         for(int i=0; i<descriptions.size(); i++) {
             out.println(i+1 + ") " + descriptions.get(i) + " VP: " + points.get(i));
         }
     }
 
     private void showTools(List<String> names) {
-        out.println("\nTools: ");
+        out.println(stateUpdateStrings.get("tools"));
         for(int i=0; i<names.size(); i++) {
             out.println(i+1 + ") " + names.get(i));
         }
@@ -87,10 +120,10 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     private void showRoundTrack(Map<Integer, List<Die>> roundTrack) {
 
         if (roundTrack.isEmpty()) {
-            out.println("\nRound Track empty! This is the First Turn!");
+            out.println(stateUpdateStrings.get("roundtrackEmpty"));
             return;
         }
-        out.print("\nRound Track: ");
+        out.print(stateUpdateStrings.get("roundtrack"));
         for (Integer j : roundTrack.keySet()) {
             out.print("\n"+j+": ");
             for (Die d : roundTrack.get(j)) {
@@ -104,12 +137,23 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
 
     }
 
+    private void windowPatternUpdated(String player, WindowPattern wp) {
+        if (!player.equals(this.nickname)) {
+            out.println(player + stateUpdateStrings.get("otherPlayerWP"));
+            printWindowPattern(wp);
+        }
+        else {
+            out.println(stateUpdateStrings.get("myWP"));
+            printWindowPattern(wp);
+        }
+    }
+
     private void askWindowPattern(int firstCard, int secondCard) {
 
         int choice;
         List<WindowPattern> windowPatterns = new ArrayList<>();
 
-        out.println("\nYou have to choose the window pattern between these four: \n");
+        out.println(handleStrings.get("askWindowPattern1"));
         windowPatterns.add(HandleJSON.createWindowPattern(null, firstCard, 0));
         windowPatterns.add(HandleJSON.createWindowPattern(null, firstCard, 1));
         windowPatterns.add(HandleJSON.createWindowPattern(null, secondCard, 0));
@@ -118,7 +162,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
             out.print(windowPatterns.indexOf(wp)+1 + ") ");
             printWindowPattern(wp);
         }
-        out.println("Write the number of the window pattern you want to use.");
+        out.println(handleStrings.get("askWindowPattern2"));
         choice = chooseBetween(1, 4);
 
         if (choice<3) {
@@ -128,64 +172,52 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         }
     }
 
-    private void windowPatternUpdated(String player, WindowPattern wp) {
-        if (!player.equals(this.nickname)) {
-            out.println("Player " + player + " windows pattern is now:");
-            printWindowPattern(wp);
-        }
-        else {
-            out.println("Your window pattern is now: ");
-            printWindowPattern(wp);
-        }
-    }
-
-    private void manageTurn(String playerTurn) {
+    private void handleTurnChange(String playerTurn) {
         if(playerTurn.equals(this.nickname)) {
-            out.println( ansi().fg(RED).a("\nIt's your turn!\n").reset() );
+            out.println( ansi().fg(RED).a(handleStrings.get("yourTurnChange")).reset() );
         } else {
-            out.println("\n" + playerTurn + " is now playing...\n");
+            out.println("\n" + playerTurn + handleStrings.get("otherTurnChange"));
         }
     }
 
     private void handleErrorMove(String reason) {
-        out.println("\nYour move has been rejected for this reason: " + reason);
-        out.println("Try again...");
+        out.println(handleStrings.get("errorMove") + reason);
+        out.println(handleStrings.get("tryAgain"));
     }
 
     private void handleSuccessMove(boolean isThereAnotherMove) {
-        out.println("\nSuccess! Your move has been accomplished.");
-        if(!isThereAnotherMove) out.println("\nYour turn is over.\n");
+        out.println(handleStrings.get("successMove"));
+        if(!isThereAnotherMove) out.println(handleStrings.get("turnIsOver"));
     }
 
     private void handleRoundChanged(String nickname, int round, DraftPool draftPool) {
         out.println();
         out.println("_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|  ROUND " + round + " |-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|\n");
-        out.println("Draftpool for this round: ");
+        out.println(handleStrings.get("dpForRound"));
         printDraftPool(draftPool);
-        manageTurn(nickname);
+        handleTurnChange(nickname);
     }
 
     private void handleEndMatch(Map<String , Integer> results, boolean isLastPlayer) {
 
         out.println( ansi().eraseScreen() );
         if(isLastPlayer) {
-            out.println("Match is terminated because all other players have disconnected.\n");
+            out.println(handleStrings.get("lastPlayer"));
         }
 
-        out.println( ansi().fg(RED).a("End of the match!").reset());
-        out.println("The winner is... " + results.keySet().toArray()[0] + "!\n");
-        out.println("Full classification: ");
+        out.println( ansi().fg(RED).a(handleStrings.get("endMatch")).reset());
+        out.print(handleStrings.get("winnerIs"));
+        out.println(results.keySet().toArray()[0] + "!\n");
+        out.println(handleStrings.get("fullClassification"));
 
         int i = 1;
 
         for (String playerNickname: results.keySet()) {
-            out.println( i +") " + playerNickname + " with " + results.get(playerNickname) + " points");
+            out.println( i +") " + playerNickname + handleStrings.get("with") + results.get(playerNickname) + handleStrings.get("points"));
             i++;
         }
 
-        out.println("\nDo you want to play again?");
-        out.println("1) Yes");
-        out.println("2) No");
+        out.println(handleStrings.get("playAgain"));
 
         int choice = chooseBetween(1, 2);
         if(choice==1) SagradaClient.newConnection(this.nickname);
@@ -199,28 +231,28 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         boolean moveToolOk = true;
 
         if (windowPattern!=null) {
-            out.println("\nCurrently, this is your windows pattern:");
+            out.println(askStrings.get("windowPattern"));
             printWindowPattern(windowPattern);
         }
         if (draftPool!=null) {
-            out.println("\nCurrently, this is the draftpool:");
+            out.println(askStrings.get("draftPool"));
             printDraftPool(draftPool);
         }
 
         //out.println( ansi().eraseScreen() );
-        out.println("\n\nPlease, select your move: ");
+        out.println(askStrings.get("selectMove"));
         int i=1;
-        out.println(i + ") Request information");
+        out.println(i + askStrings.get("requestInformation").toString());
         i++;
         if (!hasMovedDie) {
-            out.println(i + ") Move a die");
+            out.println(i + askStrings.get("moveDie").toString());
             i++;
         }
         if (!hasUsedTool) {
-            out.println(i + ") Use a tool");
+            out.println(i + askStrings.get("useTool").toString());
             i++;
         }
-        out.println(i + ") Do nothing");
+        out.println(i + askStrings.get("doNothing").toString());
         int choice = chooseBetween(1, i);
 
         if (choice==1) {
@@ -239,7 +271,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     }
 
     private void requestInformation() {
-        out.println("\nWhat do you want to see?");
+        out.println(askStrings.get("whichInformation"));
         for (RequestType t: RequestType.values()) {
             out.println((t.ordinal()+1)+") "+t.toString());
         }
@@ -252,17 +284,17 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
 
     private boolean moveDie() {
 
-        out.println("\nChoose a die from draftpool (0 to escape):");
+        out.println(askStrings.get("askDieFromDp"));
         int dieToMove = chooseBetween(0, MAX_DP);
         if(dieToMove==0) return false;
 
-        out.println("\nWhere do you want to place it? (0 to escape)");
+        out.println(askStrings.get("askPositionInWp"));
 
-        out.print("Row: ");
+        out.print(askStrings.get(ROW));
         int row = chooseBetween(0, MAX_ROW);
         if (row==0) return false;
 
-        out.print("Column: ");
+        out.print(askStrings.get(COLUMN));
         int column = chooseBetween(0, MAX_COL);
         if (column==0) return false;
 
@@ -272,7 +304,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     }
 
     private boolean useTool() {
-        out.println("Please, select the tool you want to use");
+        out.println(askStrings.get("askTool"));
         int choice = chooseBetween(1, 3);
         notifyObservers(new MessageRequestUseOfTool(nickname, choice-1));
         return true;
@@ -290,7 +322,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
 
 
         for(i=0; i<message.getDiceFromDp(); i++) {
-            out.println("Choose die from draftpool (0 to abort)");
+            out.println(askStrings.get("askDieFromDp"));
             int n = chooseBetween(0, 9);
             if (n==0) {
                 notifyObservers(new MessageToolResponse(nickname));
@@ -300,20 +332,32 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         }
 
         if(message.getDiceFromWp()>1) {
-            out.println("\nMultiple dice selection. Please, select:");
-            out.println("1) ALL the dice you want to move");
-            out.println("2) The position for them, respectively");
+            out.println(askStrings.get("multipleDice"));
         }
 
-        for(i=0; i<message.getDiceFromWp(); i++) {
-            out.println("\nChoose dice from window pattern (0 to abort)");
-            out.print("Row: ");
+        int requestedDiceFromWp = message.getDiceFromWp();
+        int requestedPositionInWp = message.getPositionInWp();
+
+        if(message.isCanReduceDiceFromWP()) {
+            out.println("How many dice do you want to move? (0 to escape)");
+            int choice = chooseBetween(0, 2);
+            if(choice==0) {
+                notifyObservers(new MessageToolResponse(nickname));
+                return;
+            }
+            requestedDiceFromWp = choice;
+            requestedPositionInWp = choice;
+        }
+
+        for(i=0; i<requestedDiceFromWp; i++) {
+            out.println(askStrings.get("diceFromWp"));
+            out.print(askStrings.get(ROW));
             int x = chooseBetween(0, MAX_ROW);
             if (x==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
             }
-            out.print("Column: ");
+            out.print(askStrings.get(COLUMN));
             int y = chooseBetween(0, MAX_COL);
             if (y==0) {
                 notifyObservers(new MessageToolResponse(nickname));
@@ -323,15 +367,15 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
             diceFromWp.add(positions);
         }
 
-        for(i=0; i<message.getPositionInWp(); i++) {
-            out.println("\nChoose position in window pattern (0 to abort)");
-            out.print("Row: ");
+        for(i=0; i<requestedPositionInWp; i++) {
+            out.println(askStrings.get("askPositionInWp"));
+            out.print(askStrings.get(ROW));
             int x = chooseBetween(0, MAX_ROW);
             if (x==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
             }
-            out.print("Column: ");
+            out.print(askStrings.get(COLUMN));
             int y = chooseBetween(0, MAX_COL);
             if (y==0) {
                 notifyObservers(new MessageToolResponse(nickname));
@@ -341,10 +385,26 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
             positionsInWp.add(positions);
         }
 
+        for(i=0; i<message.getDiceFromRoundtrack(); i++) {
+            out.println("\nChoose die from Roundtrack (0 to abort)");
+            out.print("Turn: ");
+            int x = chooseBetween(0, 9);
+            if (x==0) {
+                notifyObservers(new MessageToolResponse(nickname));
+                return;
+            }
+            diceFromRoundtrack.add(x);
+            out.print("Die: ");
+            int y = chooseBetween(0, 9);
+            if (y==0) {
+                notifyObservers(new MessageToolResponse(nickname));
+                return;
+            }
+            diceFromRoundtrack.add(y-1);
+        }
+
         if(message.isAskPlusOrMinusOne()) {
-            out.println("Do you want to add or remove 1? (0 to abort)");
-            out.println("1) Add");
-            out.println("2) Remove");
+            out.println(askStrings.get("addOrRemove"));
             int choice = chooseBetween(0,2);
             if (choice==0) {
                 notifyObservers(new MessageToolResponse(nickname));
@@ -354,45 +414,59 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
             else plusOne=false;
         }
 
-        for(i=0; i<message.getNewValue(); i++) {
-            out.println("Choose the new value: (0 to escape)");
-            newValue = chooseBetween(0, 6);
-            if (newValue==0) {
-                notifyObservers(new MessageToolResponse(nickname));
-                return;
-            }
-            newValue--;
-        }
-
-        notifyObservers(new MessageToolResponse(nickname, diceFromDp, diceFromWp, diceFromRoundtrack, positionsInWp, newValue, plusOne));
+        notifyObservers(new MessageToolResponse(nickname, diceFromDp, diceFromWp, diceFromRoundtrack, positionsInWp, plusOne));
 
     }
 
-    private void forceMove(Die die, WindowPattern windowPattern) {
-        out.print("You had to place this die: ");
+    private void forceMove(Die die, WindowPattern windowPattern, boolean chooseNewValue, boolean placedDie, boolean canChoose) {
+        int newValue=0;
+
+        if (chooseNewValue)
+            out.print("Choose the new value of the die: ");
+        else
+            out.print("You had to place this die: ");
         for (Color color : Color.values()) {
             if (color.toString().equals(die.getColour().toString())) {
                 out.println(ansi().fg(color).a("[" + die.getValue() + "] ").reset());
             }
         }
-
         printWindowPattern(windowPattern);
+        if (chooseNewValue) {
+            out.println("Choose the new value: ");
+            newValue = chooseBetween(1, 6);
+        }
+
+        if (!placedDie && canChoose) {
+            out.println("Do you want to place this die?\n1) Yes\n2) No ");
+            int choice = chooseBetween(1, 2);
+            if (choice == 1)
+                out.println("Choose position: ");
+            else {
+                notifyObservers(new MessageForcedMove(this.nickname, -1, -1, newValue, true));
+                return;
+            }
+        }
+        else if (placedDie && canChoose) {
+            notifyObservers(new MessageForcedMove(this.nickname, -1, -1, newValue, true));
+            return;
+        }
+
         int column=0;
         int row=0;
         while(column == 0) {
-            out.print("Row: ");
+            out.print(askStrings.get(ROW));
             row = chooseBetween(1, MAX_ROW);
 
-            out.print("Column (0 to undo row choice): ");
+            out.print(askStrings.get(COLUMN));
             column = chooseBetween(0, MAX_COL);
         }
 
-        notifyObservers(new MessageForcedMove(this.nickname, row-1, column-1));
+        notifyObservers(new MessageForcedMove(this.nickname, row-1, column-1, newValue, canChoose));
 
     }
 
     private void printWindowPattern(WindowPattern wp) {
-        out.println("\n" + wp.getName() + "\nDifficulty: " + wp.getDifficulty());
+        out.println("\n" + wp.getName() + printStrings.get("difficulty") + wp.getDifficulty());
         out.print("   1   2   3   4   5");
         for (int i=0; i<MAX_ROW; i++) {
             out.println();
@@ -458,7 +532,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         int choice;
         choice = scanner.nextInt();
         while(choice<min || choice>max) {
-            out.println("Invalid choice: try again.");
+            out.println(askStrings.get("invalidChoice"));
             choice = scanner.nextInt();
         }
         scanner.nextLine(); // To fix java bug
@@ -515,7 +589,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
 
     @Override
     public void visit(MessageTurnChanged message) {
-        manageTurn(message.getNickname());
+        handleTurnChange(message.getNickname());
     }
 
     @Override
@@ -565,7 +639,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
 
     @Override
     public void visit(MessageForceMove message) {
-        forceMove(message.getDie(), message.getWindowPattern());
+        forceMove(message.getDie(), message.getWindowPattern(), message.isNewValue(), message.isPlacedDie(), message.isCanChoose());
     }
 
     public void addObserver(Observer observer){
