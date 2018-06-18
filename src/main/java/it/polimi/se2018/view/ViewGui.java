@@ -6,7 +6,9 @@ import it.polimi.se2018.events.messageforcontroller.MessageSetWP;
 import it.polimi.se2018.events.messageforserver.MessageError;
 import it.polimi.se2018.events.messageforserver.MessagePing;
 import it.polimi.se2018.events.messageforview.*;
+import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.WindowPattern;
+import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
@@ -19,6 +21,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -227,6 +231,14 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
     private boolean notifyController = false;
 
     @FXML
+    void handleKeyEnter(KeyEvent event){
+         if(event.getCode() == KeyCode.ENTER){
+             this.button.fire();
+             event.consume();
+         }
+    }
+
+    @FXML
     void handleRadioBtnA(ActionEvent event) {
         this.radioBtnA.setSelected(true);
         this.radioBtnB.setSelected(false);
@@ -298,6 +310,13 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
         this.text.setText("Choose Port");
         this.textField = new TextField();
         this.gridPane.add(this.textField, 1, 1);
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                textField.requestFocus();
+            }
+        });
     }
 
     private void setWaiting(){
@@ -333,6 +352,18 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
         this.button.setDisable(false);
         this.radioBtnB.setDisable(true);
         this.radioBtnA.setDisable(true);
+
+        this.radioBtnA.setVisible(true);
+        this.radioBtnB.setVisible(true);
+        this.button.setVisible(true);
+        this.textField.setVisible(true);
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                textField.requestFocus();
+            }
+        });
 
     }
 
@@ -463,14 +494,14 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
                 this.news.setText("Wait...");
 
                 //INITIALIZE CLIENT WINDOW PATTERN
-
+            for(int x = 0; x < 4; x++) {
                 this.windowPattern.add(new ImageView[4][5]);
-                for(int i = 0; i < 4; i++){
-                    for(int j = 0; j < 5 ; j++){
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 5; j++) {
                         windowPattern.get(0)[i][j] = new ImageView();
                     }
-                 }
-
+                }
+            }
                 this.nickname.add(nicknamePlayer);
 
                 this.buttonEndTurn.setOnMouseClicked(e -> notifyObservers(new MessageDoNothing(nicknamePlayer)));
@@ -568,6 +599,8 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
 
     @Override
     public void visit(MessageDPChanged message) {
+        DraftPool draftPool = message.getDraftPool();
+
 
     }
 
