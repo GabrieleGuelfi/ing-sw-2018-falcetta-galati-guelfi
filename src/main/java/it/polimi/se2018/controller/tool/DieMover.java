@@ -2,7 +2,6 @@ package it.polimi.se2018.controller.tool;
 
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.messageforcontroller.MessageToolResponse;
-import it.polimi.se2018.events.messageforserver.MessageError;
 import it.polimi.se2018.events.messageforview.MessageErrorMove;
 import it.polimi.se2018.events.messageforview.MessageToolOrder;
 import it.polimi.se2018.events.messageforview.MessageWPChanged;

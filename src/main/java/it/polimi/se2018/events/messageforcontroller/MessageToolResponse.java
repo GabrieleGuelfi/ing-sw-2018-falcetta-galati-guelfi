@@ -4,7 +4,6 @@ import it.polimi.se2018.controller.VisitorController;
 import it.polimi.se2018.events.Message;
 
 import java.util.List;
-import java.util.Map;
 
 public class MessageToolResponse extends Message {
 

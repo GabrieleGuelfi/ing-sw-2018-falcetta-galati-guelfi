@@ -1,6 +1,5 @@
 package it.polimi.se2018.model;
 
-import it.polimi.se2018.model.publicobjective.PublicObjective;
 import it.polimi.se2018.utils.HandleJSON;
 import org.junit.Test;
 
@@ -14,9 +13,14 @@ public class TestPrivateObjective {
     @Test
     public void testConstructorPositive() {
         for (Colour c: Colour.values()) {
-            PrivateObjective p = HandleJSON.createPrivateObjective(c);
-            assertEquals(c, p.getShade());
-            assertEquals("Shades of " + c + ": Private\nSum of values on "+c+" dice\n", p.getDescription());
+            if (c!= Colour.WHITE) {
+                PrivateObjective p = HandleJSON.createPrivateObjective(c);
+                assertEquals(c, p.getShade());
+                if (c!=Colour.MAGENTA)
+                    assertEquals("Shades of " + c + ": Private\nSum of values on " + c.toString().toLowerCase() + " dice\n", p.getDescription());
+                else
+                    assertEquals("Shades of PURPLE: Private\nSum of values on purple dice\n", p.getDescription());
+            }
         }
     }
 

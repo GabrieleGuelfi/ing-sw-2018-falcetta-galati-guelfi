@@ -11,7 +11,7 @@ public class TestDie {
     @Test
     public void testConstructorPositive() {
 
-        Die die = null;
+        Die die;
 
         for(Colour c: Colour.values()) {
             die = new Die(c);
@@ -20,7 +20,6 @@ public class TestDie {
 
             assertEquals(-1, die.getValue());
 
-            die = null;
         }
 
 
@@ -95,5 +94,18 @@ public class TestDie {
 
         assertNotEquals(die, die2);
 
+    }
+
+    @Test
+    public void testIsPlacing() {
+        Die die = new Die(Colour.BLUE);
+
+        assertEquals(false, die.isPlacing());
+
+        die.setPlacing(true);
+        assertEquals(true, die.isPlacing());
+
+        die.setPlacing(false);
+        assertEquals(false, die.isPlacing());
     }
 }

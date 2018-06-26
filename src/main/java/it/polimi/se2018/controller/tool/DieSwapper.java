@@ -7,8 +7,6 @@ import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
 
-import java.util.List;
-
 public class DieSwapper extends Tool {
 
     DieSwapper(String name) {

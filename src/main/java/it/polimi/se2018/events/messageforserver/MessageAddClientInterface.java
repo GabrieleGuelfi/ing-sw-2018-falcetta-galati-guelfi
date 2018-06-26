@@ -18,6 +18,7 @@ public class MessageAddClientInterface extends Message {
         return clientInterface;
     }
 
+    @Override
     public void accept(VisitorServer visitorServer){
         visitorServer.visit(this);
     }
