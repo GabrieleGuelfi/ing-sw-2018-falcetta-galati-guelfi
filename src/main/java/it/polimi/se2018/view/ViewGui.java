@@ -338,6 +338,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
     }
 
 
+
     private void setChooseNickname(){
         this.text.setText("Choose Nickname");
 
@@ -534,6 +535,8 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
 
     @Override
     public void visit(MessageChooseWP message) {
+        // WindowPattern w1 = HandleJSON.createWindowPattern(null, first, 0);
+
         first = message.getFirstIndex();
         second = message.getSecondIndex();
         out.println(first+"second"+second);
