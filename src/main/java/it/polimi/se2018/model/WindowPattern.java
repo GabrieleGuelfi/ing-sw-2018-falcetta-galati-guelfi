@@ -23,7 +23,6 @@ public class WindowPattern implements Serializable {
         }
         this.difficulty = difficulty;
         this.name = name;
-        //placedDie = new Die[16];
         emptyBox = 20;
 
     }
@@ -69,7 +68,7 @@ public class WindowPattern implements Serializable {
     /**
      * decrease by one the number of empty box
      */
-    public void decreaseEmptyBox(){
+    private void decreaseEmptyBox(){
         emptyBox = emptyBox - 1;
     }
 

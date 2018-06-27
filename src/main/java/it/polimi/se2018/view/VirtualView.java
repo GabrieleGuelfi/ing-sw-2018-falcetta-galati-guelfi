@@ -19,7 +19,12 @@ public class VirtualView extends Observable implements Observer, ServerInterface
     }
 
     public void update(Message message){
-        this.sagradaServer.broadcast(message);
+        try {
+            this.sagradaServer.broadcast(message);
+        }
+        catch (NullPointerException e) {
+
+        }
     }
 
     public void send(Message message){
@@ -28,8 +33,8 @@ public class VirtualView extends Observable implements Observer, ServerInterface
             if(clientInterface == null) (new ConnectionHandlerThread(this, new MessageDoNothing(message.getNickname()))).start();
             else clientInterface.notify(message);
         }
-        catch(RemoteException e){
-            e.printStackTrace();
+        catch(RemoteException | NullPointerException e){
+            //e.printStackTrace();
         }
     }
 

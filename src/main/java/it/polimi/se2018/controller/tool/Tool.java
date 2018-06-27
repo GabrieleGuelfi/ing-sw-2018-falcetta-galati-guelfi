@@ -1,7 +1,6 @@
 package it.polimi.se2018.controller.tool;
 
 import it.polimi.se2018.controller.Controller;
-import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.messageforcontroller.MessageToolResponse;
 import it.polimi.se2018.events.messageforview.MessageAskMove;
 import it.polimi.se2018.events.messageforview.MessageConfirmMove;
@@ -90,8 +89,7 @@ public abstract class Tool {
     }
 
     boolean verifyDiceInDraftpool(int positionInDraftpool, int draftpoolSize) {
-        if(positionInDraftpool<0 || positionInDraftpool>(draftpoolSize-1)) return false;
-        else return true;
+        return (positionInDraftpool>=0 && positionInDraftpool<=(draftpoolSize-1));
     }
 
     public void setBeingUsed(boolean beingUsed) {

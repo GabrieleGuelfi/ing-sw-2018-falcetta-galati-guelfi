@@ -41,7 +41,6 @@ public final class HandleJSON {
         JSONParser parser = new JSONParser();
 
         try {
-            //Object obj = parser.parse(new FileReader("./src/main/java/fileutils/windowpattern"));
             Object obj = parser.parse(reader);
             JSONArray schemes = (JSONArray) obj;
             schemes = (JSONArray) schemes.get(firstIndex);
@@ -103,14 +102,15 @@ public final class HandleJSON {
         InputStream in = HandleJSON.class.getResourceAsStream("/fileutils/privateObjective");
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         JSONParser parser = new JSONParser();
-        Object obj = null;
+        Object obj;
         try {
             obj = parser.parse(reader);
         } catch (IOException | ParseException e) {
-            e.printStackTrace();
+            out.println("Failed to load resource privateObjective");
+            return null;
         }
-        JSONArray strings = (JSONArray) obj;
-        JSONObject descriptions = (JSONObject) strings.get(0);
+
+        JSONObject descriptions = (JSONObject) obj;
 
         return new PrivateObjective(shade, descriptions.get(shade.toString()).toString());
 

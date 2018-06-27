@@ -1,9 +1,7 @@
-[
-    {
-      "GREEN": "Shades of GREEN: Private\nSum of values on green dice\n",
-      "RED": "Shades of RED: Private\nSum of values on red dice\n",
-      "YELLOW": "Shades of YELLOW: Private\nSum of values on yellow dice\n",
-      "MAGENTA": "Shades of PURPLE: Private\nSum of values on purple dice\n",
-      "BLUE": "Shades of BLUE: Private\nSum of values on blue dice\n"
-    }
-]
+{
+  "GREEN": "Shades of GREEN: Private\nSum of values on green dice\n",
+  "RED": "Shades of RED: Private\nSum of values on red dice\n",
+  "YELLOW": "Shades of YELLOW: Private\nSum of values on yellow dice\n",
+  "MAGENTA": "Shades of PURPLE: Private\nSum of values on purple dice\n",
+  "BLUE": "Shades of BLUE: Private\nSum of values on blue dice\n"
+}

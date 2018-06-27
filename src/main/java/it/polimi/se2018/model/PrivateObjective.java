@@ -16,7 +16,6 @@ public class PrivateObjective {
     public PrivateObjective(Colour shade, String description) {
 
         this.shade = shade;
-        //this.description = "Shades of " + shade + ": Private\nSum of values on "+shade+" dice\n";
         this.description = description;
     }
 

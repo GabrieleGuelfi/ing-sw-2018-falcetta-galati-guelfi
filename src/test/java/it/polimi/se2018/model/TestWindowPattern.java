@@ -21,6 +21,9 @@ public class TestWindowPattern {
         w.putDice(new Die(Colour.RED), 0, 1);
         w.putDice(new Die(Colour.GREEN), 0, 1);
         assertEquals(17, w.getEmptyBox());
+
+        w.addEmptyBox();
+        assertEquals(18, w.getEmptyBox());
     }
 
     @Test

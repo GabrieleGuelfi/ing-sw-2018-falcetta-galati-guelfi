@@ -2,13 +2,11 @@ package it.polimi.se2018.events.messageforview;
 
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.view.VisitorView;
-
-import java.util.HashMap;
 import java.util.Map;
 
 public class MessageEndMatch extends Message {
 
-    private Map<String , Integer> results = new HashMap<>();
+    private Map<String , Integer> results;
     private boolean lastPlayer;
 
     public MessageEndMatch(Map<String , Integer> results, boolean lastPlayer) {
