@@ -11,6 +11,7 @@ import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.WindowPattern;
 import it.polimi.se2018.model.dicecollection.DraftPool;
+import it.polimi.se2018.network.socket.client.SagradaClient;
 import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
@@ -28,6 +29,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -147,6 +149,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
     private ArrayList<ImageView> groupOtherImage;
     private ArrayList<ImageView> chooseWindowPattern;
     private ArrayList<ImageView> tool;
+    private ArrayList<GridPane> gridPanePlayer;
 
     private String nicknamePlayer = null;
     private int connection = 1;
@@ -155,6 +158,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
     private boolean gui = true;
     private int first;
     private int second;
+    private ThreadGui th;
 
 
 
@@ -329,7 +333,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
         if(initialize){
             this.initialize = false;
 
-            ThreadGui th = new ThreadGui(this);
+            th = new ThreadGui(this);
             th.start();
             }
         else{
@@ -413,6 +417,12 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
         if(!message.getBoolean()) this.setChooseNickname();
         else{
             if(gui) {
+                this.text.setFont(Font.font("Segoe UI Black", 12));
+                this.textPrivateObjective.setFont(Font.font("Segoe UI Black", 12));
+                this.textPublicObjective.setFont(Font.font("Segoe UI Black", 12));
+                this.textTool.setFont(Font.font("Segoe UI Black", 12));
+                this.textChoosewindowpattern.setFont(Font.font("Segoe UI Black", 12));
+                this.errorText.setFont(Font.font("Segoe UI Black", 12));
 
                 this.text.setText("Waiting...");
                 this.errorText.setText(null);
@@ -439,6 +449,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
                 this.tool = new ArrayList<>();
                 this.windowPattern = new ArrayList<>();
                 this.nickname = new ArrayList<>();
+                this.gridPanePlayer = new ArrayList<>();
 
                 this.draftPool.add(draftpool5);
                 this.draftPool.add(draftpool4);
@@ -479,6 +490,11 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
                 this.tool.add(tool2);
                 this.tool.add(tool3);
 
+                this.gridPanePlayer.add(gridpaneClient);
+                this.gridPanePlayer.add(gridpanePlayer1);
+                this.gridPanePlayer.add(gridpanePlayer2);
+                this.gridPanePlayer.add(gridpanePlayer3);
+
                 this.buttonEndTurn.setVisible(true);
                 this.buttonEndTurn.setOpacity(1);
                 this.news.setText("Wait...");
@@ -499,7 +515,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
 
             }
             else{
-                //gestire caso cli;
+                SagradaClient.setView(new View());
             }
 
 
@@ -581,6 +597,11 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
 
     @Override
     public void visit(MessageWPChanged message) {
+
+        if(!nickname.contains(message.getPlayer())) {
+            this.nickname.add(message.getPlayer());
+            windowPattern.add(new ImageView[4][5]);
+        }
         int i = this.nickname.indexOf(message.getPlayer());
         int size;
         if(i == 0){

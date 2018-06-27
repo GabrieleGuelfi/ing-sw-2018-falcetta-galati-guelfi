@@ -73,15 +73,16 @@ public class SagradaClient {
 
     }
 
-    public void setView(ViewInterface v){
+    public static void setView(ViewInterface v){
+        client.deregister((Observer) view);
         view = v;
+        view.addObserver(client);
+        client.register((Observer) view);
     }
 
 
     public static void main(String[] args) {
        launch(ViewGame.class, args);
     }
-
-
 
 }
