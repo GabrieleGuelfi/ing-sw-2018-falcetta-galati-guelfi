@@ -2,10 +2,12 @@ package it.polimi.se2018.view;
 
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.messageforcontroller.MessageDoNothing;
+import it.polimi.se2018.events.messageforcontroller.MessageMoveDie;
 import it.polimi.se2018.events.messageforcontroller.MessageSetWP;
 import it.polimi.se2018.events.messageforserver.MessageError;
 import it.polimi.se2018.events.messageforserver.MessagePing;
 import it.polimi.se2018.events.messageforview.*;
+import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.WindowPattern;
 import it.polimi.se2018.model.dicecollection.DraftPool;
@@ -158,33 +160,24 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
 
 
 
-    private EventHandler<MouseEvent> handleChooseDie = new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent event) {
-
-            dieChoosen = (ImageView) event.getSource();
-
-            //rimuovere event Handler tool
-            for(ImageView imageView : groupDie){
-                imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
-            }
-            for(ImageView imageView : groupDestination){
-                imageView.setOnMouseClicked(handleChooseBox);
-            }
-
-        }
-    };
-
     private EventHandler<MouseEvent> handleChooseBox = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
             targetOfDie = (ImageView) event.getSource();
             for(ImageView imageView : groupDestination){
                 imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+                groupDestination.remove(imageView);
             }
-
-            //new messageMoveDie
-
+            int row;
+            int column;
+            for(row = 0; row < 4; row ++){
+                for(column = 0; column < 5 ; column++){
+                   if( windowPattern.get(0)[row][column] == targetOfDie) {
+                       notifyObservers(new MessageMoveDie(nicknamePlayer, draftPool.indexOf(dieChoosen), row, column ));
+                       break;
+                   }
+                }
+            }
         }
     };
 
@@ -281,7 +274,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
 
                 if(this.text.getText().equals("Choose")){
                     this.gui = true;
-                    this.setChoosePort();
+                    this.setChooseIP();
                 }
                 else {
                     this.connection = 1;
@@ -292,7 +285,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
 
                 if(this.text.getText().equals("Choose")){
                     this.gui = false;
-                    this.setChoosePort();
+                    this.setChooseIP();
                 }
                 else {
 
@@ -304,10 +297,10 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
         }
     }
 
-    private void setChoosePort(){
+    private void setChooseIP(){
         this.radioBtnA.setDisable(true);
         this.radioBtnB.setDisable(true);
-        this.text.setText("Choose Port");
+        this.text.setText("Choose IP");
         this.textField = new TextField();
         this.gridPane.add(this.textField, 1, 1);
 
@@ -485,10 +478,6 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
                 this.tool.add(tool2);
                 this.tool.add(tool3);
 
-                this.textTool.setText("Tool");
-                this.textPublicObjective.setText("Public Objective");
-                this.textPrivateObjective.setText("Private Objective");
-
                 this.buttonEndTurn.setVisible(true);
                 this.buttonEndTurn.setOpacity(1);
                 this.news.setText("Wait...");
@@ -520,7 +509,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
     public void visit(MessagePrivObj message) {
         //search correct image
 
-        this.privateObjective.setImage(new Image("/images/other/ObjEmpty.jpg"));
+        out.println(message.getDescription());
 
     }
 
@@ -589,11 +578,37 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
 
     @Override
     public void visit(MessageWPChanged message) {
+        int i = this.nickname.indexOf(message.getPlayer());
+        int size;
+        if(i == 0){
+            size = 50;
+        }
+        else{
+            size = 25;
+        }
+
+        WindowPattern window = message.getWp();
+        for(int row = 0; row < 4 ; row++){
+            for(int column = 0; column < 5; column++){
+                Die die = window.getBox(row, column).getDie();
+                Image image;
+                if(die == null) {
+                    image = null;
+                }
+                else{
+                    image = new Image("/images/"+die.getColour()+"/"+die.getValue()+".jpg");
+                }
+                windowPattern.get(i)[row][column].setImage(image);
+                windowPattern.get(i)[row][column].setFitHeight(size);
+                windowPattern.get(i)[row][column].setFitWidth(size);
+            }
+        }
 
     }
 
     @Override
     public void visit(MessageTurnChanged message) {
+
         this.news.setText(message.getNickname() + " is playing.");
     }
 
@@ -601,17 +616,39 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
     public void visit(MessageDPChanged message) {
         DraftPool draftPool = message.getDraftPool();
 
+        for(Die die : draftPool.getBag()){
+            Colour colour = die.getColour();
+            int value = die.getValue();
+
+            ImageView imageView;
+
+            for(ImageView i : this.draftPool){
+                if(i.getImage() == null) {
+                    i.setImage(new Image("/images/"+colour+"/"+value+".jpg"));
+                    i.setFitWidth(50);
+                    i.setFitHeight(50);
+                    break;
+                }
+            }
+        }
+
 
     }
 
     @Override
     public void visit(MessageConfirmMove message) {
-
+        Image image = dieChoosen.getImage();
+        dieChoosen.setImage(null);
+        targetOfDie.setImage(image);
+        dieChoosen = null;
+        targetOfDie = null;
     }
 
     @Override
     public void visit(MessageErrorMove message) {
         this.news.setText(message.getReason());
+        this.dieChoosen = null;
+        this.targetOfDie = null;
     }
 
     @Override
@@ -641,6 +678,38 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
 
     @Override
     public void visit(MessageAskMove message) {
+        this.textTool.setText("Tool");
+        this.textPublicObjective.setText("Public Objective");
+        this.textPrivateObjective.setText("Private Objective");
+
+        EventHandler<MouseEvent> handler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                dieChoosen = (ImageView) event.getSource();
+                for(ImageView imageView : groupDie){
+                    imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+                    groupDie.remove(imageView);
+
+                    for(int row = 0 ; row < 4 ; row ++){
+                        for(int column = 0; column < 5 ; column++){
+                            ImageView image = windowPattern.get(0)[row][column];
+                            if(image == null) {
+                                groupDestination.add(image);
+                                image.setOnMouseClicked(handleChooseBox);
+                            }
+                        }
+                    }
+
+                }
+            }
+        };
+        if(message.isHasMovedDie()){
+            for(ImageView im : draftPool){
+                if(im.getImage() != null) groupDie.add(im);
+            }
+            for(ImageView i : groupDie) i.setOnMouseClicked(handler);
+        }
+        else if(message.isHasUsedTool()){}
 
     }
 
