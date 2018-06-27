@@ -37,7 +37,9 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     private Scanner scanner;
     private String nickname;
 
-    public View() {
+    public View(String nickname) {
+
+        this.nickname = nickname;
         scanner = new Scanner(System.in);
         System.setProperty("jansi.passthrough", "true");
         AnsiConsole.systemInstall();

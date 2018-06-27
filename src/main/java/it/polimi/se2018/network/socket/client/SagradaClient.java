@@ -49,7 +49,6 @@ public class SagradaClient {
         do{
             choice = view.askConnection();
         }while (choice == 0);
-        out.println("Connessione presa");
         if(choice==1) connectThroughSocket(nickname);
         else connectThroughRmi(nickname);
 
@@ -73,13 +72,14 @@ public class SagradaClient {
 
     }
 
-    public static void setView(ViewInterface v){
+    public static void setCLI(String nickname) {
+
         client.deregister((Observer) view);
-        view = v;
+        view = new View(nickname);
         view.addObserver(client);
         client.register((Observer) view);
-    }
 
+    }
 
     public static void main(String[] args) {
        launch(ViewGame.class, args);

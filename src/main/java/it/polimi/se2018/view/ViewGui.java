@@ -421,7 +421,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
                 this.textPrivateObjective.setFont(Font.font("Segoe UI Black", 12));
                 this.textPublicObjective.setFont(Font.font("Segoe UI Black", 12));
                 this.textTool.setFont(Font.font("Segoe UI Black", 12));
-                this.textChoosewindowpattern.setFont(Font.font("Segoe UI Black", 12));
+                //this.textChoosewindowpattern.setFont(Font.font("Segoe UI Black", 12));
                 this.errorText.setFont(Font.font("Segoe UI Black", 12));
 
                 this.text.setText("Waiting...");
@@ -515,7 +515,9 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
 
             }
             else{
-                SagradaClient.setView(new View());
+                SagradaClient.setCLI(this.nicknamePlayer);
+                Platform.exit();
+
             }
 
 
