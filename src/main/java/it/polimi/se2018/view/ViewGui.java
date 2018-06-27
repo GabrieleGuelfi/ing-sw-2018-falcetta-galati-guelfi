@@ -250,7 +250,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
         this.errorText.setText(null);
         if(this.radioBtnB.isDisable()){
             choise = this.textField.getText();
-            if(this.text.getText().equals("Choose Port")) {
+            if(this.text.getText().equals("Choose IP")) {
                 try {
                     this.port = Integer.parseInt(choise);
                     this.textField.clear();
