@@ -16,17 +16,10 @@ import it.polimi.se2018.model.WindowPattern;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
 
+import it.polimi.se2018.utils.StringJSON;
 import org.fusesource.jansi.AnsiConsole;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import static java.lang.System.*;
 import static org.fusesource.jansi.Ansi.*;
@@ -34,7 +27,7 @@ import static org.fusesource.jansi.Ansi.Color.*;
 
 public class View extends Observable implements Observer, VisitorView, ViewInterface {
 
-    private static final int MAX_ROW = 4;
+    private static final int MAX_ROW = 4; //already in WindowPattern, can we use it?
     private static final int MAX_COL = 5;
     private static final int MAX_DP = 9;
     private static final String ROW = "row";
@@ -44,74 +37,49 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     private Scanner scanner;
     private String nickname;
 
-    private JSONObject introductionStrings;
-    private JSONObject stateUpdateStrings;
-    private JSONObject handleStrings;
-    private JSONObject askStrings;
-    private JSONObject printStrings;
-
     public View() {
         scanner = new Scanner(System.in);
-        initializeJSON();
         System.setProperty("jansi.passthrough", "true");
         AnsiConsole.systemInstall();
-        out.println(introductionStrings.get("welcome"));
+        out.println(StringJSON.printStrings("introductionStrings", "welcome"));
 
-    }
-
-    private void initializeJSON() {
-        InputStream in = HandleJSON.class.getResourceAsStream("/fileutils/viewstrings");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        JSONParser parser = new JSONParser();
-        Object obj = null;
-        try {
-            obj = parser.parse(reader);
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-        JSONArray strings = (JSONArray) obj;
-        introductionStrings = (JSONObject) strings.get(0);
-        stateUpdateStrings = (JSONObject) strings.get(1);
-        handleStrings = (JSONObject) strings.get(2);
-        askStrings = (JSONObject) strings.get(3);
-        printStrings = (JSONObject) strings.get(4);
     }
 
     public int askConnection() {
-        out.println(introductionStrings.get("askConnection"));
+        out.println(StringJSON.printStrings("introductionStrings", "askConnection"));
         return chooseBetween(1,2);
     }
 
     public String askNickname() {
-        out.println(introductionStrings.get("askNickname"));
+        out.println(StringJSON.printStrings("introductionStrings", "askNickname"));
         this.nickname = scanner.nextLine();
         return this.nickname;
     }
 
     private void nicknameConfirmation(MessageNickname nicknameMessage) {
         if (nicknameMessage.getBoolean()) {
-            out.println(introductionStrings.get("nicknameIsOk"));
+            out.println(StringJSON.printStrings("introductionStrings","nicknameIsOk"));
         }
         else {
-            out.println(introductionStrings.get("nicknameNotOk"));
+            out.println(StringJSON.printStrings("introductionStrings","nicknameNotOk"));
             askNickname();
             notifyObservers(new Message(nickname));
         }
     }
 
     private void showPrivateObjective(String description) {
-        out.println(stateUpdateStrings.get("privateObjective") + description);
+        out.println(StringJSON.printStrings("stateUpdateStrings","privateObjective") + description);
     }
 
     private void showPublicObjective(List<String> descriptions, List<Integer> points) {
-        out.println(stateUpdateStrings.get("publicObjective"));
+        out.println(StringJSON.printStrings("stateUpdateStrings", "publicObjective"));
         for(int i=0; i<descriptions.size(); i++) {
             out.println(i+1 + ") " + descriptions.get(i) + " VP: " + points.get(i));
         }
     }
 
     private void showTools(List<String> names) {
-        out.println(stateUpdateStrings.get("tools"));
+        out.println(StringJSON.printStrings("stateUpdateStrings","tools"));
         for(int i=0; i<names.size(); i++) {
             out.println(i+1 + ") " + names.get(i));
         }
@@ -120,10 +88,10 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     private void showRoundTrack(Map<Integer, List<Die>> roundTrack) {
 
         if (roundTrack.isEmpty()) {
-            out.println(stateUpdateStrings.get("roundtrackEmpty"));
+            out.println(StringJSON.printStrings("stateUpdateStrings","roundtrackEmpty"));
             return;
         }
-        out.print(stateUpdateStrings.get("roundtrack"));
+        out.print(StringJSON.printStrings("stateUpdateStrings","roundtrack"));
         for (Integer j : roundTrack.keySet()) {
             out.print("\n"+j+": ");
             for (Die d : roundTrack.get(j)) {
@@ -139,11 +107,11 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
 
     private void windowPatternUpdated(String player, WindowPattern wp) {
         if (!player.equals(this.nickname)) {
-            out.println(player + stateUpdateStrings.get("otherPlayerWP"));
+            out.println(player + StringJSON.printStrings("stateUpdateStrings","otherPlayerWP"));
             printWindowPattern(wp);
         }
         else {
-            out.println(stateUpdateStrings.get("myWP"));
+            out.println(StringJSON.printStrings("stateUpdateStrings","myWP"));
             printWindowPattern(wp);
         }
     }
@@ -153,7 +121,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         int choice;
         List<WindowPattern> windowPatterns = new ArrayList<>();
 
-        out.println(handleStrings.get("askWindowPattern1"));
+        out.println(StringJSON.printStrings("handleStrings", "askWindowPattern1"));
         windowPatterns.add(HandleJSON.createWindowPattern(null, firstCard, 0));
         windowPatterns.add(HandleJSON.createWindowPattern(null, firstCard, 1));
         windowPatterns.add(HandleJSON.createWindowPattern(null, secondCard, 0));
@@ -162,7 +130,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
             out.print(windowPatterns.indexOf(wp)+1 + ") ");
             printWindowPattern(wp);
         }
-        out.println(handleStrings.get("askWindowPattern2"));
+        out.println(StringJSON.printStrings("handleStrings", "askWindowPattern2"));
         choice = chooseBetween(1, 4);
 
         if (choice<3) {
@@ -174,26 +142,26 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
 
     private void handleTurnChange(String playerTurn) {
         if(playerTurn.equals(this.nickname)) {
-            out.println( ansi().fg(RED).a(handleStrings.get("yourTurnChange")).reset() );
+            out.println( ansi().fg(RED).a(StringJSON.printStrings("handleStrings","yourTurnChange")).reset() );
         } else {
-            out.println("\n" + playerTurn + handleStrings.get("otherTurnChange"));
+            out.println("\n" + playerTurn + StringJSON.printStrings("handleStrings","otherTurnChange"));
         }
     }
 
     private void handleErrorMove(String reason) {
-        out.println(handleStrings.get("errorMove") + reason);
-        out.println(handleStrings.get("tryAgain"));
+        out.println(StringJSON.printStrings("handleStrings", "errorMove") + reason);
+        out.println(StringJSON.printStrings("handleStrings","tryAgain"));
     }
 
     private void handleSuccessMove(boolean isThereAnotherMove) {
-        out.println(handleStrings.get("successMove"));
-        if(!isThereAnotherMove) out.println(handleStrings.get("turnIsOver"));
+        out.println(StringJSON.printStrings("handleStrings", "successMove"));
+        if(!isThereAnotherMove) out.println(StringJSON.printStrings("handleStrings","turnIsOver"));
     }
 
     private void handleRoundChanged(String nickname, int round, DraftPool draftPool) {
         out.println();
         out.println("_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|  ROUND " + round + " |-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|\n");
-        out.println(handleStrings.get("dpForRound"));
+        out.println(StringJSON.printStrings("handleStrings","dpForRound"));
         printDraftPool(draftPool);
         handleTurnChange(nickname);
     }
@@ -202,22 +170,22 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
 
         out.println( ansi().eraseScreen() );
         if(isLastPlayer) {
-            out.println(handleStrings.get("lastPlayer"));
+            out.println(StringJSON.printStrings("handleStrings","lastPlayer"));
         }
 
-        out.println( ansi().fg(RED).a(handleStrings.get("endMatch")).reset());
-        out.print(handleStrings.get("winnerIs"));
+        out.println( ansi().fg(RED).a(StringJSON.printStrings("handleStrings","endMatch")).reset());
+        out.print(StringJSON.printStrings("handleStrings","winnerIs"));
         out.println(results.keySet().toArray()[0] + "!\n");
-        out.println(handleStrings.get("fullClassification"));
+        out.println(StringJSON.printStrings("handleStrings","fullClassification"));
 
         int i = 1;
 
         for (String playerNickname: results.keySet()) {
-            out.println( i +") " + playerNickname + handleStrings.get("with") + results.get(playerNickname) + handleStrings.get("points"));
+            out.println( i +") " + playerNickname + StringJSON.printStrings("handleStrings","with") + results.get(playerNickname) + StringJSON.printStrings("handleStrings","points"));
             i++;
         }
 
-        out.println(handleStrings.get("playAgain"));
+        out.println(StringJSON.printStrings("handleStrings","playAgain"));
 
         int choice = chooseBetween(1, 2);
         if(choice==1) SagradaClient.newConnection(this.nickname);
@@ -231,28 +199,28 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         boolean moveToolOk = true;
 
         if (windowPattern!=null) {
-            out.println(askStrings.get("windowPattern"));
+            out.println(StringJSON.printStrings("askStrings","windowPattern"));
             printWindowPattern(windowPattern);
         }
         if (draftPool!=null) {
-            out.println(askStrings.get("draftPool"));
+            out.println(StringJSON.printStrings("askStrings","draftPool"));
             printDraftPool(draftPool);
         }
 
         //out.println( ansi().eraseScreen() );
-        out.println(askStrings.get("selectMove"));
+        out.println(StringJSON.printStrings("askStrings","selectMove"));
         int i=1;
-        out.println(i + askStrings.get("requestInformation").toString());
+        out.println(i + StringJSON.printStrings("askStrings","requestInformation"));
         i++;
         if (!hasMovedDie) {
-            out.println(i + askStrings.get("moveDie").toString());
+            out.println(i + StringJSON.printStrings("askStrings","moveDie"));
             i++;
         }
         if (!hasUsedTool) {
-            out.println(i + askStrings.get("useTool").toString());
+            out.println(i + StringJSON.printStrings("askStrings","useTool"));
             i++;
         }
-        out.println(i + askStrings.get("doNothing").toString());
+        out.println(i + StringJSON.printStrings("askStrings","doNothing"));
         int choice = chooseBetween(1, i);
 
         if (choice==1) {
@@ -271,7 +239,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     }
 
     private void requestInformation() {
-        out.println(askStrings.get("whichInformation"));
+        out.println(StringJSON.printStrings("askStrings","whichInformation"));
         for (RequestType t: RequestType.values()) {
             out.println((t.ordinal()+1)+") "+t.toString());
         }
@@ -284,17 +252,17 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
 
     private boolean moveDie() {
 
-        out.println(askStrings.get("askDieFromDp"));
+        out.println(StringJSON.printStrings("askStrings","askDieFromDp"));
         int dieToMove = chooseBetween(0, MAX_DP);
         if(dieToMove==0) return false;
 
-        out.println(askStrings.get("askPositionInWp"));
+        out.println(StringJSON.printStrings("askStrings","askPositionInWp"));
 
-        out.print(askStrings.get(ROW));
+        out.print(StringJSON.printStrings("askStrings", ROW));
         int row = chooseBetween(0, MAX_ROW);
         if (row==0) return false;
 
-        out.print(askStrings.get(COLUMN));
+        out.print(StringJSON.printStrings("askStrings", COLUMN));
         int column = chooseBetween(0, MAX_COL);
         if (column==0) return false;
 
@@ -304,7 +272,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     }
 
     private boolean useTool() {
-        out.println(askStrings.get("askTool"));
+        out.println(StringJSON.printStrings("askStrings","askTool"));
         int choice = chooseBetween(1, 3);
         notifyObservers(new MessageRequestUseOfTool(nickname, choice-1));
         return true;
@@ -322,7 +290,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
 
 
         for(i=0; i<message.getDiceFromDp(); i++) {
-            out.println(askStrings.get("askDieFromDp"));
+            out.println(StringJSON.printStrings("askStrings","askDieFromDp"));
             int n = chooseBetween(0, 9);
             if (n==0) {
                 notifyObservers(new MessageToolResponse(nickname));
@@ -332,7 +300,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         }
 
         if(message.getDiceFromWp()>1) {
-            out.println(askStrings.get("multipleDice"));
+            out.println(StringJSON.printStrings("askStrings","multipleDice"));
         }
 
         int requestedDiceFromWp = message.getDiceFromWp();
@@ -350,14 +318,14 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         }
 
         for(i=0; i<requestedDiceFromWp; i++) {
-            out.println(askStrings.get("diceFromWp"));
-            out.print(askStrings.get(ROW));
+            out.println(StringJSON.printStrings("askStrings","diceFromWp"));
+            out.print(StringJSON.printStrings("askStrings", ROW));
             int x = chooseBetween(0, MAX_ROW);
             if (x==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
             }
-            out.print(askStrings.get(COLUMN));
+            out.print(StringJSON.printStrings("askStrings", COLUMN));
             int y = chooseBetween(0, MAX_COL);
             if (y==0) {
                 notifyObservers(new MessageToolResponse(nickname));
@@ -368,14 +336,14 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         }
 
         for(i=0; i<requestedPositionInWp; i++) {
-            out.println(askStrings.get("askPositionInWp"));
-            out.print(askStrings.get(ROW));
+            out.println(StringJSON.printStrings("askStrings","askPositionInWp"));
+            out.print(StringJSON.printStrings("askStrings", ROW));
             int x = chooseBetween(0, MAX_ROW);
             if (x==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
             }
-            out.print(askStrings.get(COLUMN));
+            out.print(StringJSON.printStrings("askStrings", COLUMN));
             int y = chooseBetween(0, MAX_COL);
             if (y==0) {
                 notifyObservers(new MessageToolResponse(nickname));
@@ -404,7 +372,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         }
 
         if(message.isAskPlusOrMinusOne()) {
-            out.println(askStrings.get("addOrRemove"));
+            out.println(StringJSON.printStrings("askStrings","addOrRemove"));
             int choice = chooseBetween(0,2);
             if (choice==0) {
                 notifyObservers(new MessageToolResponse(nickname));
@@ -454,10 +422,10 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         int column=0;
         int row=0;
         while(column == 0) {
-            out.print(askStrings.get(ROW));
+            out.print(StringJSON.printStrings("askStrings", ROW));
             row = chooseBetween(1, MAX_ROW);
 
-            out.print(askStrings.get(COLUMN));
+            out.print(StringJSON.printStrings("askStrings", COLUMN));
             column = chooseBetween(0, MAX_COL);
         }
 
@@ -466,7 +434,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     }
 
     private void printWindowPattern(WindowPattern wp) {
-        out.println("\n" + wp.getName() + printStrings.get("difficulty") + wp.getDifficulty());
+        out.println("\n" + wp.getName() + StringJSON.printStrings("printStrings","difficulty") + wp.getDifficulty());
         out.print("   1   2   3   4   5");
         for (int i=0; i<MAX_ROW; i++) {
             out.println();
@@ -532,7 +500,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         int choice;
         choice = scanner.nextInt();
         while(choice<min || choice>max) {
-            out.println(askStrings.get("invalidChoice"));
+            out.println(StringJSON.printStrings("askStrings","invalidChoice"));
             choice = scanner.nextInt();
         }
         scanner.nextLine(); // To fix java bug
