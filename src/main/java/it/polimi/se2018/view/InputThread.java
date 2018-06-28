@@ -21,11 +21,9 @@ public class InputThread extends Thread {
 
     public int getChoice() {
         while (choice == -2) {
-            limit++;
-            if (limit>10) stopThread();
             if(choice==-1) return choice;
             try {
-                Thread.sleep(500);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -36,9 +34,16 @@ public class InputThread extends Thread {
     @Override
     public void run() {
 
+        try {
+            System.in.read(new byte[System.in.available()]);
+        } catch (IOException e) {
+            System.err.println("Error in Sysin flush");
+            e.printStackTrace();
+        }
+
         while(choice==-2) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 choice = -1;
             }

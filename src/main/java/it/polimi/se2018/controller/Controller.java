@@ -35,7 +35,7 @@ public class Controller implements VisitorController, Observer {
         this.virtualView = view;
         view.register(this);
 
-        timeForRound = 5; // HARDCODED
+        timeForRound = 30; // HARDCODED
 
         prepareGame(nickname);
     }
@@ -439,6 +439,8 @@ public class Controller implements VisitorController, Observer {
 
     @Override
     public void visit(MessageDoNothing message) {
+
+        gameTimer.stopTimer();
 
         Player player = searchNick(message.getNickname());
 

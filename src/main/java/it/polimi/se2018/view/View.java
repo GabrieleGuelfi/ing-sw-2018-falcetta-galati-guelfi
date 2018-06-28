@@ -37,7 +37,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     private Scanner scanner;
     private String nickname;
 
-    private InputThread inputThread;
+    public static InputThread inputThread;
 
     public View(String nickname) {
 
@@ -503,17 +503,16 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
 
         int choice;
         //choice = scanner.nextInt();
-        //inputThread = new InputThread();
-        //inputThread.start();
-        //choice = inputThread.getChoice();
-        //if(choice==-1) return choice;
-        choice = scanner.nextInt();
+        inputThread = new InputThread();
+        inputThread.start();
+        choice = inputThread.getChoice();
+        if(choice==-1) return choice;
         while(choice<min || choice>max) {
             out.println(StringJSON.printStrings("askStrings","invalidChoice"));
-            choice = scanner.nextInt();
-            //choice = inputThread.getChoice();
+            //choice = scanner.nextInt();
+            choice = inputThread.getChoice();
         }
-        scanner.nextLine(); // To fix java bug
+        //scanner.nextLine(); // To fix java bug
         return choice;
 
     }
@@ -623,7 +622,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     @Override
     public void visit(MessageTimeFinished message) {
         out.println("Time finished...");
-        //inputThread.stopThread();
+        inputThread.stopThread();
 
     }
 

@@ -7,6 +7,7 @@ public class MessageTimeFinished extends Message {
 
     public MessageTimeFinished(String nickname) {
         super(nickname);
+        this.timeFinished = true;
     }
 
     @Override
