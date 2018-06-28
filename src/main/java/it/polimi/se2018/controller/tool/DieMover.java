@@ -37,15 +37,8 @@ public class DieMover extends Tool {
         List<Die> localDice = new ArrayList<>();
         int row;
         int column;
-        int localNumberOfDice = this.numberOfDice;
 
         if(respectRoundtrack) {
-            try{
-                int x = message.getDiceFromWp().get(1)[0];
-            }
-            catch (IndexOutOfBoundsException e){
-                localNumberOfDice = 1;
-            }
 
             Die firstDie = player.getWindowPattern().getBox(message.getDiceFromWp().get(0)[0], message.getDiceFromWp().get(0)[1]).getDie();
             if(firstDie==null) {
@@ -63,7 +56,7 @@ public class DieMover extends Tool {
                 virtualView.send(new MessageErrorMove(player.getNickname(), "No die of this colour in roundtrack!"));
                 return true;
             }
-            if(localNumberOfDice>1) {
+            if(message.getDiceFromWp().size()>1) {
                 Die secondDie = player.getWindowPattern().getBox(message.getDiceFromWp().get(1)[0], message.getDiceFromWp().get(1)[1]).getDie();
                 if(!secondDie.getColour().equals(firstDie.getColour())) {
                     virtualView.send(new MessageErrorMove(player.getNickname(), "Dice have different colours!"));
@@ -75,7 +68,7 @@ public class DieMover extends Tool {
 
         WindowPattern localWindowPattern = player.getWindowPattern().copy();
 
-        for(int i=0; i<localNumberOfDice; i++) {
+        for(int i=0; i<this.numberOfDice; i++) {
             originalRows.add(message.getDiceFromWp().get(i)[0]);
             originalColumns.add(message.getDiceFromWp().get(i)[1]);
             localDice.add(localWindowPattern.getBox(originalRows.get(i), originalColumns.get(i)).getDie());
@@ -83,7 +76,7 @@ public class DieMover extends Tool {
             localWindowPattern.addEmptyBox();
         }
 
-        for(int i=0; i<localNumberOfDice; i++){
+        for(int i=0; i<message.getDiceFromWp().size(); i++){
 
             if (localDice.get(i)==null) {
                 virtualView.send(new MessageErrorMove( player.getNickname(), "No die in this position!"));
@@ -112,11 +105,11 @@ public class DieMover extends Tool {
 
         }
 
-        for(int i=0; i<localNumberOfDice; i++) {
+        for(int i=0; i<message.getDiceFromWp().size(); i++) {
             player.getWindowPattern().getBox(originalRows.get(i), originalColumns.get(i)).setDie(null);
         }
 
-        for(int i=0; i<localNumberOfDice; i++) {
+        for(int i=0; i<message.getDiceFromWp().size(); i++) {
             row = message.getPositionsInWp().get(i)[0];
             column = message.getPositionsInWp().get(i)[1];
             player.getWindowPattern().getBox(row, column).setDie(localDice.get(i));
