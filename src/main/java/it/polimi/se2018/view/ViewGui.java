@@ -744,5 +744,10 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
 
     }
 
+    @Override
+    public void visit(MessageTimeFinished message) {
+
+    }
+
 
 }

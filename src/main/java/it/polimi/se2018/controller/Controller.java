@@ -23,6 +23,9 @@ public class Controller implements VisitorController, Observer {
     private Match match;
     private VirtualView virtualView;
 
+    private GameTimer gameTimer;
+    private int timeForRound;
+
     /**
      * Constructor of the class
      * @param nickname List of nickname of the player
@@ -31,6 +34,8 @@ public class Controller implements VisitorController, Observer {
     public Controller(List<String> nickname, VirtualView view) {
         this.virtualView = view;
         view.register(this);
+
+        timeForRound = 5; // HARDCODED
 
         prepareGame(nickname);
     }
@@ -82,6 +87,7 @@ public class Controller implements VisitorController, Observer {
         // Create the match...
         this.match = new Match(new Bag(), players, objectives, tools, virtualView);
 
+
         for(String player: nickname) {
             List<Integer> patterns = HandleJSON.chooseWP(player);
             virtualView.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
@@ -103,10 +109,12 @@ public class Controller implements VisitorController, Observer {
      * start a game with first round
      */
     private void startGame() {
+        if(gameTimer!=null) gameTimer.stopTimer();
         this.match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool().copy()));
         this.match.notifyObservers(new MessageRoundChanged(match.getRound().getPlayerTurn().getNickname(), match.getNumRound(), match.getRound().getDraftPool()));
         Player player = match.getRound().getPlayerTurn();
         virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), null));
+        startTimer();
     }
 
     /**
@@ -241,6 +249,7 @@ public class Controller implements VisitorController, Observer {
             Player player = match.getRound().getPlayerTurn();
             match.notifyObservers(new MessageTurnChanged(player.getNickname()));
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
+            startTimer();
         }
         catch (IllegalStateException e) {
             try {
@@ -249,6 +258,7 @@ public class Controller implements VisitorController, Observer {
                 match.notifyObservers(new MessageRoundChanged(match.getFirstPlayerRound().getNickname(), match.getNumRound(), match.getRound().getDraftPool()));
                 Player player = match.getRound().getPlayerTurn();
                 virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), null));
+                startTimer();
 
             }
             catch (IllegalStateException e1) {
@@ -370,6 +380,8 @@ public class Controller implements VisitorController, Observer {
     @Override
     public void visit(MessageMoveDie message) {
 
+        gameTimer.stopTimer();
+
         Player player = searchNick(message.getNickname());
 
         if (player == null) {
@@ -418,7 +430,10 @@ public class Controller implements VisitorController, Observer {
         match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
 
         if(!isThereAnotherMove) nextTurn();
-        else virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+        else {
+            startTimer();
+            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+        }
 
     }
 
@@ -569,6 +584,21 @@ public class Controller implements VisitorController, Observer {
         }
         player.setPlacedDie(false);
         player.setUsedTool(false);
+        nextTurn();
+
+    }
+
+    private void startTimer() {
+
+        this.gameTimer = new GameTimer(this, timeForRound);
+        this.gameTimer.start();
+
+    }
+
+    void handleEndTime() {
+
+        Player currentPlayer = match.getRound().getPlayerTurn();
+        virtualView.send(new MessageTimeFinished(currentPlayer.getNickname()));
         nextTurn();
 
     }

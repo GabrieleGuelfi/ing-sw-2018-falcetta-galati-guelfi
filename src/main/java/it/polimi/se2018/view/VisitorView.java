@@ -27,4 +27,6 @@ public interface VisitorView {
     void visit(MessageAskMove message);
     void visit(MessageForceMove message);
 
+    void visit(MessageTimeFinished message);
+
 }

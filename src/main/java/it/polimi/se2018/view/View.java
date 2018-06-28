@@ -37,6 +37,8 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     private Scanner scanner;
     private String nickname;
 
+    private InputThread inputThread;
+
     public View(String nickname) {
 
         this.nickname = nickname;
@@ -500,10 +502,16 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     private int chooseBetween(int min, int max) {
 
         int choice;
+        //choice = scanner.nextInt();
+        //inputThread = new InputThread();
+        //inputThread.start();
+        //choice = inputThread.getChoice();
+        //if(choice==-1) return choice;
         choice = scanner.nextInt();
         while(choice<min || choice>max) {
             out.println(StringJSON.printStrings("askStrings","invalidChoice"));
             choice = scanner.nextInt();
+            //choice = inputThread.getChoice();
         }
         scanner.nextLine(); // To fix java bug
         return choice;
@@ -610,6 +618,13 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     @Override
     public void visit(MessageForceMove message) {
         forceMove(message.getDie(), message.getWindowPattern(), message.isNewValue(), message.isPlacedDie(), message.isCanChoose());
+    }
+
+    @Override
+    public void visit(MessageTimeFinished message) {
+        out.println("Time finished...");
+        //inputThread.stopThread();
+
     }
 
     public void addObserver(Observer observer){
