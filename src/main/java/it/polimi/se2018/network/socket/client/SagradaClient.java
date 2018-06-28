@@ -65,7 +65,7 @@ public class SagradaClient {
         client = new ClientImplementation();
 
         view.addObserver(client);
-        client.register((Observer) view);
+        client.register(view);
         nick = view.askNickname();
 
         newConnection(nick);
@@ -74,10 +74,10 @@ public class SagradaClient {
 
     public static void setCLI(String nickname) {
 
-        client.deregister((Observer) view);
+        client.deregister(view);
         view = new View(nickname);
         view.addObserver(client);
-        client.register((Observer) view);
+        client.register(view);
 
     }
 

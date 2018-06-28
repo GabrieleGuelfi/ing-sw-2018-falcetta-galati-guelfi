@@ -17,8 +17,10 @@ public class ClientImplementation extends Observable implements ClientInterface,
     }
 
     public void notify(Message message) {
-        if(message.isTimeFinished()) View.inputThread.stopThread();
-        else    (new ConnectionHandlerThread(this, message)).start();
+        if(message.isTimeFinished()) View.getInputThread().stopThread();
+        else {
+            (new ConnectionHandlerThread(this, message)).start();
+        }
     }
 
     @Override

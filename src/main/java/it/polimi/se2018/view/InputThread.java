@@ -1,31 +1,27 @@
 package it.polimi.se2018.view;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Scanner;
 
-import static java.lang.Integer.parseInt;
+import static java.lang.System.out;
 
 public class InputThread extends Thread {
 
     private int choice;
-    private int limit=0;
+    private boolean isChosing;
     private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-    public InputThread() {
-        //scanner = new Scanner(System.in);
-        choice = -2;
+    InputThread() {
+        isChosing = true;
     }
 
-    public int getChoice() {
-        while (choice == -2) {
-            if(choice==-1) return choice;
+    int getChoice() {
+        while (isChosing) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                this.interrupt();
             }
         }
         return choice;
@@ -37,23 +33,26 @@ public class InputThread extends Thread {
         try {
             System.in.read(new byte[System.in.available()]);
         } catch (IOException e) {
-            System.err.println("Error in Sysin flush");
             e.printStackTrace();
         }
 
-        while(choice==-2) {
+        while(isChosing) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
+                isChosing = false;
                 choice = -1;
+                this.interrupt();
             }
-            //System.out.println("Verifico se puo leggere");
+
             try {
-                if(br.ready()) choice=Integer.parseInt(br.readLine());
+                if(br.ready()) {
+                    choice=Integer.parseInt(br.readLine());
+                    isChosing = false;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
 
     }

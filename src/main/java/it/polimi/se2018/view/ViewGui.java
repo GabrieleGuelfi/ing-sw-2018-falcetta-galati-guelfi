@@ -40,7 +40,7 @@ import static java.lang.System.in;
 import static java.lang.System.out;
 
 
-public class ViewGui extends Observable implements VisitorView, Observer, ViewInterface{
+public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
     //GAME
     @FXML
@@ -743,11 +743,5 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
     public void visit(MessageForceMove message) {
 
     }
-
-    @Override
-    public void visit(MessageTimeFinished message) {
-
-    }
-
 
 }
