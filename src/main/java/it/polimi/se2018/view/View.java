@@ -184,7 +184,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
         int i = 1;
 
         for (String playerNickname: results.keySet()) {
-            out.println( i +") " + playerNickname + StringJSON.printStrings("handleStrings","with") + results.get(playerNickname) + StringJSON.printStrings("handleStrings","points"));
+            out.println( i +") " + playerNickname + " " + StringJSON.printStrings("handleStrings","with") + results.get(playerNickname) + StringJSON.printStrings("handleStrings","points"));
             i++;
         }
 

@@ -1,6 +1,5 @@
 package it.polimi.se2018.controller.tool;
 
-import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.messageforcontroller.MessageToolResponse;
 import it.polimi.se2018.events.messageforserver.MessageError;
 import it.polimi.se2018.events.messageforview.*;
@@ -8,7 +7,11 @@ import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
 import it.polimi.se2018.model.WindowPattern;
+import it.polimi.se2018.utils.StringJSON;
 
+import java.util.List;
+
+import static it.polimi.se2018.controller.VerifyRules.*;
 import static java.lang.Math.abs;
 
 public class DieChanger extends Tool {
@@ -17,7 +20,7 @@ public class DieChanger extends Tool {
     private boolean plusMinusOne;
     private boolean mixAllDice;
 
-    DieChanger(String name, boolean oppositeFace, boolean plusMinusOne, boolean mixAllDice) {
+    DieChanger(List<String> name, boolean oppositeFace, boolean plusMinusOne, boolean mixAllDice) {
         super(name);
 
         this.oppositeFace = oppositeFace;
@@ -27,7 +30,7 @@ public class DieChanger extends Tool {
 
 
     @Override
-    public boolean use(MessageToolResponse message, Match match, Player player, Controller controller) {
+    public boolean use(MessageToolResponse message, Match match, Player player) {
 
         if(mixAllDice) {
             for (Die d : match.getRound().getDraftPool().getBag())
@@ -36,16 +39,16 @@ public class DieChanger extends Tool {
 
         if(plusMinusOne) {
             if(!verifyDiceInDraftpool(message.getDiceFromDp(), match.getRound().getDraftPool().size())) {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "Invalid choice of die from draftpool"));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorMove","noDieDraftpool")));
                 return true;
             }
             Die die = match.getRound().getDraftPool().getBag().get(message.getDiceFromDp());
             if (die.getValue()==6 && message.getPlusOne()) {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "Can't add 1 to a die with value 6"));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","plusOne")));
                 return true;
             }
             if (die.getValue()==1 && !message.getPlusOne()) {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "Can't remove 1 to a die with value 1"));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","minusOne")));
                 return true;
             }
 
@@ -59,7 +62,7 @@ public class DieChanger extends Tool {
 
         if(oppositeFace) {
             if(!verifyDiceInDraftpool(message.getDiceFromDp(), match.getRound().getDraftPool().size())) {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "Invalid choice of die from draftpool"));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorMove","noDieDraftpool")));
                 return true;
             }
             Die die = match.getRound().getDraftPool().getBag().get(message.getDiceFromDp());
@@ -68,7 +71,7 @@ public class DieChanger extends Tool {
 
         if(!oppositeFace && !plusMinusOne && !mixAllDice) {
             if(!verifyDiceInDraftpool(message.getDiceFromDp(), match.getRound().getDraftPool().size())) {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "Invalid choice of die from draftpool"));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorMove","noDieDraftpool")));
                 return true;
             }
             Die die = match.getRound().getDraftPool().getBag().get(message.getDiceFromDp());
@@ -77,7 +80,7 @@ public class DieChanger extends Tool {
             boolean found = false;
             for (int i=0; i< WindowPattern.MAX_ROW && !found; i++) {
                 for (int j=0; j<WindowPattern.MAX_COL && !found; j++) {
-                    if(controller.isNearDie(player.getWindowPattern(), i, j) && controller.verifyColor(player.getWindowPattern(), i, j, die) && controller.verifyNumber(player.getWindowPattern(), i, j, die))
+                    if(isNearDie(player.getWindowPattern(), i, j) && verifyColor(player.getWindowPattern(), i, j, die) && verifyNumber(player.getWindowPattern(), i, j, die))
                         found = true;
                 }
             }
@@ -94,7 +97,7 @@ public class DieChanger extends Tool {
                 return false;
             }
             else {
-                virtualView.send(new MessageError("You can't place the die, sorry"));
+                virtualView.send(new MessageError(StringJSON.printStrings("errorTool","errorPlacing")));
             }
 
         }
@@ -109,7 +112,7 @@ public class DieChanger extends Tool {
         if(!canUseTool(player)) return;
         if (mixAllDice) {
             if(match.getRound().getNumTurn() <= match.getPlayers().size() || player.isPlacedDie()) {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "You can't use this tool!"));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","cantUseTool")));
                 virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
                 return;
             }
@@ -119,7 +122,7 @@ public class DieChanger extends Tool {
         if (oppositeFace) virtualView.send(new MessageToolOrder(player.getNickname(), 1, false));
         if (!oppositeFace && !plusMinusOne && !mixAllDice){
             if (player.isPlacedDie()) {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "You have already placed a die"));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","alreadyPlaced")));
                 virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
                 return;
             }

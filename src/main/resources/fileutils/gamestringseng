@@ -1,71 +1,90 @@
 {
   "introductionStrings": {
-                          "welcome": "Welcome in Sagrada!\nWait for the game to begin.",
-                          "askConnection": "Please, choose method connection beetween:\n1) Socket\n2) RMI",
-                          "askNickname": "Please, choose your nickname",
-                          "nicknameIsOk": "\nAll settled! Wait for the game to begin...",
-                          "nicknameNotOk": "\nNickname already used: choose another one"
-                         },
+    "welcome": "Welcome in Sagrada!\nWait for the game to begin.",
+    "askConnection": "Please, choose method connection beetween:\n1) Socket\n2) RMI",
+    "askNickname": "Please, choose your nickname",
+    "nicknameIsOk": "\nAll settled! Wait for the game to begin...",
+    "nicknameNotOk": "\nNickname already used: choose another one"
+  },
 
   "stateUpdateStrings": {
-                          "privateObjective": "\nYour private objective is:\n",
-                          "publicObjective": "\nPublic objectives: ",
-                          "tools": "\nTools: ",
-                          "roundtrackEmpty": "\nRound Track empty! This is the First Turn!",
-                          "roundtrack": "\nRound Track: ",
-                          "otherPlayerWP": "'s windowpattern is now: ",
-                          "myWP": "Your window pattern is now: "
-                        },
+    "privateObjective": "\nYour private objective is:\n",
+    "publicObjective": "\nPublic objectives: ",
+    "tools": "\nTools: ",
+    "roundtrackEmpty": "\nRound Track empty! This is the First Turn!",
+    "roundtrack": "\nRound Track: ",
+    "otherPlayerWP": "'s windowpattern is now: ",
+    "myWP": "Your window pattern is now: "
+  },
 
   "handleStrings":  {
-                      "askWindowPattern1": "\nYou have to choose the window pattern between these four: \n",
-                      "askWindowPattern2": "Write the number of the window pattern you want to use.",
-                      "yourTurnChange": "\nIt's your turn!\n",
-                      "otherTurnChange": " is now playing...\n",
-                      "errorMove": "\nYour move has been rejected for this reason: ",
-                      "tryAgain": "Try again...",
-                      "successMove": "\nSuccess! Your move has been accomplished.",
-                      "turnIsOver": "\nYour turn is over.\n",
-                      "dpForRound": "Draftpool for this round: ",
-                      "lastPlayer": "Match is terminated because all other players have disconnected.\n",
-                      "endMatch": "End of the match!",
-                      "winnerIs": "The winner is... ",
-                      "fullClassification": "Full classification: ",
-                      "points": " points",
-                      "playAgain": "\nDo you want to play again?\n1) Yes\n2) No"
-                    },
+    "askWindowPattern1": "\nYou have to choose the window pattern between these four: \n",
+    "askWindowPattern2": "Write the number of the window pattern you want to use.",
+    "yourTurnChange": "\nIt's your turn!\n",
+    "otherTurnChange": " is now playing...\n",
+    "errorMove": "\nYour move has been rejected for this reason: ",
+    "tryAgain": "Try again...",
+    "successMove": "\nSuccess! Your move has been accomplished.",
+    "turnIsOver": "\nYour turn is over.\n",
+    "dpForRound": "Draftpool for this round: ",
+    "lastPlayer": "Match is terminated because all other players have disconnected.\n",
+    "endMatch": "End of the match!",
+    "winnerIs": "The winner is... ",
+    "fullClassification": "Full classification: ",
+    "points": " points",
+    "playAgain": "\nDo you want to play again?\n1) Yes\n2) No",
+    "with": "with"
+  },
   "askStrings": {
-                  "windowPattern": "\nCurrently, this is your windows pattern:",
-                  "draftPool": "\nCurrently, this is the draftpool:",
-                  "selectMove": "\n\nPlease, select your move: ",
-                  "requestInformation": ") Request information",
-                  "moveDie": ") Move a die",
-                  "row": "Row: ",
-                  "column": "Column: ",
-                  "useTool": ") Use a tool",
-                  "doNothing": ") Do nothing",
-                  "whichInformation": "\nWhat do you want to see?",
-                  "askDieFromDp": "\nChoose a die from draftpool (0 to escape):",
-                  "askPositionInWp": "\nWhere do you want to place it? (0 to escape)",
-                  "askTool": "Please, select the tool you want to use",
-                  "multipleDice": "\nMultiple dice selection. Please, select:\n1) ALL the dice you want to move\n2) The position for them, respectively",
-                  "diceFromWp": "\nChoose a die from window pattern (0 to escape)",
-                  "addOrRemove": "Do you want to add or remove 1? (0 to escape)\n1) Add\n2) Remove",
-                  "newValue": "Choose the new value: (0 to escape)",
-                  "placeThisDie": "You have to place this die (0 in column choice to escape)",
-                  "invalidChoice": "Invalid choice: try again "
-                },
+    "windowPattern": "\nCurrently, this is your windows pattern:",
+    "draftPool": "\nCurrently, this is the draftpool:",
+    "selectMove": "\n\nPlease, select your move: ",
+    "requestInformation": ") Request information",
+    "moveDie": ") Move a die",
+    "row": "Row: ",
+    "column": "Column: ",
+    "useTool": ") Use a tool",
+    "doNothing": ") Do nothing",
+    "whichInformation": "\nWhat do you want to see?",
+    "askDieFromDp": "\nChoose a die from draftpool (0 to escape):",
+    "askPositionInWp": "\nWhere do you want to place it? (0 to escape)",
+    "askTool": "Please, select the tool you want to use",
+    "multipleDice": "\nMultiple dice selection. Please, select:\n1) ALL the dice you want to move\n2) The position for them, respectively",
+    "diceFromWp": "\nChoose a die from window pattern (0 to escape)",
+    "addOrRemove": "Do you want to add or remove 1? (0 to escape)\n1) Add\n2) Remove",
+    "newValue": "Choose the new value: (0 to escape)",
+    "placeThisDie": "You have to place this die (0 in column choice to escape)",
+    "invalidChoice": "Invalid choice: try again "
+  },
 
   "printStrings": {
-                    "difficulty": "\nDifficulty: "
-                  },
-  "controller": {
-                  "playerNotFound": "404 Player not found!",
-                  "noDieDraftpool": "Inexistent die in draftpool!",
-                  "diePlaced": "Die already placed in this turn",
-                  "nearDie": "No dice near the position",
-                  "valueRestriction": "Violated Value Restriction!",
-                  "colourRestriction": "Violated Colour Restriction!",
-                  "diePlacing": "No die is placing, error with tool"
-                }
+    "difficulty": "\nDifficulty: "
+  },
+  "errorMove": {
+    "playerNotFound": "404 Player not found!",
+    "noDieDraftpool": "Invalid choice of die from draftpool!",
+    "diePlaced": "Die already placed in this turn",
+    "nearDie": "No dice near the position",
+    "valueRestriction": "Violated Value Restriction!",
+    "colourRestriction": "Violated Colour Restriction!",
+    "diePlacing": "No die is placing, error with tool",
+    "boxFull": "This box is already full!"
+  },
+  "errorTool": {
+    "plusOne": "Can't add 1 to a die with value 6",
+    "minusOne": "Can't remove 1 to a die with value 1",
+    "errorPlacing": "You can't place the die, sorry",
+    "cantUseTool": "You can't use this tool!",
+    "alreadyPlaced": "You have already placed a die in this turn",
+    "noDiePosition": "No die in this position!",
+    "noDieRoundtrack": "No die of this colour in roundtrack!",
+    "differentColours": "Dice have different colours!",
+    "isNearDie": "There is a die near the position",
+    "secondTurn": "You can't use this tool in your second turn!",
+    "noroundTrack": "No roundTrack for this turn",
+    "firstRound": "First Turn! Empty RoundTrack",
+    "favorTokens": "Not enough favor tokens",
+    "noTool": "Tool not existing"
+  }
+
 }

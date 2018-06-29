@@ -116,5 +116,26 @@ public final class HandleJSON {
 
     }
 
+    public static List<String> createTool(String number) {
+        List<String> tool = new ArrayList<>();
+        InputStream in = HandleJSON.class.getResourceAsStream("/fileutils/tools");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        JSONParser parser = new JSONParser();
+        Object obj;
+        try {
+            obj = parser.parse(reader);
+        } catch (IOException | ParseException e) {
+            out.println("Failed to load resource tools");
+            return tool;
+        }
+
+        JSONObject tools = (JSONObject) obj;
+        JSONArray string = (JSONArray) tools.get(number);
+
+        tool.add((String) string.get(0));
+        tool.add((String) string.get(0));
+
+        return tool;
+    }
 
 }

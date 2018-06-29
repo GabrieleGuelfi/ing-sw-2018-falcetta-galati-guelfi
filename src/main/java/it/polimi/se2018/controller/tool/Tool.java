@@ -1,11 +1,12 @@
 package it.polimi.se2018.controller.tool;
 
-import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.messageforcontroller.MessageToolResponse;
 import it.polimi.se2018.events.messageforview.MessageAskMove;
 import it.polimi.se2018.events.messageforview.MessageConfirmMove;
 import it.polimi.se2018.events.messageforview.MessageErrorMove;
 import it.polimi.se2018.model.*;
+import it.polimi.se2018.utils.HandleJSON;
+import it.polimi.se2018.utils.StringJSON;
 import it.polimi.se2018.view.VirtualView;
 
 import java.util.ArrayList;
@@ -18,11 +19,13 @@ public abstract class Tool {
 
     VirtualView virtualView;
     private String name;
+    private String description;
     boolean used;
     boolean isBeingUsed;
 
-    public Tool(String name) {
-        this.name = name;
+    public Tool(List<String> name) {
+        this.name = name.get(0);
+        this.description = name.get(1);
         this.used = false;
     }
 
@@ -36,18 +39,18 @@ public abstract class Tool {
 
         final List<Command> tools = new ArrayList<>();
 
-        tools.add(() -> new DieChanger("Grozing Pliers", false, true, false));
-        tools.add(() -> new DieChanger("Glazing Hammer", false, false, true));
-        tools.add(() -> new DieChanger("Grinding Stone", true, false, false));
-        tools.add(() -> new DieChanger("Flux Brush", false, false, false));
-        tools.add(() -> new DieMover("Eglomise Brush", 1, false, true, false ));
-        tools.add(() -> new DieMover("Copper Foil Burnisher", 1, true, false, false));
-        tools.add(() -> new DieMover("Lathekin", 2, true, true, false));
-        tools.add(() -> new DieMover("Tap Wheel", 2, true, true, true));
-        tools.add(() -> new DiePlacer("Running Pliers", false, false ));
-        tools.add(() -> new DiePlacer("Cork-backed Straightedge", true, false));
-        tools.add(() -> new DiePlacer("Flux Remover", false, true));
-        tools.add(() -> new DieSwapper("Lens Cutter"));
+        tools.add(() -> new DieChanger(HandleJSON.createTool("1"), false, true, false));
+        tools.add(() -> new DieChanger(HandleJSON.createTool("7"), false, false, true));
+        tools.add(() -> new DieChanger(HandleJSON.createTool("10"), true, false, false));
+        tools.add(() -> new DieChanger(HandleJSON.createTool("6"), false, false, false));
+        tools.add(() -> new DieMover(HandleJSON.createTool("2"), 1, false, true, false ));
+        tools.add(() -> new DieMover(HandleJSON.createTool("3"), 1, true, false, false));
+        tools.add(() -> new DieMover(HandleJSON.createTool("4"), 2, true, true, false));
+        tools.add(() -> new DieMover(HandleJSON.createTool("12"), 2, true, true, true));
+        tools.add(() -> new DiePlacer(HandleJSON.createTool("8"), false, false ));
+        tools.add(() -> new DiePlacer(HandleJSON.createTool("9"), true, false));
+        tools.add(() -> new DiePlacer(HandleJSON.createTool("11"), false, true));
+        tools.add(() -> new DieSwapper(HandleJSON.createTool("5")));
 
         TOOLS = Collections.unmodifiableList(tools);
     }
@@ -59,7 +62,7 @@ public abstract class Tool {
             return command.create();
         }
         catch (IndexOutOfBoundsException e) {
-            out.println("Tool not existing");
+            out.println(StringJSON.printStrings("errorTool","noTool"));
             return null;
         }
     }
@@ -67,7 +70,7 @@ public abstract class Tool {
 
     boolean canUseTool(Player player) {
         if((this.used && player.getFavorTokens()<2) || (player.getFavorTokens()<1)) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "Not enough favor tokens"));
+            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","favorTokens")));
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
             return false;
         }
@@ -100,6 +103,10 @@ public abstract class Tool {
         return name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public boolean isUsed() {
         return used;
     }
@@ -108,7 +115,7 @@ public abstract class Tool {
         return isBeingUsed;
     }
 
-    public abstract boolean use(MessageToolResponse message, Match match, Player player, Controller controller);
+    public abstract boolean use(MessageToolResponse message, Match match, Player player);
 
     public abstract void requestOrders(Player player, Match match);
 

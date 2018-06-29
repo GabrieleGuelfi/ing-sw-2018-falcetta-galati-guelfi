@@ -4,11 +4,12 @@ public class GameTimer extends Thread {
 
     private Controller controller;
     private int time;
-    private boolean loop = true;
+    private boolean loop;
 
     GameTimer(Controller controller, int time) {
         this.controller = controller;
         this.time = time;
+        this.loop = true;
     }
 
     @Override
