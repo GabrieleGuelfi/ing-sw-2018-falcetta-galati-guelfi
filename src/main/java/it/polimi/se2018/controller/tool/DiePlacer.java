@@ -40,6 +40,13 @@ public class DiePlacer extends Tool {
             match.getRound().getDraftPool().addDie(d);
             d.setRandomValue();
             d.setPlacing(true);
+            if(this.used) player.removeFavorTokens(2);
+            else {
+                this.used = true;
+                player.removeFavorTokens(1);
+            }
+            player.setUsedTool(true);
+            this.isBeingUsed = false;
             virtualView.send(new MessageForceMove(player.getNickname(), d, player.getWindowPattern(), true, player.isPlacedDie(), true));
         }
         else {

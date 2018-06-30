@@ -68,7 +68,8 @@
     "valueRestriction": "Violated Value Restriction!",
     "colourRestriction": "Violated Colour Restriction!",
     "diePlacing": "No die is placing, error with tool",
-    "boxFull": "This box is already full!"
+    "boxFull": "This box is already full!",
+    "errorTurn": "It's not your turn!"
   },
   "errorTool": {
     "plusOne": "Can't add 1 to a die with value 6",

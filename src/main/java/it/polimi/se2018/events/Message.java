@@ -10,6 +10,7 @@ public class Message implements Serializable{
 
     protected String nickname;
     protected boolean timeFinished;
+    protected boolean noTurn;
 
     public Message(String s){
         this.nickname = s;
@@ -33,6 +34,10 @@ public class Message implements Serializable{
 
     public boolean isTimeFinished() {
         return timeFinished;
+    }
+
+    public boolean isNoTurn() {
+        return noTurn;
     }
 
     public String getNickname(){

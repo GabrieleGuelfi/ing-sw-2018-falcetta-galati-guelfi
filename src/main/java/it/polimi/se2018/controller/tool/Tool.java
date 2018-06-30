@@ -87,6 +87,8 @@ public abstract class Tool {
 
         player.setUsedTool(true);
 
+        this.isBeingUsed = false;
+
         virtualView.send(new MessageConfirmMove(player.getNickname(), !player.isPlacedDie()));
 
     }

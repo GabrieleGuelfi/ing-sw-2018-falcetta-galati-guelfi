@@ -76,7 +76,6 @@ public class DieChanger extends Tool {
             }
             Die die = match.getRound().getDraftPool().getBag().get(message.getDiceFromDp());
             die.setRandomValue();
-            // Here we should force the user to set the value...
             boolean found = false;
             for (int i=0; i< WindowPattern.MAX_ROW && !found; i++) {
                 for (int j=0; j<WindowPattern.MAX_COL && !found; j++) {
@@ -94,6 +93,7 @@ public class DieChanger extends Tool {
                 }
 
                 player.setUsedTool(true);
+                this.isBeingUsed = false;
                 return false;
             }
             else {

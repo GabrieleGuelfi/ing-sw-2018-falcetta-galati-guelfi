@@ -16,20 +16,21 @@ import static java.lang.System.*;
 
 public final class HandleJSON {
 
-    private static List<Integer> rand = new ArrayList<>();
+    private static List<Integer> rand;
     private static Map<String, List<Integer>> windowPattern = new HashMap<>();
 
     private HandleJSON() {
         throw new IllegalStateException("utility class");
     }
 
-    public static WindowPattern createWindowPattern (String nickname, int firstIndex, int secondIndex) {
+    public static void newGame() {
+        rand = new ArrayList<>();
+    }
 
+    public static WindowPattern createWindowPattern (String nickname, int firstIndex, int secondIndex) {
         if (nickname!=null && !windowPattern.containsKey(nickname)) {
-            out.println(windowPattern);
             out.println("nickname non valido in json "+nickname);
             return null;
-
         }
         else if (nickname!=null && windowPattern.get(nickname).get(0)!=firstIndex && windowPattern.get(nickname).get(1)!=firstIndex) {
             out.println("windowPattern non valida");

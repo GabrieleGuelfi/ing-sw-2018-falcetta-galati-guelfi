@@ -13,6 +13,7 @@ public class MessageSetWP extends Message {
         super(nickname);
         this.firstIndex = firstIndex;
         this.secondIndex = secondIndex;
+        this.noTurn = true;
     }
 
     public int getFirstIndex() {

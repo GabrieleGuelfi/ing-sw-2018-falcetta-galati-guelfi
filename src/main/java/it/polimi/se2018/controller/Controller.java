@@ -89,7 +89,7 @@ public class Controller implements VisitorController, Observer {
         // Create the match...
         this.match = new Match(new Bag(), players, objectives, tools, virtualView);
 
-
+        HandleJSON.newGame();
         for(String player: nickname) {
             List<Integer> patterns = HandleJSON.chooseWP(player);
             virtualView.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
@@ -155,7 +155,7 @@ public class Controller implements VisitorController, Observer {
      */
     private void nextTurn() {
         try {
-            gameTimer.stopTimer();
+            if (gameTimer!=null) gameTimer.stopTimer();
             match.getRound().nextTurn(match.getPlayers());
             Player player = match.getRound().getPlayerTurn();
             match.notifyObservers(new MessageTurnChanged(player.getNickname()));
@@ -267,19 +267,29 @@ public class Controller implements VisitorController, Observer {
 
     @Override
     public void update(Message message) {
-        message.accept(this);
+        if (!message.getNickname().equals(match.getRound().getPlayerTurn().getNickname()) && !message.isNoTurn()) {
+            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings(ERROR_MOVE, "errorTurn")));
+        }
+        else {
+            message.accept(this);
+        }
     }
 
     @Override
     public void visit(MessageSetWP message) {
-
         Player player = null;
         for (Player p: match.getPlayers()) {
             if (p.getNickname().equals(message.getNickname()))
                 player = p;
         }
+
         if (player!=null) {
-            player.setWindowPattern(HandleJSON.createWindowPattern(player.getNickname(), message.getFirstIndex(), message.getSecondIndex()));
+            try {
+                player.setWindowPattern(HandleJSON.createWindowPattern(player.getNickname(), message.getFirstIndex(), message.getSecondIndex()));
+            }
+            catch (IllegalArgumentException e) {
+                virtualView.send(new MessageErrorMove(player.getNickname(), e.getMessage()));
+            }
             match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
             if (areWPset()) startGame();
         }
@@ -330,7 +340,6 @@ public class Controller implements VisitorController, Observer {
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
             return;
         }
-
 
         player.getWindowPattern().putDice(d, message.getRow(), message.getColumn());
         player.setPlacedDie(true);
@@ -474,7 +483,7 @@ public class Controller implements VisitorController, Observer {
                     virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern(), false, player.isPlacedDie(), true));
                     return;
                 } else {
-                    virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern(), false, player.isPlacedDie(), false));
+                    virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern(), false, true, false));
                     return;
                 }
             }
@@ -487,7 +496,6 @@ public class Controller implements VisitorController, Observer {
         }
         d.setPlacing(false);
         boolean isThereAnotherMove = true;
-        player.setUsedTool(true);
         if (player.isUsedTool() && player.isPlacedDie()) {
             player.setPlacedDie(false);
             player.setUsedTool(false);
