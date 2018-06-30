@@ -421,8 +421,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
                 this.textPrivateObjective.setFont(Font.font("Segoe UI Black", 12));
                 this.textPublicObjective.setFont(Font.font("Segoe UI Black", 12));
                 this.textTool.setFont(Font.font("Segoe UI Black", 12));
-                this.textChoosewindowpattern.setFont(Font.font("Segoe UI Black", 12));
-                this.errorText.setFont(Font.font("Segoe UI Black", 12));
+
 
                 this.text.setText("Waiting...");
                 this.errorText.setText(null);
@@ -600,8 +599,18 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
 
         if(!nickname.contains(message.getPlayer())) {
             this.nickname.add(message.getPlayer());
+            int index = nickname.indexOf(message.getPlayer());
             windowPattern.add(new ImageView[4][5]);
+            for(int x = 0; x < 4; x++) {
+                this.windowPattern.add(new ImageView[4][5]);
+                for (int l = 0; l < 4; l++) {
+                    for (int j = 0; j < 5; j++) {
+                        windowPattern.get(index)[l][j] = new ImageView();
+                    }
+                }
+            }
         }
+
         int i = this.nickname.indexOf(message.getPlayer());
         int size;
         if(i == 0){
@@ -622,6 +631,7 @@ public class ViewGui extends Observable implements VisitorView, Observer, ViewIn
                 else{
                     image = new Image("/images/"+die.getColour()+"/"+die.getValue()+".jpg");
                 }
+                out.println("i: " + i + "row: "+ row + "column: "+ column);
                 windowPattern.get(i)[row][column].setImage(image);
                 windowPattern.get(i)[row][column].setFitHeight(size);
                 windowPattern.get(i)[row][column].setFitWidth(size);
