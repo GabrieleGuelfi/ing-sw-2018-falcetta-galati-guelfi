@@ -1,22 +1,24 @@
 package it.polimi.se2018.controller.tool;
 
-import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.messageforcontroller.MessageToolResponse;
 import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
+import it.polimi.se2018.utils.StringJSON;
+
+import java.util.List;
 
 public class DieSwapper extends Tool {
 
-    DieSwapper(String name) {
+    DieSwapper(List<String> name) {
         super(name);
     }
 
     @Override
-    public boolean use(MessageToolResponse message, Match match, Player player, Controller controller) {
+    public boolean use(MessageToolResponse message, Match match, Player player) {
         if (!match.getRoundTrack().containsKey(message.getDiceFromRoundtrack().get(0))) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "No roundTrack for this turn"));
+            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","noRoundTrack")));
             return true;
         }
         try {
@@ -30,7 +32,7 @@ public class DieSwapper extends Tool {
             match.getRound().getDraftPool().addDie(dieTrack);
         }
         catch (NullPointerException | IndexOutOfBoundsException e) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), "No dice in this position"));
+            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","noDiePosition")));
             return true;
         }
         finishToolMove(player);
@@ -43,7 +45,7 @@ public class DieSwapper extends Tool {
 
         if (canUseTool(player) ) {
             if (match.getRoundTrack().isEmpty()) {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "First Turn! Empty RoundTrack"));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","firstRound")));
                 virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
             }
             else {

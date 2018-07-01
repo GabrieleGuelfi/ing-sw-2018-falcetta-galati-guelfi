@@ -16,20 +16,21 @@ import static java.lang.System.*;
 
 public final class HandleJSON {
 
-    private static List<Integer> rand = new ArrayList<>();
+    private static List<Integer> rand;
     private static Map<String, List<Integer>> windowPattern = new HashMap<>();
 
     private HandleJSON() {
         throw new IllegalStateException("utility class");
     }
 
-    public static WindowPattern createWindowPattern (String nickname, int firstIndex, int secondIndex) {
+    public static void newGame() {
+        rand = new ArrayList<>();
+    }
 
+    public static WindowPattern createWindowPattern (String nickname, int firstIndex, int secondIndex) {
         if (nickname!=null && !windowPattern.containsKey(nickname)) {
-            out.println(windowPattern);
             out.println("nickname non valido in json "+nickname);
             return null;
-
         }
         else if (nickname!=null && windowPattern.get(nickname).get(0)!=firstIndex && windowPattern.get(nickname).get(1)!=firstIndex) {
             out.println("windowPattern non valida");
@@ -116,5 +117,26 @@ public final class HandleJSON {
 
     }
 
+    public static List<String> createTool(String number) {
+        List<String> tool = new ArrayList<>();
+        InputStream in = HandleJSON.class.getResourceAsStream("/fileutils/tools");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        JSONParser parser = new JSONParser();
+        Object obj;
+        try {
+            obj = parser.parse(reader);
+        } catch (IOException | ParseException e) {
+            out.println("Failed to load resource tools");
+            return tool;
+        }
+
+        JSONObject tools = (JSONObject) obj;
+        JSONArray string = (JSONArray) tools.get(number);
+
+        tool.add((String) string.get(0));
+        tool.add((String) string.get(0));
+
+        return tool;
+    }
 
 }

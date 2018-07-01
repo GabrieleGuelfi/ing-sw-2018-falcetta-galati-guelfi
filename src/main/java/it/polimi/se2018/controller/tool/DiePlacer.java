@@ -1,6 +1,5 @@
 package it.polimi.se2018.controller.tool;
 
-import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.messageforcontroller.MessageToolResponse;
 import it.polimi.se2018.events.messageforview.MessageAskMove;
 import it.polimi.se2018.events.messageforview.MessageErrorMove;
@@ -9,22 +8,26 @@ import it.polimi.se2018.events.messageforview.MessageToolOrder;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
+import it.polimi.se2018.utils.StringJSON;
 
+import java.util.List;
 import java.util.Random;
+
+import static it.polimi.se2018.controller.VerifyRules.*;
 
 public class DiePlacer extends Tool {
 
     private boolean respectDistance;
     private boolean takeFromBag;
 
-    DiePlacer(String name, boolean respectDistance, boolean takeFromBag) {
+    DiePlacer(List<String> name, boolean respectDistance, boolean takeFromBag) {
         super(name);
-        this.respectDistance = respectDistance; //true
-        this.takeFromBag = takeFromBag; //false
+        this.respectDistance = respectDistance;
+        this.takeFromBag = takeFromBag;
     }
 
     @Override
-    public boolean use(MessageToolResponse message, Match match, Player player, Controller controller) {
+    public boolean use(MessageToolResponse message, Match match, Player player) {
 
         Die die = match.getRound().getDraftPool().getBag().get(message.getDiceFromDp());
 
@@ -37,6 +40,13 @@ public class DiePlacer extends Tool {
             match.getRound().getDraftPool().addDie(d);
             d.setRandomValue();
             d.setPlacing(true);
+            if(this.used) player.removeFavorTokens(2);
+            else {
+                this.used = true;
+                player.removeFavorTokens(1);
+            }
+            player.setUsedTool(true);
+            this.isBeingUsed = false;
             virtualView.send(new MessageForceMove(player.getNickname(), d, player.getWindowPattern(), true, player.isPlacedDie(), true));
         }
         else {
@@ -44,18 +54,18 @@ public class DiePlacer extends Tool {
             int column = message.getPositionsInWp().get(0)[1];
 
             if (respectDistance && !takeFromBag) {
-                if (controller.isNearDie(player.getWindowPattern(), row, column)) {
-                    virtualView.send(new MessageErrorMove(player.getNickname(), "There is a die near the position"));
+                if (isNearDie(player.getWindowPattern(), row, column)) {
+                    virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","isNearDie")));
                     return true;
                 }
 
-                if (!controller.verifyColor(player.getWindowPattern(), row, column, die)) {
-                    virtualView.send(new MessageErrorMove(player.getNickname(), "Violated colour restriction"));
+                if (!verifyColor(player.getWindowPattern(), row, column, die)) {
+                    virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorMove","colourRestriction")));
                     return true;
                 }
 
-                if (!controller.verifyNumber(player.getWindowPattern(), row, column, die)) {
-                    virtualView.send(new MessageErrorMove(player.getNickname(), "Violated value restriction"));
+                if (!verifyNumber(player.getWindowPattern(), row, column, die)) {
+                    virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorMove","valueRestriction")));
                     return true;
                 }
 
@@ -68,18 +78,18 @@ public class DiePlacer extends Tool {
             }
             if (!takeFromBag) {
 
-                if (!controller.isNearDie(player.getWindowPattern(), row, column)) {
-                    virtualView.send(new MessageErrorMove(player.getNickname(), "Violated near dice restriction"));
+                if (!isNearDie(player.getWindowPattern(), row, column)) {
+                    virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorMove","nearDie")));
                     return true;
                 }
 
-                if (!controller.verifyColor(player.getWindowPattern(), row, column, die)) {
-                    virtualView.send(new MessageErrorMove(player.getNickname(), "Violated colour restriction"));
+                if (!verifyColor(player.getWindowPattern(), row, column, die)) {
+                    virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorMove","colourRestriction")));
                     return true;
                 }
 
-                if (!controller.verifyNumber(player.getWindowPattern(), row, column, die)) {
-                    virtualView.send(new MessageErrorMove(player.getNickname(), "Violated value restriction"));
+                if (!verifyNumber(player.getWindowPattern(), row, column, die)) {
+                    virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorMove","valueRestriction")));
                     return true;
                 }
 
@@ -100,7 +110,7 @@ public class DiePlacer extends Tool {
         if(!canUseTool(player)) return;
         if(!respectDistance && !takeFromBag) {
             if(match.getRound().getNumTurn() > match.getPlayers().size()) {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "You can't use this tool in your second turn!"));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","secondTurn")));
                 virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
                 return;
             }
@@ -108,7 +118,7 @@ public class DiePlacer extends Tool {
         }
         if(respectDistance && !takeFromBag) {
             if(player.isPlacedDie())  {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "You have already placed a die in this turn!"));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","alreadyPlaced")));
                 virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
                 return;
             }

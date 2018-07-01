@@ -1,6 +1,5 @@
 package it.polimi.se2018.controller.tool;
 
-import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.messageforcontroller.MessageToolResponse;
 import it.polimi.se2018.events.messageforview.MessageErrorMove;
 import it.polimi.se2018.events.messageforview.MessageToolOrder;
@@ -9,10 +8,13 @@ import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
 import it.polimi.se2018.model.WindowPattern;
+import it.polimi.se2018.utils.StringJSON;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static it.polimi.se2018.controller.VerifyRules.*;
 
 public class DieMover extends Tool {
 
@@ -21,7 +23,7 @@ public class DieMover extends Tool {
     private boolean respectValue;
     private boolean respectRoundtrack;
 
-    DieMover(String name, int numberOfDice, boolean respectColour, boolean respectValue, boolean respectRoundtrack) {
+    DieMover(List<String> name, int numberOfDice, boolean respectColour, boolean respectValue, boolean respectRoundtrack) {
         super(name);
         this.numberOfDice = numberOfDice;
         this.respectColour = respectColour;
@@ -30,26 +32,19 @@ public class DieMover extends Tool {
     }
 
     @Override
-    public boolean use(MessageToolResponse message, Match match, Player player, Controller controller) {
+    public boolean use(MessageToolResponse message, Match match, Player player) {
 
         List<Integer> originalRows = new ArrayList<>();
         List<Integer> originalColumns = new ArrayList<>();
         List<Die> localDice = new ArrayList<>();
         int row;
         int column;
-        int localNumberOfDice = this.numberOfDice;
 
         if(respectRoundtrack) {
-            try{
-                int x = message.getDiceFromWp().get(1)[0];
-            }
-            catch (IndexOutOfBoundsException e){
-                localNumberOfDice = 1;
-            }
 
             Die firstDie = player.getWindowPattern().getBox(message.getDiceFromWp().get(0)[0], message.getDiceFromWp().get(0)[1]).getDie();
             if(firstDie==null) {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "No die in this position!"));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","noDiePosition")));
                 return true;
             }
             boolean foundInRT = false;
@@ -60,13 +55,13 @@ public class DieMover extends Tool {
             }
 
             if(!foundInRT) {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "No die of this colour in roundtrack!"));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","noDieRoundtrack")));
                 return true;
             }
-            if(localNumberOfDice>1) {
+            if(message.getDiceFromWp().size()>1) {
                 Die secondDie = player.getWindowPattern().getBox(message.getDiceFromWp().get(1)[0], message.getDiceFromWp().get(1)[1]).getDie();
                 if(!secondDie.getColour().equals(firstDie.getColour())) {
-                    virtualView.send(new MessageErrorMove(player.getNickname(), "Dice have different colours!"));
+                    virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","differentColours")));
                     return true;
                 }
             }
@@ -75,7 +70,7 @@ public class DieMover extends Tool {
 
         WindowPattern localWindowPattern = player.getWindowPattern().copy();
 
-        for(int i=0; i<localNumberOfDice; i++) {
+        for(int i=0; i<this.numberOfDice; i++) {
             originalRows.add(message.getDiceFromWp().get(i)[0]);
             originalColumns.add(message.getDiceFromWp().get(i)[1]);
             localDice.add(localWindowPattern.getBox(originalRows.get(i), originalColumns.get(i)).getDie());
@@ -83,28 +78,28 @@ public class DieMover extends Tool {
             localWindowPattern.addEmptyBox();
         }
 
-        for(int i=0; i<localNumberOfDice; i++){
+        for(int i=0; i<message.getDiceFromWp().size(); i++){
 
             if (localDice.get(i)==null) {
-                virtualView.send(new MessageErrorMove( player.getNickname(), "No die in this position!"));
+                virtualView.send(new MessageErrorMove( player.getNickname(), StringJSON.printStrings("errorTool","noDiePosition")));
                 return true;
             }
 
             row = message.getPositionsInWp().get(i)[0];
             column = message.getPositionsInWp().get(i)[1];
 
-            if(!controller.isNearDie(localWindowPattern, row, column)) {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "Violated near dice restriction"));
+            if(!isNearDie(localWindowPattern, row, column)) {
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorMove","nearDie")));
                 return true;
             }
 
-            if(respectColour && !controller.verifyColor(localWindowPattern, row, column, localDice.get(i))) {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "Violated colour restriction"));
+            if(respectColour && !verifyColor(localWindowPattern, row, column, localDice.get(i))) {
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorMove","colourRestriction")));
                 return true;
             }
 
-            if(respectValue && !controller.verifyNumber(localWindowPattern, row, column, localDice.get(i))) {
-                virtualView.send(new MessageErrorMove(player.getNickname(), "Violated value restriction"));
+            if(respectValue && !verifyNumber(localWindowPattern, row, column, localDice.get(i))) {
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorMove","valueRestriction")));
                 return true;
             }
 
@@ -112,11 +107,11 @@ public class DieMover extends Tool {
 
         }
 
-        for(int i=0; i<localNumberOfDice; i++) {
+        for(int i=0; i<message.getDiceFromWp().size(); i++) {
             player.getWindowPattern().getBox(originalRows.get(i), originalColumns.get(i)).setDie(null);
         }
 
-        for(int i=0; i<localNumberOfDice; i++) {
+        for(int i=0; i<message.getDiceFromWp().size(); i++) {
             row = message.getPositionsInWp().get(i)[0];
             column = message.getPositionsInWp().get(i)[1];
             player.getWindowPattern().getBox(row, column).setDie(localDice.get(i));

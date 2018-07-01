@@ -25,19 +25,22 @@ import static java.lang.System.*;
 import static org.fusesource.jansi.Ansi.*;
 import static org.fusesource.jansi.Ansi.Color.*;
 
-public class View extends Observable implements Observer, VisitorView, ViewInterface {
+public class View extends Observable implements VisitorView, ViewInterface {
 
-    private static final int MAX_ROW = 4; //already in WindowPattern, can we use it?
-    private static final int MAX_COL = 5;
+    private static final int MAX_ROW = WindowPattern.MAX_ROW;
+    private static final int MAX_COL = WindowPattern.MAX_COL;
     private static final int MAX_DP = 9;
     private static final String ROW = "row";
     private static final String COLUMN = "column";
 
-    private static View view;
     private Scanner scanner;
     private String nickname;
 
-    public View() {
+    private static InputThread inputThread;
+
+    public View(String nickname) {
+
+        this.nickname = nickname;
         scanner = new Scanner(System.in);
         System.setProperty("jansi.passthrough", "true");
         AnsiConsole.systemInstall();
@@ -181,7 +184,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         int i = 1;
 
         for (String playerNickname: results.keySet()) {
-            out.println( i +") " + playerNickname + StringJSON.printStrings("handleStrings","with") + results.get(playerNickname) + StringJSON.printStrings("handleStrings","points"));
+            out.println( i +") " + playerNickname + " " + StringJSON.printStrings("handleStrings","with") + results.get(playerNickname) + StringJSON.printStrings("handleStrings","points"));
             i++;
         }
 
@@ -191,6 +194,15 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         if(choice==1) SagradaClient.newConnection(this.nickname);
         else SagradaClient.closeClient();
 
+    }
+
+    private boolean isTimeFinished(int choice) {
+
+        if(choice==-1) {
+            out.println( ansi().fg(RED).a("TIME IS UP!").reset());
+            return true;
+        }
+        return false;
     }
 
     private void askMove(boolean hasMovedDie, boolean hasUsedTool, WindowPattern windowPattern, DraftPool draftPool) {
@@ -207,7 +219,6 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
             printDraftPool(draftPool);
         }
 
-        //out.println( ansi().eraseScreen() );
         out.println(StringJSON.printStrings("askStrings","selectMove"));
         int i=1;
         out.println(i + StringJSON.printStrings("askStrings","requestInformation"));
@@ -236,6 +247,8 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
             askMove(hasMovedDie, hasUsedTool, windowPattern, draftPool);
         }
 
+        isTimeFinished(choice);
+
     }
 
     private void requestInformation() {
@@ -244,6 +257,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
             out.println((t.ordinal()+1)+") "+t.toString());
         }
         int choice = chooseBetween(1, 6);
+        if(isTimeFinished(choice)) return;
         for (RequestType t: RequestType.values())
             if (t.ordinal()+1==choice)
                 notifyObservers(new MessageRequest(this.nickname, t));
@@ -255,16 +269,19 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         out.println(StringJSON.printStrings("askStrings","askDieFromDp"));
         int dieToMove = chooseBetween(0, MAX_DP);
         if(dieToMove==0) return false;
+        if(isTimeFinished(dieToMove)) return true;
 
         out.println(StringJSON.printStrings("askStrings","askPositionInWp"));
 
         out.print(StringJSON.printStrings("askStrings", ROW));
         int row = chooseBetween(0, MAX_ROW);
         if (row==0) return false;
+        if(isTimeFinished(row)) return true;
 
         out.print(StringJSON.printStrings("askStrings", COLUMN));
         int column = chooseBetween(0, MAX_COL);
         if (column==0) return false;
+        if(isTimeFinished(column)) return true;
 
         notifyObservers(new MessageMoveDie(this.nickname, dieToMove-1, row-1, column-1));
         return true;
@@ -274,6 +291,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     private boolean useTool() {
         out.println(StringJSON.printStrings("askStrings","askTool"));
         int choice = chooseBetween(1, 3);
+        if(isTimeFinished(choice)) return true;
         notifyObservers(new MessageRequestUseOfTool(nickname, choice-1));
         return true;
     }
@@ -292,6 +310,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         for(i=0; i<message.getDiceFromDp(); i++) {
             out.println(StringJSON.printStrings("askStrings","askDieFromDp"));
             int n = chooseBetween(0, 9);
+            if(isTimeFinished(n)) return;
             if (n==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
@@ -309,6 +328,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         if(message.isCanReduceDiceFromWP()) {
             out.println("How many dice do you want to move? (0 to escape)");
             int choice = chooseBetween(0, 2);
+            if(isTimeFinished(choice)) return;
             if(choice==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
@@ -321,12 +341,14 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
             out.println(StringJSON.printStrings("askStrings","diceFromWp"));
             out.print(StringJSON.printStrings("askStrings", ROW));
             int x = chooseBetween(0, MAX_ROW);
+            if(isTimeFinished(x)) return;
             if (x==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
             }
             out.print(StringJSON.printStrings("askStrings", COLUMN));
             int y = chooseBetween(0, MAX_COL);
+            if(isTimeFinished(y)) return;
             if (y==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
@@ -339,12 +361,14 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
             out.println(StringJSON.printStrings("askStrings","askPositionInWp"));
             out.print(StringJSON.printStrings("askStrings", ROW));
             int x = chooseBetween(0, MAX_ROW);
+            if(isTimeFinished(x)) return;
             if (x==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
             }
             out.print(StringJSON.printStrings("askStrings", COLUMN));
             int y = chooseBetween(0, MAX_COL);
+            if(isTimeFinished(y)) return;
             if (y==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
@@ -357,6 +381,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
             out.println("\nChoose die from Roundtrack (0 to abort)");
             out.print("Turn: ");
             int x = chooseBetween(0, 9);
+            if(isTimeFinished(x)) return;
             if (x==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
@@ -364,6 +389,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
             diceFromRoundtrack.add(x);
             out.print("Die: ");
             int y = chooseBetween(0, 9);
+            if(isTimeFinished(y)) return;
             if (y==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
@@ -374,6 +400,7 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         if(message.isAskPlusOrMinusOne()) {
             out.println(StringJSON.printStrings("askStrings","addOrRemove"));
             int choice = chooseBetween(0,2);
+            if(isTimeFinished(choice)) return;
             if (choice==0) {
                 notifyObservers(new MessageToolResponse(nickname));
                 return;
@@ -402,11 +429,13 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         if (chooseNewValue) {
             out.println("Choose the new value: ");
             newValue = chooseBetween(1, 6);
+            if(isTimeFinished(newValue)) return;
         }
 
         if (!placedDie && canChoose) {
             out.println("Do you want to place this die?\n1) Yes\n2) No ");
             int choice = chooseBetween(1, 2);
+            if(isTimeFinished(choice)) return;
             if (choice == 1)
                 out.println("Choose position: ");
             else {
@@ -424,9 +453,11 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
         while(column == 0) {
             out.print(StringJSON.printStrings("askStrings", ROW));
             row = chooseBetween(1, MAX_ROW);
+            if(isTimeFinished(row)) return;
 
             out.print(StringJSON.printStrings("askStrings", COLUMN));
             column = chooseBetween(0, MAX_COL);
+            if(isTimeFinished(column)) return;
         }
 
         notifyObservers(new MessageForcedMove(this.nickname, row-1, column-1, newValue, canChoose));
@@ -498,16 +529,21 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     private int chooseBetween(int min, int max) {
 
         int choice;
-        choice = scanner.nextInt();
+        inputThread = new InputThread();
+        inputThread.start();
+        choice = inputThread.getChoice();
+        if(choice==-1) return choice;
         while(choice<min || choice>max) {
             out.println(StringJSON.printStrings("askStrings","invalidChoice"));
-            choice = scanner.nextInt();
+            choice = inputThread.getChoice();
         }
-        scanner.nextLine(); // To fix java bug
         return choice;
 
     }
 
+    public static InputThread getInputThread() {
+        return inputThread;
+    }
 
     @Override
     public void update(Message m)
@@ -613,7 +649,9 @@ public class View extends Observable implements Observer, VisitorView, ViewInter
     public void addObserver(Observer observer){
         this.register(observer);
     }
-    public void notifyObserver(Message message){}
+    public void notifyObserver(Message message){
+        notifyObservers(message);
+    }
 }
 
 

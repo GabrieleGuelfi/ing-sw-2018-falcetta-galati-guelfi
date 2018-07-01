@@ -16,12 +16,17 @@ import it.polimi.se2018.view.VirtualView;
 
 import java.util.*;
 
-import static java.lang.System.*;
+import static it.polimi.se2018.controller.VerifyRules.*;
 
 public class Controller implements VisitorController, Observer {
 
     private Match match;
     private VirtualView virtualView;
+
+    private GameTimer gameTimer;
+    private int timeForRound;
+
+    private static final String ERROR_MOVE = "errorMove";
 
     /**
      * Constructor of the class
@@ -31,6 +36,8 @@ public class Controller implements VisitorController, Observer {
     public Controller(List<String> nickname, VirtualView view) {
         this.virtualView = view;
         view.register(this);
+
+        timeForRound = 60; // HARDCODED
 
         prepareGame(nickname);
     }
@@ -82,6 +89,7 @@ public class Controller implements VisitorController, Observer {
         // Create the match...
         this.match = new Match(new Bag(), players, objectives, tools, virtualView);
 
+        HandleJSON.newGame();
         for(String player: nickname) {
             List<Integer> patterns = HandleJSON.chooseWP(player);
             virtualView.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
@@ -103,10 +111,12 @@ public class Controller implements VisitorController, Observer {
      * start a game with first round
      */
     private void startGame() {
+        if(gameTimer!=null) gameTimer.stopTimer();
         this.match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool().copy()));
         this.match.notifyObservers(new MessageRoundChanged(match.getRound().getPlayerTurn().getNickname(), match.getNumRound(), match.getRound().getDraftPool()));
         Player player = match.getRound().getPlayerTurn();
         virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), null));
+        startTimer();
     }
 
     /**
@@ -129,98 +139,6 @@ public class Controller implements VisitorController, Observer {
     }
 
     /**
-     * Verify if there is another Die near the position chosen by user
-     * @param w window pattern of the user
-     * @param row chosen by user
-     * @param column chosen by user
-     * @return true if there is another die near
-     */
-    public boolean isNearDie(WindowPattern w, int row, int column) {
-        if (w.getEmptyBox() == 20) {
-            return (row == 0 || row == WindowPattern.MAX_ROW-1 || column == 0 || column == WindowPattern.MAX_COL-1);
-        }
-        for(int i=row-1; i<row+2; i++ ) {
-            for(int j=column-1; j<column+2; j++) {
-                if (i!=row || j!=column) {
-                    try {
-                        if (w.getBox(i, j).getDie() != null)
-                            return true;
-                    } catch (IllegalArgumentException e) {
-                    }
-                }
-            }
-        }
-        return false;
-
-    }
-
-    /**
-     * verify if there is another Die with the same colour near, or if there is colourRestriction in the Box
-     * @param w window pattern of the user
-     * @param row chosen by user
-     * @param column chosen by user
-     * @param die which the player want to place
-     * @return false if Die break colour restriction
-     */
-    public boolean verifyColor(WindowPattern w, int row, int column, Die die) {
-
-        try {
-            if (w.getBox(row, column).getColourRestriction() != die.getColour() && w.getBox(row, column).getColourRestriction() != Colour.WHITE)
-                return false;
-        } catch (IllegalArgumentException | NullPointerException e){}
-        try {
-            if (w.getBox(row - 1, column).getDie().getColour() == die.getColour())
-                return false;
-        } catch (IllegalArgumentException | NullPointerException e) {}
-        try {
-            if (w.getBox(row, column - 1).getDie().getColour() == die.getColour())
-                return false;
-        } catch (IllegalArgumentException | NullPointerException e) {}
-        try {
-            if (w.getBox(row, column + 1).getDie().getColour() == die.getColour())
-                return false;
-        } catch (IllegalArgumentException | NullPointerException e) {}
-        try {
-            if (w.getBox(row + 1, column).getDie().getColour() == die.getColour())
-                return false;
-        } catch (IllegalArgumentException | NullPointerException e) {}
-        return true;
-    }
-
-    /**
-     * verify if there is another Die with the same number near, or if there is numberRestriction in the Box
-     * @param w window pattern of the user
-     * @param row chosen by user
-     * @param column chosen by user
-     * @param die which the player want to place
-     * @return false if Die break number restriction
-     */
-    public boolean verifyNumber(WindowPattern w, int row, int column, Die die) {
-
-        try {
-            if (w.getBox(row, column).getValueRestriction() != die.getValue() && w.getBox(row, column).getValueRestriction() != 0) //0 equals to no restriction
-                return false;
-        } catch (IllegalArgumentException | NullPointerException e) {}
-        try {
-            if (w.getBox(row - 1, column).getDie().getValue() == die.getValue())
-                return false;
-        } catch (IllegalArgumentException | NullPointerException e) {}
-        try {
-            if (w.getBox(row, column - 1).getDie().getValue() == die.getValue())
-                return false;
-        } catch (IllegalArgumentException | NullPointerException e) {}
-        try {
-            if (w.getBox(row, column + 1).getDie().getValue() == die.getValue())
-                return false;
-        } catch (IllegalArgumentException | NullPointerException e) {}
-        try {
-            if (w.getBox(row + 1, column).getDie().getValue() == die.getValue())
-                return false;
-        } catch (IllegalArgumentException | NullPointerException e) {}
-        return true;
-    }
-
-    /**
      * @param nickname of a player that controller search
      * @return Player with the nickname
      */
@@ -237,10 +155,12 @@ public class Controller implements VisitorController, Observer {
      */
     private void nextTurn() {
         try {
+            if (gameTimer!=null) gameTimer.stopTimer();
             match.getRound().nextTurn(match.getPlayers());
             Player player = match.getRound().getPlayerTurn();
             match.notifyObservers(new MessageTurnChanged(player.getNickname()));
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
+            startTimer();
         }
         catch (IllegalStateException e) {
             try {
@@ -249,6 +169,7 @@ public class Controller implements VisitorController, Observer {
                 match.notifyObservers(new MessageRoundChanged(match.getFirstPlayerRound().getNickname(), match.getNumRound(), match.getRound().getDraftPool()));
                 Player player = match.getRound().getPlayerTurn();
                 virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), null));
+                startTimer();
 
             }
             catch (IllegalStateException e1) {
@@ -346,24 +267,34 @@ public class Controller implements VisitorController, Observer {
 
     @Override
     public void update(Message message) {
-        message.accept(this);
+        if (!message.getNickname().equals(match.getRound().getPlayerTurn().getNickname()) && !message.isNoTurn()) {
+            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings(ERROR_MOVE, "errorTurn")));
+        }
+        else {
+            message.accept(this);
+        }
     }
 
     @Override
     public void visit(MessageSetWP message) {
-
         Player player = null;
         for (Player p: match.getPlayers()) {
             if (p.getNickname().equals(message.getNickname()))
                 player = p;
         }
+
         if (player!=null) {
-            player.setWindowPattern(HandleJSON.createWindowPattern(player.getNickname(), message.getFirstIndex(), message.getSecondIndex()));
+            try {
+                player.setWindowPattern(HandleJSON.createWindowPattern(player.getNickname(), message.getFirstIndex(), message.getSecondIndex()));
+            }
+            catch (IllegalArgumentException e) {
+                virtualView.send(new MessageErrorMove(player.getNickname(), e.getMessage()));
+            }
             match.notifyObservers(new MessageWPChanged(player.getNickname(), player.getWindowPattern()));
             if (areWPset()) startGame();
         }
         else {
-            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings("controller","playerNotFound")));
+            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings(ERROR_MOVE,"playerNotFound")));
         }
     }
 
@@ -373,7 +304,7 @@ public class Controller implements VisitorController, Observer {
         Player player = searchNick(message.getNickname());
 
         if (player == null) {
-            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings("controller","playerNotFound")));
+            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings(ERROR_MOVE,"playerNotFound")));
             return;
         }
         Die d;
@@ -381,29 +312,35 @@ public class Controller implements VisitorController, Observer {
              d = match.getRound().getDraftPool().getBag().get(message.getDieFromDraftPool());
         }
         catch (IndexOutOfBoundsException e) {
-            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings("controller","noDieDraftpool")));
+            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings(ERROR_MOVE,"noDieDraftpool")));
             return;
         }
         if (player.isPlacedDie()) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("controller","DiePlced")));
+            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings(ERROR_MOVE,"DiePlaced")));
+            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
+            return;
+        }
+        if (player.getWindowPattern().getBox(message.getRow(), message.getColumn()).getDie()!=null) {
+            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings(ERROR_MOVE,"boxFull")));
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
             return;
         }
         if (!isNearDie(player.getWindowPattern(), message.getRow(), message.getColumn())) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("controller","nearDie")));
+            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings(ERROR_MOVE,"nearDie")));
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
             return;
         }
         if (!verifyNumber(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("controller","valueRestriction")));
+            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings(ERROR_MOVE,"valueRestriction")));
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
             return;
         }
         if (!verifyColor(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("controller","colourRestriction!")));
+            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings(ERROR_MOVE,"colourRestriction!")));
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
             return;
         }
+
         player.getWindowPattern().putDice(d, message.getRow(), message.getColumn());
         player.setPlacedDie(true);
         boolean isThereAnotherMove = true;
@@ -418,7 +355,10 @@ public class Controller implements VisitorController, Observer {
         match.notifyObservers(new MessageDPChanged(match.getRound().getDraftPool()));
 
         if(!isThereAnotherMove) nextTurn();
-        else virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+        else {
+            startTimer();
+            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+        }
 
     }
 
@@ -428,7 +368,7 @@ public class Controller implements VisitorController, Observer {
         Player player = searchNick(message.getNickname());
 
         if (player == null) {
-            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings("controller","playerNotFound")));
+            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings(ERROR_MOVE,"playerNotFound")));
             return;
         }
         player.setPlacedDie(false);
@@ -441,7 +381,7 @@ public class Controller implements VisitorController, Observer {
         Player player = searchNick(message.getNickname());
 
         if (player == null) {
-            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings("controller","playerNotFound")));
+            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings(ERROR_MOVE,"playerNotFound")));
             return;
         }
         message.getType().performRequest(player, virtualView, match);
@@ -460,7 +400,7 @@ public class Controller implements VisitorController, Observer {
 
         Player player = searchNick(message.getNickname());
         if (player == null) {
-            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings("controller","playerNotFound")));
+            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings(ERROR_MOVE,"playerNotFound")));
             return;
         }
         Tool toolInUse = null;
@@ -476,7 +416,7 @@ public class Controller implements VisitorController, Observer {
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
         } else {
 
-            canProceed = toolInUse.use(message, match, player, this);
+            canProceed = toolInUse.use(message, match, player);
 
             if(canProceed) {
                 toolInUse.setBeingUsed(false);
@@ -508,7 +448,7 @@ public class Controller implements VisitorController, Observer {
     public void visit(MessageForcedMove message) {
         Player player = searchNick(message.getNickname());
         if (player == null) {
-            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings("controller","playerNotFound")));
+            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings(ERROR_MOVE,"playerNotFound")));
             return;
         }
 
@@ -517,7 +457,7 @@ public class Controller implements VisitorController, Observer {
             if (die.isPlacing())
                 d = die;
         if (d == null) {
-            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings("controller","diePlacing")));
+            virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings(ERROR_MOVE,"diePlacing")));
             return;
         }
 
@@ -528,22 +468,22 @@ public class Controller implements VisitorController, Observer {
             boolean error = false;
             if (!isNearDie(player.getWindowPattern(), message.getRow(), message.getColumn())) {
                 error=true;
-                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("controller","nearDie")));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings(ERROR_MOVE,"nearDie")));
             }
             if (!verifyNumber(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
                 error=true;
-                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("controller","valueRestriction")));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings(ERROR_MOVE,"valueRestriction")));
             }
             if (!verifyColor(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
                 error=true;
-                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("controller","colourRestriction")));
+                virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings(ERROR_MOVE,"colourRestriction")));
             }
             if (error) {
                 if (message.isChosen()) {
                     virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern(), false, player.isPlacedDie(), true));
                     return;
                 } else {
-                    virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern(), false, player.isPlacedDie(), false));
+                    virtualView.send(new MessageForceMove(message.getNickname(), d, player.getWindowPattern(), false, true, false));
                     return;
                 }
             }
@@ -556,7 +496,6 @@ public class Controller implements VisitorController, Observer {
         }
         d.setPlacing(false);
         boolean isThereAnotherMove = true;
-        player.setUsedTool(true);
         if (player.isUsedTool() && player.isPlacedDie()) {
             player.setPlacedDie(false);
             player.setUsedTool(false);
@@ -569,6 +508,31 @@ public class Controller implements VisitorController, Observer {
         }
         player.setPlacedDie(false);
         player.setUsedTool(false);
+        nextTurn();
+
+    }
+
+    private void startTimer() {
+
+        this.gameTimer = new GameTimer(this, timeForRound);
+        this.gameTimer.start();
+
+    }
+
+    void handleEndTime() {
+        for(Die d : match.getRound().getDraftPool().getBag())
+            if (d.isPlacing())
+                d.setPlacing(false);
+
+        for(Tool t : match.getTools())
+            if(t.isBeingUsed())
+                t.setBeingUsed(false);
+
+        match.getRound().getPlayerTurn().setPlacedDie(false);
+        match.getRound().getPlayerTurn().setUsedTool(false);
+
+        Player currentPlayer = match.getRound().getPlayerTurn();
+        virtualView.send(new MessageTimeFinished(currentPlayer.getNickname()));
         nextTurn();
 
     }

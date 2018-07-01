@@ -26,5 +26,4 @@ public interface VisitorView {
     void visit(MessageToolOrder message);
     void visit(MessageAskMove message);
     void visit(MessageForceMove message);
-
 }
