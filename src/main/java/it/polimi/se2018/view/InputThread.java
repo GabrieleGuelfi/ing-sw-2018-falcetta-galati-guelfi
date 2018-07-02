@@ -1,5 +1,7 @@
 package it.polimi.se2018.view;
 
+import it.polimi.se2018.utils.StringJSON;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -47,8 +49,13 @@ public class InputThread extends Thread {
 
             try {
                 if(br.ready()) {
-                    choice=Integer.parseInt(br.readLine());
-                    isChosing = false;
+                    try {
+                        choice = Integer.parseInt(br.readLine());
+                        isChosing = false;
+                    }
+                    catch (NumberFormatException e) {
+                        System.out.println(StringJSON.printStrings("askStrings", "invalidChoice"));
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();

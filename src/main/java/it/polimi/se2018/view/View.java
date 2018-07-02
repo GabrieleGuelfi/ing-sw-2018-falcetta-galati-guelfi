@@ -535,6 +535,8 @@ public class View extends Observable implements VisitorView, ViewInterface {
         if(choice==-1) return choice;
         while(choice<min || choice>max) {
             out.println(StringJSON.printStrings("askStrings","invalidChoice"));
+            inputThread = new InputThread();
+            inputThread.start();
             choice = inputThread.getChoice();
         }
         return choice;
