@@ -86,6 +86,15 @@
     "firstRound": "First Turn! Empty RoundTrack",
     "favorTokens": "Not enough favor tokens",
     "noTool": "Tool not existing"
+  },
+
+  "request": {
+    "tool": "Tools",
+    "private": "Private Objective",
+    "public": "Public Objective",
+    "allWP": "Window pattern of other players",
+    "myWP": "My window pattern",
+    "roundTrack": "Roundtrack"
   }
 
 }

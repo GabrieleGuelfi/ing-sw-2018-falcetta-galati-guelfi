@@ -5,6 +5,7 @@ import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
+import it.polimi.se2018.utils.StringJSON;
 import it.polimi.se2018.view.VirtualView;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public enum RequestType {
     TOOL {
         @Override
         public String toString() {
-            return "Tools";
+            return StringJSON.printStrings("request", "tool");
         }
 
         @Override
@@ -29,7 +30,7 @@ public enum RequestType {
     PRIVATE{
         @Override
         public String toString() {
-            return "Private Objective";
+            return StringJSON.printStrings("request", "private");
         }
 
         @Override
@@ -40,7 +41,7 @@ public enum RequestType {
     PUBLIC {
         @Override
         public String toString() {
-            return "Public Objectives";
+            return StringJSON.printStrings("request", "public");
         }
 
         @Override
@@ -58,7 +59,7 @@ public enum RequestType {
     ALLWP {
         @Override
         public String toString() {
-            return "Window pattern of other players";
+            return StringJSON.printStrings("request", "allWP");
         }
 
         @Override
@@ -73,7 +74,7 @@ public enum RequestType {
     MYWP {
         @Override
         public String toString() {
-            return "My window pattern";
+            return StringJSON.printStrings("request", "myWP");
         }
 
         @Override
@@ -84,7 +85,7 @@ public enum RequestType {
     ROUNDTRACK {
         @Override
         public String toString() {
-            return "Roundtrack";
+            return StringJSON.printStrings("request", "roundTrack");
         }
 
         @Override
