@@ -19,14 +19,27 @@ public final class HandleJSON {
     private static List<Integer> rand;
     private static Map<String, List<Integer>> windowPattern = new HashMap<>();
 
+    /**
+     * hide the public constructor, no one can create an instance of this class
+     */
     private HandleJSON() {
         throw new IllegalStateException("utility class");
     }
 
+    /**
+     * reset the chosen Window Pattern of the previous match
+     */
     public static void newGame() {
         rand = new ArrayList<>();
     }
 
+    /**
+     * create a Window Pattern from JSON file
+     * @param nickname of the player to verify he chose a correct Window Pattern
+     * @param firstIndex of the card in the file
+     * @param secondIndex specify if it is the front or the back of the card
+     * @return the WindowPattern or null if there was same errors
+     */
     public static WindowPattern createWindowPattern (String nickname, int firstIndex, int secondIndex) {
         if (nickname!=null && !windowPattern.containsKey(nickname)) {
             out.println("nickname non valido in json "+nickname);
@@ -81,6 +94,10 @@ public final class HandleJSON {
         return null;
     }
 
+    /**
+     * @param nickname of the player who had to choose Window Pattern
+     * @return two index of the two card chosen randomly
+     */
     public static List<Integer> chooseWP(String nickname) {
 
         Integer index;
@@ -119,6 +136,11 @@ public final class HandleJSON {
         return rand;
     }
 
+    /**
+     * create a Private Objective from JSON file
+     * @param shade of the Private Objective
+     * @return a pPrivate Objective
+     */
     public static PrivateObjective createPrivateObjective(Colour shade) {
 
         InputStream in = HandleJSON.class.getResourceAsStream("/fileutils/privateObjective");
@@ -138,6 +160,10 @@ public final class HandleJSON {
 
     }
 
+    /**
+     * @param number of the Tool to create from JSON
+     * @return name and description of the Tool
+     */
     public static List<String> createTool(String number) {
         List<String> tool = new ArrayList<>();
         InputStream in = HandleJSON.class.getResourceAsStream("/fileutils/tools");

@@ -96,5 +96,11 @@ public enum RequestType {
         }
     };
 
+    /**
+     * send to player the info requested
+     * @param player who asked info
+     * @param view to send message
+     * @param match for take info
+     */
     public abstract void performRequest(Player player, VirtualView view, Match match);
 }
