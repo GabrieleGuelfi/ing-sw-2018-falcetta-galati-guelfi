@@ -79,7 +79,9 @@ public class Controller implements VisitorController, Observer {
                 index = generator.nextInt(11);
             rand.add(index);
             Tool tool = Tool.factory(index);
-            tool.setVirtualView(this.virtualView);
+            if (tool != null) {
+                tool.setVirtualView(this.virtualView);
+            }
             tools.add(tool);
         }
 
@@ -90,10 +92,8 @@ public class Controller implements VisitorController, Observer {
         this.match = new Match(new Bag(), players, objectives, tools, virtualView);
 
         HandleJSON.newGame();
-        for(String player: nickname) {
-            List<Integer> patterns = HandleJSON.chooseWP(player);
-            virtualView.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
-        }
+
+        virtualView.send(new MessageCustomWP(match.getPlayers().get(0).getNickname()));
 
     }
 
@@ -554,6 +554,18 @@ public class Controller implements VisitorController, Observer {
         player.setUsedTool(false);
         nextTurn();
 
+    }
+
+    @Override
+    public void visit(MessageCustomResponse message) {
+        if(message.isUseCustom()) {
+            HandleJSON.addWP(message.getFile());
+        }
+
+        for(Player player: match.getPlayers()) {
+            List<Integer> patterns = HandleJSON.chooseWP(player.getNickname());
+            virtualView.send(new MessageChooseWP(player.getNickname(), patterns.get(0), patterns.get(1), message.getFile()));
+        }
     }
 
     /**

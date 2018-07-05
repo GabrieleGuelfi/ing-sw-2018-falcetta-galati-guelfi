@@ -1,5 +1,6 @@
 package it.polimi.se2018.view;
 
+import it.polimi.se2018.utils.HandleJSON;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -30,6 +31,9 @@ public class ViewGame extends Application {
 
     @Override
     public void start(Stage stage){
+
+        HandleJSON.newGame();
+
         try {
 
             Parent root = FXMLLoader.load(getClass().getResource("/fileutils/sagradaMatch.fxml"));

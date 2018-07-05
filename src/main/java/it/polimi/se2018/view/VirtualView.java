@@ -37,7 +37,7 @@ public class VirtualView extends Observable implements Observer, ServerInterface
         }
         catch(RemoteException | NullPointerException e){
             final Logger logger = Logger.getLogger(this.getClass().getName());
-            logger.log(Level.WARNING, e.getMessage());
+            logger.log(Level.FINE, e.getMessage());
         }
     }
 

@@ -856,4 +856,9 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
     }
 
+    @Override
+    public void visit(MessageCustomWP message) {
+
+    }
+
 }
