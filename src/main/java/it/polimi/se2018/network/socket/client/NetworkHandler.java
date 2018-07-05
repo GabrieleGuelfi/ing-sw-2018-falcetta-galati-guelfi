@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class NetworkHandler extends Thread implements ServerInterface {
 
@@ -26,7 +28,6 @@ public class NetworkHandler extends Thread implements ServerInterface {
         }
         catch(IOException e) {
             System.out.println("Connection error!");
-            e.printStackTrace();
         }
     }
 
@@ -48,7 +49,6 @@ public class NetworkHandler extends Thread implements ServerInterface {
 
             }
             catch(IOException | ClassNotFoundException e) {
-                e.printStackTrace();
                 stopConnection();
             }
         }
@@ -76,7 +76,8 @@ public class NetworkHandler extends Thread implements ServerInterface {
                 this.socket.close();
             }
             catch (IOException e) {
-                e.printStackTrace();
+                final Logger logger = Logger.getLogger(this.getClass().getName());
+                logger.log(Level.WARNING, e.getMessage());
             }
             System.out.println("Closed");
         }

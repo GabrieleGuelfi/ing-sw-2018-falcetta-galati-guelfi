@@ -20,6 +20,9 @@ import org.omg.CORBA.IMP_LIMIT;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import static java.lang.System.*;
 
 public class ViewGame extends Application {
@@ -39,7 +42,8 @@ public class ViewGame extends Application {
 
         }
         catch(IOException e){
-            e.printStackTrace();
+            final Logger logger = Logger.getLogger(this.getClass().getName());
+            logger.log(Level.WARNING, e.getMessage());
         }
         stage.show();
     }

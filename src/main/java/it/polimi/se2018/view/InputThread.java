@@ -5,6 +5,8 @@ import it.polimi.se2018.utils.StringJSON;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.lang.System.out;
 
@@ -33,9 +35,10 @@ public class InputThread extends Thread {
     public void run() {
 
         try {
-            System.in.read(new byte[System.in.available()]);
+            System.in.skip(System.in.available());
         } catch (IOException e) {
-            e.printStackTrace();
+            final Logger logger = Logger.getLogger(this.getClass().getName());
+            logger.log(Level.WARNING, e.getMessage());
         }
 
         while(isChosing) {
@@ -54,11 +57,12 @@ public class InputThread extends Thread {
                         isChosing = false;
                     }
                     catch (NumberFormatException e) {
-                        System.out.println(StringJSON.printStrings("askStrings", "invalidChoice"));
+                        out.println(StringJSON.printStrings("askStrings", "invalidChoice"));
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                final Logger logger = Logger.getLogger(this.getClass().getName());
+                logger.log(Level.WARNING, e.getMessage());
             }
         }
 

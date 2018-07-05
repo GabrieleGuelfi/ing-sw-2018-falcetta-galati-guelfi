@@ -2,7 +2,6 @@ package it.polimi.se2018.network.socket.client;
 
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.network.socket.server.ServerInterface;
-import it.polimi.se2018.utils.Observer;
 import it.polimi.se2018.view.*;
 
 import java.net.MalformedURLException;
@@ -10,8 +9,9 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import static java.lang.System.out;
 import static javafx.application.Application.launch;
 
 public class SagradaClient {
@@ -37,7 +37,8 @@ public class SagradaClient {
             if(remoteRef==null) remoteRef =  (ClientInterface) UnicastRemoteObject.exportObject(client, 0);
             server.addClient(remoteRef, nickname);
         } catch (RemoteException | NotBoundException | MalformedURLException e) {
-            e.printStackTrace();
+            final Logger logger = Logger.getLogger(SagradaClient.class.getName());
+            logger.log(Level.WARNING, e.getMessage());
         } finally {
             client.addServer(server); }
 

@@ -38,7 +38,11 @@ public final class StringJSON {
             logger.log(Level.WARNING, e.getMessage());
         }
         JSONObject strings = (JSONObject) obj;
-        JSONObject typeStrings = (JSONObject) strings.get(type);
-        return (String) typeStrings.get(field);
+        if (strings!=null) {
+            JSONObject typeStrings = (JSONObject) strings.get(type);
+            return (String) typeStrings.get(field);
+        }
+        else
+            return null;
     }
 }

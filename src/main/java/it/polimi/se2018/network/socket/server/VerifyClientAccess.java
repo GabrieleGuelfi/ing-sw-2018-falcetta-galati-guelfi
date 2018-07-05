@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import it.polimi.se2018.events.messageforview.MessageNickname;
 import static java.lang.System.*;
 
@@ -51,10 +54,10 @@ public class VerifyClientAccess extends Thread{
                     }
                 }
                 catch(ClassNotFoundException e){
-                    e.printStackTrace();
+                    final Logger logger = Logger.getLogger(this.getClass().getName());
+                    logger.log(Level.WARNING, e.getMessage());
                 }
                 catch(IOException e){
-                    e.printStackTrace();
                     this.loop = false;
                 }
             }

@@ -242,8 +242,11 @@ public class Controller implements VisitorController, Observer {
             for (i=0; i<points.size() && !found; i++) {
                 if (p.getPoints()>points.get(i))
                     found = true;
-                else if (p.getPoints()==points.get(i))
-                    found = manageTie(p, searchNick(nicknames.get(i)));
+                else if (p.getPoints()==points.get(i)) {
+                    Player player = searchNick(nicknames.get(i));
+                    if (player!=null)
+                        found = manageTie(p, player);
+                }
             }
             if (i==0) i=1;
             points.add(i-1, p.getPoints());
