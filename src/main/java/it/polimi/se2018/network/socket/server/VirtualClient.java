@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.lang.System.*;
 
@@ -37,7 +39,8 @@ public class VirtualClient extends Observable implements ClientInterface, Runnab
                 }
         }
         catch(ClassNotFoundException e){
-            e.printStackTrace();
+            final Logger logger = Logger.getLogger(this.getClass().getName());
+            logger.log(Level.WARNING, e.getMessage());
         }
          catch(IOException e){
 
@@ -47,7 +50,8 @@ public class VirtualClient extends Observable implements ClientInterface, Runnab
                 try {
                     this.clientConnection.close();
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    final Logger logger = Logger.getLogger(this.getClass().getName());
+                    logger.log(Level.WARNING, ex.getMessage());
                 } finally {
                     Thread.currentThread().interrupt();
                 }
@@ -82,7 +86,8 @@ public class VirtualClient extends Observable implements ClientInterface, Runnab
             this.clientConnection.close();
         }
         catch(IOException e){
-            e.printStackTrace();
+            final Logger logger = Logger.getLogger(this.getClass().getName());
+            logger.log(Level.WARNING, e.getMessage());
         }
         finally {
             Thread.currentThread().interrupt();

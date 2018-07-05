@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 
@@ -40,7 +42,8 @@ public class TestController {
         try {
             field = controller.getClass().getDeclaredField("match");
         } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+            final Logger logger = Logger.getLogger(this.getClass().getName());
+            logger.log(Level.WARNING, e.getMessage());
         }
 
         if (field != null)
@@ -51,7 +54,8 @@ public class TestController {
         try {
             match = (Match) field.get(controller);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            final Logger logger = Logger.getLogger(this.getClass().getName());
+            logger.log(Level.WARNING, e.getMessage());
         }
     }
 
@@ -90,7 +94,8 @@ public class TestController {
         try {
             field1 = HandleJSON.class.getDeclaredField("windowPattern");
         } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+            final Logger logger = Logger.getLogger(this.getClass().getName());
+            logger.log(Level.WARNING, e.getMessage());
         }
 
         if (field1 != null)
@@ -101,7 +106,8 @@ public class TestController {
         try {
             windowPattern = (Map<String, List<Integer>>) field1.get(HandleJSON.class);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            final Logger logger = Logger.getLogger(this.getClass().getName());
+            logger.log(Level.WARNING, e.getMessage());
         }
         windowPattern.clear();
         virtualView.notifyObservers(new MessageSetWP("player0", 0, 0));

@@ -7,11 +7,13 @@ public class MessageChooseWP extends Message {
 
     private int firstIndex;
     private int secondIndex;
+    private String file;
 
-    public MessageChooseWP(String nickname, int firstIndex, int secondIndex) {
+    public MessageChooseWP(String nickname, int firstIndex, int secondIndex, String file) {
         super(nickname);
         this.firstIndex = firstIndex;
         this.secondIndex = secondIndex;
+        this.file = file;
     }
 
     public int getFirstIndex() {
@@ -20,6 +22,10 @@ public class MessageChooseWP extends Message {
 
     public int getSecondIndex() {
         return secondIndex;
+    }
+
+    public String getFile() {
+        return file;
     }
 
     @Override

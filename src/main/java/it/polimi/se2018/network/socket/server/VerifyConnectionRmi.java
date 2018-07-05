@@ -7,6 +7,8 @@ import it.polimi.se2018.network.socket.client.ClientInterface;
 import it.polimi.se2018.utils.Observable;
 
 import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class VerifyConnectionRmi extends Observable implements Runnable {
     private ClientInterface clientInterface;
@@ -26,13 +28,14 @@ public class VerifyConnectionRmi extends Observable implements Runnable {
             }
         }
         catch(RemoteException e){
-            //e.printStackTrace();
             this.notifyObservers(new MessageErrorVirtualClientClosed(this.clientInterface));
             this.loop = false;
             Thread.currentThread().interrupt();
         }
         catch (InterruptedException e ){
-            e.printStackTrace();
+            final Logger logger = Logger.getLogger(this.getClass().getName());
+            logger.log(Level.WARNING, e.getMessage());
+            Thread.currentThread().interrupt();
         }
 
     }

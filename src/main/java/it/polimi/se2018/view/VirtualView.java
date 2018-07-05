@@ -8,6 +8,8 @@ import it.polimi.se2018.network.socket.server.*;
 import it.polimi.se2018.utils.*;
 
 import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class VirtualView extends Observable implements Observer, ServerInterface{
 
@@ -34,7 +36,8 @@ public class VirtualView extends Observable implements Observer, ServerInterface
             else clientInterface.notify(message);
         }
         catch(RemoteException | NullPointerException e){
-            //e.printStackTrace();
+            final Logger logger = Logger.getLogger(this.getClass().getName());
+            logger.log(Level.FINE, e.getMessage());
         }
     }
 

@@ -13,5 +13,5 @@ public interface VisitorController {
     void visit(MessageToolResponse message);
     void visit(MessageRequestUseOfTool message);
     void visit(MessageForcedMove message);
-
+    void visit(MessageCustomResponse message);
 }

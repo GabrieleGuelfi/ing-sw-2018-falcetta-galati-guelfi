@@ -22,6 +22,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import it.polimi.se2018.utils.Observer;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SagradaServer implements VisitorServer, Observer{
     private int port = 1111;
@@ -179,7 +181,6 @@ public class SagradaServer implements VisitorServer, Observer{
                 if (c.getNickname().equals(player)) return c.getVirtualClient();
             }
         } catch (NullPointerException e) {
-            e.printStackTrace();
             out.println("Client" + player + "does not exists.");
         }
         return null;
@@ -192,7 +193,8 @@ public class SagradaServer implements VisitorServer, Observer{
                 c.getVirtualClient().notify(message);
             }
             catch (RemoteException e){
-                e.printStackTrace();
+                final Logger logger = Logger.getLogger(this.getClass().getName());
+                logger.log(Level.WARNING, e.getMessage());
             }
         }
     }
@@ -241,7 +243,8 @@ public class SagradaServer implements VisitorServer, Observer{
                 c.getVirtualClient().closeConnection();
             }
             catch(RemoteException e){
-                e.printStackTrace();
+                final Logger logger = Logger.getLogger(this.getClass().getName());
+                logger.log(Level.WARNING, e.getMessage());
             }
         }
 
@@ -302,7 +305,8 @@ public class SagradaServer implements VisitorServer, Observer{
             } else message.getClientInterface().notify(new MessageNickname(false));
         }
         catch (RemoteException e){
-            e.printStackTrace();
+            final Logger logger = Logger.getLogger(this.getClass().getName());
+            logger.log(Level.WARNING, e.getMessage());
         }
     }
 

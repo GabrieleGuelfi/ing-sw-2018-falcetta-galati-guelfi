@@ -16,6 +16,7 @@ import it.polimi.se2018.model.WindowPattern;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
 
+import java.io.FileNotFoundException;
 import java.util.*;
 
 import it.polimi.se2018.utils.StringJSON;
@@ -124,7 +125,9 @@ public class View extends Observable implements VisitorView, ViewInterface {
         }
     }
 
-    private void askWindowPattern(int firstCard, int secondCard) {
+    private void askWindowPattern(int firstCard, int secondCard, String file) {
+        if (file!=null)
+            HandleJSON.addWP(file);
 
         int choice;
         List<WindowPattern> windowPatterns = new ArrayList<>();
@@ -531,6 +534,31 @@ public class View extends Observable implements VisitorView, ViewInterface {
         out.println("\n");
     }
 
+    private void askCustomWP() {
+        out.println(StringJSON.printStrings("askCustom", "useCustom"));
+        int choice = chooseBetween(1, 2);
+        if (choice==1) {
+            out.println(StringJSON.printStrings("askCustom", "file"));
+            String file = scanner.nextLine();
+            String jsonFile;
+            try {
+                jsonFile = HandleJSON.readFile(file);
+            } catch (FileNotFoundException e) {
+                out.println(StringJSON.printStrings("askCustom", "fileNotFound"));
+                askCustomWP();
+                return;
+            }
+            if(jsonFile==null) {
+                out.println(StringJSON.printStrings("askCustom", "incorrectFile"));
+                notifyObservers(new MessageCustomResponse(this.nickname, false, null));
+                return;
+            }
+            notifyObservers(new MessageCustomResponse(this.nickname, true, jsonFile));
+        }
+        else
+            notifyObservers(new MessageCustomResponse(this.nickname, false, null));
+    }
+
     private int chooseBetween(int min, int max) {
 
         int choice;
@@ -590,7 +618,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
 
     @Override
     public void visit(MessageChooseWP message) {
-        askWindowPattern(message.getFirstIndex(), message.getSecondIndex());
+        askWindowPattern(message.getFirstIndex(), message.getSecondIndex(), message.getFile());
     }
 
     @Override
@@ -651,6 +679,11 @@ public class View extends Observable implements VisitorView, ViewInterface {
     @Override
     public void visit(MessageForceMove message) {
         forceMove(message.getDie(), message.getWindowPattern(), message.isNewValue(), message.isPlacedDie(), message.isCanChoose());
+    }
+
+    @Override
+    public void visit(MessageCustomWP message) {
+        askCustomWP();
     }
 
     public void addObserver(Observer observer){

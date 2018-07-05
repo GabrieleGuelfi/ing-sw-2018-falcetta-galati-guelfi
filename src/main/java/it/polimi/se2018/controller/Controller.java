@@ -79,7 +79,9 @@ public class Controller implements VisitorController, Observer {
                 index = generator.nextInt(11);
             rand.add(index);
             Tool tool = Tool.factory(index);
-            tool.setVirtualView(this.virtualView);
+            if (tool != null) {
+                tool.setVirtualView(this.virtualView);
+            }
             tools.add(tool);
         }
 
@@ -90,10 +92,8 @@ public class Controller implements VisitorController, Observer {
         this.match = new Match(new Bag(), players, objectives, tools, virtualView);
 
         HandleJSON.newGame();
-        for(String player: nickname) {
-            List<Integer> patterns = HandleJSON.chooseWP(player);
-            virtualView.send(new MessageChooseWP(player, patterns.get(patterns.size()-2), patterns.get(patterns.size()-1)));
-        }
+
+        virtualView.send(new MessageCustomWP(match.getPlayers().get(0).getNickname()));
 
     }
 
@@ -242,8 +242,11 @@ public class Controller implements VisitorController, Observer {
             for (i=0; i<points.size() && !found; i++) {
                 if (p.getPoints()>points.get(i))
                     found = true;
-                else if (p.getPoints()==points.get(i))
-                    found = manageTie(p, searchNick(nicknames.get(i)));
+                else if (p.getPoints()==points.get(i)) {
+                    Player player = searchNick(nicknames.get(i));
+                    if (player!=null)
+                        found = manageTie(p, player);
+                }
             }
             if (i==0) i=1;
             points.add(i-1, p.getPoints());
@@ -271,6 +274,10 @@ public class Controller implements VisitorController, Observer {
         virtualView.sendToServer(new MessageRestartServer());
     }
 
+    /**
+     * awakened by a message, and verify if is the turn of the owner of the message
+     * @param message message to visit
+     */
     @Override
     public synchronized void update(Message message) {
         if (!message.getNickname().equals(match.getRound().getPlayerTurn().getNickname()) && !message.isNoTurn()) {
@@ -281,6 +288,10 @@ public class Controller implements VisitorController, Observer {
         }
     }
 
+    /**
+     * set a Window Pattern for the players
+     * @param message contains parameters to set the Window Pattern
+     */
     @Override
     public void visit(MessageSetWP message) {
         Player player = null;
@@ -304,6 +315,10 @@ public class Controller implements VisitorController, Observer {
         }
     }
 
+    /**
+     * place a die after verifying all placement restrictions
+     * @param message contains positions of the die in the draftpool and in the window pattern
+     */
     @Override
     public void visit(MessageMoveDie message) {
 
@@ -367,6 +382,10 @@ public class Controller implements VisitorController, Observer {
 
     }
 
+    /**
+     * skip the turn for the player
+     * @param message contains nickname of the player that want to skip
+     */
     @Override
     public void visit(MessageDoNothing message) {
 
@@ -381,6 +400,10 @@ public class Controller implements VisitorController, Observer {
         nextTurn();
     }
 
+    /**
+     * answer to request of info of a player
+     * @param message contains the type of request
+     */
     @Override
     public void visit(MessageRequest message) {
         Player player = searchNick(message.getNickname());
@@ -393,6 +416,10 @@ public class Controller implements VisitorController, Observer {
         virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
     }
 
+    /**
+     * end a game if only one player remain in the match
+     * @param message contains the nickname of the winner
+     */
     @Override
     public void visit(MessageEndGame message){
         //IN THIS MESSAGE THERE IS THE NAME OF THE WINNER
@@ -400,6 +427,10 @@ public class Controller implements VisitorController, Observer {
 
     }
 
+    /**
+     * manage the usage of a tool
+     * @param message contains all parameter necessary to handle the usage of the tool
+     */
     @Override
     public void visit(MessageToolResponse message) {
 
@@ -444,11 +475,19 @@ public class Controller implements VisitorController, Observer {
         }
     }
 
+    /**
+     * verify if the player can use a tool
+     * @param message contains the number of tool player want to use
+     */
     @Override
     public void visit(MessageRequestUseOfTool message) {
         match.getTools().get(message.getNumberOfTool()).requestOrders(searchNick(message.getNickname()), match);
     }
 
+    /**
+     * manage the second move of a tool
+     * @param message contains the choice of the player
+     */
     @Override
     public void visit(MessageForcedMove message) {
         Player player = searchNick(message.getNickname());
@@ -517,6 +556,21 @@ public class Controller implements VisitorController, Observer {
 
     }
 
+    @Override
+    public void visit(MessageCustomResponse message) {
+        if(message.isUseCustom()) {
+            HandleJSON.addWP(message.getFile());
+        }
+
+        for(Player player: match.getPlayers()) {
+            List<Integer> patterns = HandleJSON.chooseWP(player.getNickname());
+            virtualView.send(new MessageChooseWP(player.getNickname(), patterns.get(0), patterns.get(1), message.getFile()));
+        }
+    }
+
+    /**
+     * start the timer for a single turn
+     */
     private void startTimer() {
 
         this.gameTimer = new GameTimer(this, timeForRound);
@@ -524,6 +578,9 @@ public class Controller implements VisitorController, Observer {
 
     }
 
+    /**
+     * send a message to player if the timer finished
+     */
     void handleEndTime() {
         for(Die d : match.getRound().getDraftPool().getBag())
             if (d.isPlacing())

@@ -7,6 +7,8 @@ import it.polimi.se2018.utils.Observer;
 import it.polimi.se2018.view.View;
 
 import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientImplementation extends Observable implements ClientInterface, Observer {
 
@@ -28,7 +30,8 @@ public class ClientImplementation extends Observable implements ClientInterface,
         try {
             server.send(m);
         } catch (RemoteException e) {
-            e.printStackTrace();
+            final Logger logger = Logger.getLogger(this.getClass().getName());
+            logger.log(Level.WARNING, e.getMessage());
         }
     }
 
