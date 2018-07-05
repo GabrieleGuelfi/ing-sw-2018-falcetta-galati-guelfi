@@ -213,7 +213,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
         return false;
     }
 
-    private void askMove(boolean hasMovedDie, boolean hasUsedTool, WindowPattern windowPattern, DraftPool draftPool) {
+    private void askMove(boolean hasMovedDie, boolean hasUsedTool, WindowPattern windowPattern, DraftPool draftPool, int favorTokens) {
 
         boolean moveDieOk = true;
         boolean moveToolOk = true;
@@ -226,6 +226,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
             out.println(StringJSON.printStrings("askStrings","draftPool"));
             printDraftPool(draftPool);
         }
+        out.println(StringJSON.printStrings("askStrings", "favorTokens") + favorTokens);
 
         out.println(StringJSON.printStrings("askStrings","selectMove"));
         int i=1;
@@ -252,7 +253,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
         if (choice==2 && hasMovedDie && hasUsedTool) notifyObservers(new MessageDoNothing(this.nickname));
 
         if(!moveDieOk || !moveToolOk) {
-            askMove(hasMovedDie, hasUsedTool, windowPattern, draftPool);
+            askMove(hasMovedDie, hasUsedTool, windowPattern, draftPool, favorTokens);
         }
 
         isTimeFinished(choice);
@@ -673,7 +674,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
 
     @Override
     public void visit(MessageAskMove message) {
-        askMove(message.isHasMovedDie(), message.isHasUsedTool(), message.getWindowPattern(), message.getDraftPool());
+        askMove(message.isHasMovedDie(), message.isHasUsedTool(), message.getWindowPattern(), message.getDraftPool(), message.getFavorTokens());
     }
 
     @Override
