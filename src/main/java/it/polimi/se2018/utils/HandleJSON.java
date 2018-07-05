@@ -87,10 +87,31 @@ public final class HandleJSON {
         Random generator = new Random();
         List<Integer> choice = new ArrayList<>();
 
+        InputStream in = HandleJSON.class.getResourceAsStream("/fileutils/windowpattern");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        JSONParser parser = new JSONParser();
+        JSONArray schemes;
+        try {
+            Object obj = parser.parse(reader);
+            schemes = (JSONArray) obj;
+        }
+        catch (FileNotFoundException e) {
+            out.println("file not found");
+            return Collections.emptyList();
+        }
+        catch (IOException e) {
+            out.println("ioexception");
+            return Collections.emptyList();
+        }
+        catch (ParseException e) {
+            out.println("parseException");
+            return Collections.emptyList();
+        }
+
         for (int i = 0; i < 2; i++) {
-            index = generator.nextInt(12);
+            index = generator.nextInt(schemes.size());
             while (rand.contains(index))
-                index = generator.nextInt(12);
+                index = generator.nextInt(schemes.size());
             rand.add(index);
             choice.add(index);
         }

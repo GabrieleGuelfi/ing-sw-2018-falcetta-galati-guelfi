@@ -371,7 +371,7 @@ public class TestController {
     }
 
     @Test
-    public void testTool5() { //da finire
+    public void testTool5() {
         testSetWp();
         match.getTools().clear();
         match.getTools().add(Tool.factory(11));
@@ -379,13 +379,10 @@ public class TestController {
 
         Die dieRT = new Die(Colour.MAGENTA);
         dieRT.setValue(3);
-        List<Die> round = new ArrayList<>();
-        round.add(dieRT);
-        match.getRoundTrack().put(3, round);
 
         match.getRound().getDraftPool().getBag().clear();
         Die dieDP = new Die(Colour.YELLOW);
-        dieRT.setValue(4);
+        dieDP.setValue(4);
         match.getRound().getDraftPool().addDie(dieDP);
         virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
 
@@ -394,8 +391,7 @@ public class TestController {
         dieRound.add(0);
         virtualView.notifyObservers(new MessageToolResponse("player0", 0, null, dieRound, null, false));
 
-        //assertEquals(dieRT, match.getRoundTrack().get(3).get(0));
-        //assertEquals(dieDP, match.getRound().getDraftPool().getBag().get(0));
+        assertEquals(dieDP, match.getRound().getDraftPool().getBag().get(0));
 
         for (int i=0; i<8; i++) {
             if (i < 4)
@@ -414,7 +410,149 @@ public class TestController {
         virtualView.notifyObservers(new MessageToolResponse("player1", 0, null, dieRound, null, false));
 
         assertEquals(dieRT, match.getRoundTrack().get(1).get(0));
-        //assertEquals(dieDP, match.getRound().getDraftPool().getBag().get(0));
+        assertEquals(dieDP, match.getRound().getDraftPool().getBag().get(0));
+    }
+
+    @Test
+    public void testTool8() {
+        testSetWp();
+        match.getTools().clear();
+        match.getTools().add(Tool.factory(8));
+        match.getTools().get(0).setVirtualView(virtualView);
+
+        Die die1 = new Die(Colour.MAGENTA);
+        die1.setValue(3);
+        match.getRound().getDraftPool().getBag().clear();
+        Die die2 = new Die(Colour.YELLOW);
+        die2.setValue(2);
+        match.getRound().getDraftPool().addDie(die1);
+        match.getRound().getDraftPool().addDie(die2);
+
+        virtualView.notifyObservers(new MessageMoveDie("player0", 0, 0, 0));
+
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        virtualView.notifyObservers(new MessageToolResponse("player0"));
+
+        //verifyNear
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        List<Integer[]> newPositionsWP = new ArrayList<>();
+        Integer[] positionsWP = { 3, 4 };
+        newPositionsWP.add(positionsWP);
+        virtualView.notifyObservers(new MessageToolResponse("player0", 0, null, null, newPositionsWP, false));
+        assertNull(match.getPlayers().get(0).getWindowPattern().getBox(3,4).getDie());
+        assertEquals(die2, match.getRound().getDraftPool().getBag().get(0));
+
+        //verifyNumber
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        positionsWP[0] = 0;
+        positionsWP[1] = 1;
+        newPositionsWP.clear();
+        newPositionsWP.add(positionsWP);
+        virtualView.notifyObservers(new MessageToolResponse("player0", 0, null, null, newPositionsWP, false));
+        assertNull(match.getPlayers().get(0).getWindowPattern().getBox(0,1).getDie());
+        assertEquals(die2, match.getRound().getDraftPool().getBag().get(0));
+
+        //verifyColor
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        positionsWP[0] = 1;
+        positionsWP[1] = 0;
+        newPositionsWP.clear();
+        newPositionsWP.add(positionsWP);
+        virtualView.notifyObservers(new MessageToolResponse("player0", 0, null, null, newPositionsWP, false));
+        assertNull(match.getPlayers().get(0).getWindowPattern().getBox(1,0).getDie());
+        assertEquals(die2, match.getRound().getDraftPool().getBag().get(0));
+
+        //correctUse
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        positionsWP[0] = 1;
+        positionsWP[1] = 1;
+        newPositionsWP.clear();
+        newPositionsWP.add(positionsWP);
+        virtualView.notifyObservers(new MessageToolResponse("player0", 0, null, null, newPositionsWP, false));
+        assertEquals(die2, match.getPlayers().get(0).getWindowPattern().getBox(1,1).getDie());
+        assertEquals(0, match.getRound().getDraftPool().getBag().size());
+
+        for (int i=1; i<6; i++) {
+            if (i < 4)
+                virtualView.notifyObservers(new MessageDoNothing("player" + i));
+            else
+                virtualView.notifyObservers(new MessageDoNothing("player" + (7-i)));
+        }
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player1", 0));
+        assertEquals(false, match.getTools().get(0).isBeingUsed());
+
+        virtualView.notifyObservers(new MessageDoNothing("player1"));
+        assertEquals(2, match.getNumRound());
+        assertEquals("player1", match.getRound().getPlayerTurn().getNickname());
+    }
+
+    @Test
+    public void testTool9() {
+        testSetWp();
+        match.getTools().clear();
+        match.getTools().add(Tool.factory(9));
+        match.getTools().get(0).setVirtualView(virtualView);
+
+        Die die1 = new Die(Colour.MAGENTA);
+        die1.setValue(3);
+        match.getRound().getDraftPool().getBag().clear();
+        Die die2 = new Die(Colour.YELLOW);
+        die2.setValue(4);
+        match.getRound().getDraftPool().addDie(die1);
+        match.getRound().getDraftPool().addDie(die2);
+
+        virtualView.notifyObservers(new MessageMoveDie("player0", 0, 0, 0));
+
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        assertEquals(false, match.getTools().get(0).isBeingUsed());
+
+        for (int i=0; i<7; i++) {
+            if (i < 4)
+                virtualView.notifyObservers(new MessageDoNothing("player" + i));
+            else
+                virtualView.notifyObservers(new MessageDoNothing("player" + (7-i)));
+        }
+
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+
+        //verifyNear
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        List<Integer[]> newPositionsWP = new ArrayList<>();
+        Integer[] positionsWP = { 0, 1 };
+        newPositionsWP.add(positionsWP);
+        virtualView.notifyObservers(new MessageToolResponse("player0", 0, null, null, newPositionsWP, false));
+        assertNull(match.getPlayers().get(0).getWindowPattern().getBox(0,1).getDie());
+        assertEquals(die2, match.getRound().getDraftPool().getBag().get(0));
+
+        //verifyNumber
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        positionsWP[0] = 0;
+        positionsWP[1] = 4;
+        newPositionsWP.clear();
+        newPositionsWP.add(positionsWP);
+        virtualView.notifyObservers(new MessageToolResponse("player0", 0, null, null, newPositionsWP, false));
+        assertNull(match.getPlayers().get(0).getWindowPattern().getBox(0,4).getDie());
+        assertEquals(die2, match.getRound().getDraftPool().getBag().get(0));
+
+        //verifyColor
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        positionsWP[0] = 2;
+        positionsWP[1] = 2;
+        newPositionsWP.clear();
+        newPositionsWP.add(positionsWP);
+        virtualView.notifyObservers(new MessageToolResponse("player0", 0, null, null, newPositionsWP, false));
+        assertNull(match.getPlayers().get(0).getWindowPattern().getBox(2,2).getDie());
+        assertEquals(die2, match.getRound().getDraftPool().getBag().get(0));
+
+        //correctUse
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        positionsWP[0] = 3;
+        positionsWP[1] = 2;
+        newPositionsWP.clear();
+        newPositionsWP.add(positionsWP);
+        virtualView.notifyObservers(new MessageToolResponse("player0", 0, null, null, newPositionsWP, false));
+        assertEquals(die2, match.getPlayers().get(0).getWindowPattern().getBox(3,2).getDie());
+        assertEquals(9, match.getRound().getDraftPool().getBag().size());
     }
 
     @Test
