@@ -5,6 +5,7 @@ import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.Match;
 import it.polimi.se2018.model.Player;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
+import it.polimi.se2018.utils.StringJSON;
 import it.polimi.se2018.view.VirtualView;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public enum RequestType {
     TOOL {
         @Override
         public String toString() {
-            return "Tools";
+            return StringJSON.printStrings("request", "tool");
         }
 
         @Override
@@ -29,36 +30,38 @@ public enum RequestType {
     PRIVATE{
         @Override
         public String toString() {
-            return "Private Objective";
+            return StringJSON.printStrings("request", "private");
         }
 
         @Override
         public void performRequest(Player player, VirtualView virtualView, Match match) {
-            virtualView.send(new MessagePrivObj(player.getNickname(), player.getPrivateObjective().getDescription()));
+            virtualView.send(new MessagePrivObj(player.getNickname(), player.getPrivateObjective().getDescription(), player.getPrivateObjective().getShade().toString()));
         }
     },
     PUBLIC {
         @Override
         public String toString() {
-            return "Public Objectives";
+            return StringJSON.printStrings("request", "public");
         }
 
         @Override
         public void performRequest(Player player, VirtualView virtualView, Match match) {
             List<String> publicObjDescriptions = new ArrayList<>();
             List<Integer> publicObjPoints = new ArrayList<>();
+            List<Integer> id = new ArrayList<>();
             for(PublicObjective p: match.getPublicObjectives()) {
                 publicObjDescriptions.add(p.getDescription());
                 publicObjPoints.add(p.getVp());
+                id.add(p.getId());
             }
             if(!publicObjDescriptions.isEmpty())
-                virtualView.send(new MessagePublicObj(player.getNickname(), publicObjDescriptions, publicObjPoints));
+                virtualView.send(new MessagePublicObj(player.getNickname(), publicObjDescriptions, publicObjPoints, id));
         }
     },
     ALLWP {
         @Override
         public String toString() {
-            return "Window pattern of other players";
+            return StringJSON.printStrings("request", "allWP");
         }
 
         @Override
@@ -73,7 +76,7 @@ public enum RequestType {
     MYWP {
         @Override
         public String toString() {
-            return "My window pattern";
+            return StringJSON.printStrings("request", "myWP");
         }
 
         @Override
@@ -84,7 +87,7 @@ public enum RequestType {
     ROUNDTRACK {
         @Override
         public String toString() {
-            return "Roundtrack";
+            return StringJSON.printStrings("request", "roundTrack");
         }
 
         @Override

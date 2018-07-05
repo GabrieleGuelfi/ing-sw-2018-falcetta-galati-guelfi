@@ -57,11 +57,13 @@ public class Match extends Observable {
 
         List<String> publicObjDescriptions = new ArrayList<>();
         List<Integer> publicObjPoints = new ArrayList<>();
+        List<Integer> id = new ArrayList<>();
         for(PublicObjective p: objectives) {
             publicObjDescriptions.add(p.getDescription());
             publicObjPoints.add(p.getVp());
+            id.add(p.getId());
         }
-        if(!publicObjDescriptions.isEmpty()) notifyObservers(new MessagePublicObj(publicObjDescriptions, publicObjPoints));
+        if(!publicObjDescriptions.isEmpty()) notifyObservers(new MessagePublicObj(publicObjDescriptions, publicObjPoints, id));
 
         List<String> toolsNames = new ArrayList<>();
         for(Tool t: tools) {

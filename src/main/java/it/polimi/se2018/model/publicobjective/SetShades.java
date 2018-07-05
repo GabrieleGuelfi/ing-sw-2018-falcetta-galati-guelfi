@@ -16,8 +16,8 @@ public class SetShades extends PublicObjective {
      * @param vp how much points give the objective
      * @param set the min value of the couple of shade
      */
-    SetShades (String description, int vp, int set) {
-        super(description, vp);
+    SetShades (int id, String description, int vp, int set) {
+        super(id, description, vp);
         this.set = set;
     }
 

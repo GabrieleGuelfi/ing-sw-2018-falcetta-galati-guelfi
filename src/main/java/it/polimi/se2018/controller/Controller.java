@@ -134,7 +134,7 @@ public class Controller implements VisitorController, Observer {
                 index = generator.nextInt(colours.length);
             rand.add(index);
             p.setPrivateObjective(HandleJSON.createPrivateObjective(colours[index]));
-            virtualView.send(new MessagePrivObj(p.getNickname(), p.getPrivateObjective().getDescription()));
+            virtualView.send(new MessagePrivObj(p.getNickname(), p.getPrivateObjective().getDescription(), p.getPrivateObjective().getShade().toString()));
         }
     }
 
@@ -159,6 +159,12 @@ public class Controller implements VisitorController, Observer {
             match.getRound().nextTurn(match.getPlayers());
             Player player = match.getRound().getPlayerTurn();
             match.notifyObservers(new MessageTurnChanged(player.getNickname()));
+            if (player.isPlacedDie() && player.isUsedTool()) {
+                player.setUsedTool(false);
+                player.setPlacedDie(false);
+                nextTurn();
+                return;
+            }
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
             startTimer();
         }
@@ -266,7 +272,7 @@ public class Controller implements VisitorController, Observer {
     }
 
     @Override
-    public void update(Message message) {
+    public synchronized void update(Message message) {
         if (!message.getNickname().equals(match.getRound().getPlayerTurn().getNickname()) && !message.isNoTurn()) {
             virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings(ERROR_MOVE, "errorTurn")));
         }
@@ -356,7 +362,6 @@ public class Controller implements VisitorController, Observer {
 
         if(!isThereAnotherMove) nextTurn();
         else {
-            startTimer();
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
         }
 

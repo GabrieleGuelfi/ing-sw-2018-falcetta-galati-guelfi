@@ -98,7 +98,7 @@ public class DiePlacer extends Tool {
                 player.setPlacedDie(true);
                 finishToolMove(player);
 
-                return true;
+                return false;
             }
         }
         return false;
