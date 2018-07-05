@@ -17,7 +17,7 @@ public class ClientImplementation extends Observable implements ClientInterface,
     }
 
     public void notify(Message message) {
-        if(message.isTimeFinished()) View.getInputThread().stopThread();
+        if(message.isTimeFinished()) SagradaClient.stopTurn();
         else {
             (new ConnectionHandlerThread(this, message)).start();
         }

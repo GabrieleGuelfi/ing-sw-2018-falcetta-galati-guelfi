@@ -34,7 +34,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import static java.lang.System.out;
 
@@ -152,6 +151,8 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     private ArrayList<ImageView> chooseWindowPattern;
     private ArrayList<ImageView> tool;
     private ArrayList<GridPane> gridPanePlayer;
+    private EventHandler<MouseEvent> eventHandlersDie;
+    private EventHandler<MouseEvent> eventHandlersDestination;
 
     private String nicknamePlayer = null;
     private int connection = 1;
@@ -186,17 +187,18 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     private EventHandler<MouseEvent> handleChooseDie = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
+
             dieChoosen = (ImageView) event.getSource();
-
-
-            for(int i = 0; i < 4; i ++){
-                for (int j = 0 ; j < 5; j++){
-
-                        windowPattern.get(0)[i][j].setOnMouseClicked(handleChooseBox);
-                        groupDestination.add(windowPattern.get(0)[i][j]);
-
-                }
+            for(ImageView imageView : groupDestination) {
+                imageView.setOnMouseClicked(handleChooseBox);
+                imageView.setDisable(false);
             }
+
+            for(ImageView imageView : groupDie) imageView.setDisable(true);
+
+            news.setText(null);
+            news.setText("Tell me where do you want to place it!");
+
         }
     };
 
@@ -206,16 +208,12 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
             targetOfDie = (ImageView) event.getSource();
 
-
-            for (ImageView imageView : groupDie) imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, handleChooseDie);
-
             int row;
             int column;
             for(row = 0; row < 4; row ++){
                 for(column = 0; column < 5 ; column++){
                    if( windowPattern.get(0)[row][column] == targetOfDie) {
                        notifyObservers(new MessageMoveDie(nicknamePlayer, draftPool.indexOf(dieChoosen), row, column ));
-                       out.println("Message Move Die send");
                        break;
                    }
                 }
@@ -223,6 +221,8 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
             for(ImageView imageView : groupDestination){
                 imageView.setDisable(true);
             }
+            news.setText(null);
+            news.setText("You made your choise baby!");
         }
     };
 
@@ -244,9 +244,34 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
         }
     };
 
-    private EventHandler<ActionEvent> handleButtonEndTurn = new EventHandler<ActionEvent>() {
+    private EventHandler<MouseEvent> handleButtonEndTurn = new EventHandler<MouseEvent>() {
         @Override
-        public void handle(ActionEvent event) {
+        public void handle(MouseEvent event) {
+
+            if(eventHandlersDestination != null){
+                for(ImageView imageView : groupDestination){
+                    imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlersDestination);
+                    imageView.setDisable(true);
+                }
+            }
+
+            if(eventHandlersDie != null){
+                for(ImageView imageView : groupDie){
+                    imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlersDie);
+                    imageView.setDisable(true);
+                }
+            }
+
+            dieChoosen = null;
+            targetOfDie = null;
+
+            groupDie.clear();
+            groupDestination.clear();
+
+            lastBeautifulMessage = "End Turn!";
+            news.setText(lastBeautifulMessage);
+            out.println("buttonEndTurn");
+
             notifyObserver(new MessageDoNothing(nicknamePlayer));
         }
     };
@@ -583,7 +608,7 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                 this.buttonEndTurn.setOpacity(1);
                 this.news.setText("Wait...");
 
-                buttonEndTurn.setOnAction(handleButtonEndTurn);
+                buttonEndTurn.setOnMouseClicked(handleButtonEndTurn);
                 buttonEndTurn.setDisable(false);
 
 
@@ -642,27 +667,31 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
         this.textPublicObjective.setText("Public Objective");
         this.textPrivateObjective.setText("Private Objective");
 
+        out.println("Private Obj: " + message.getDescription());
+
     }
 
     @Override
     public void visit(MessagePublicObj message) {
-        Image image = new Image("/images/other/ObjEmpty.jpg");
-         if (publicObjective1.getImage() == null) this.publicObjective1.setImage(image);
-         else this.publicObjective2.setImage(image);
-         out.println("public objective");
+        out.println("Public Obj: " + message.getDescriptions().get(0));
+
     }
 
     @Override
     public void visit(MessageTool message) {
-        Image image = new Image("/images/other/ObjEmpty.jpg");
-
         int i = 0;
-        while ((i<3) && (this.tool.get(i).getImage() != null)){
-            i++;
-            out.println(i);
+        String path = "/images/tool/";
+        for(String string : message.getNames()){
+            try{
+                String s = path + string + ".jpg";
+                tool.get(i).setImage(new Image(s));
+                i++;
+            }
+            catch(Exception e){
+                tool.get(i).setImage(new Image("/images/other/ObjEmpty.jpg"));
+                i++;
+            }
         }
-        this.tool.get(i).setImage(image);
-
     }
 
     @Override
@@ -780,35 +809,69 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
     @Override
     public void visit(MessageConfirmMove message) {
-        Image image = dieChoosen.getImage();
-        dieChoosen.setImage(null);
-        targetOfDie.setImage(image);
+
         dieChoosen = null;
         targetOfDie = null;
 
-        for(ImageView imageView : groupDestination){
-            imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, handleChooseBox);
+        for(ImageView imageView : groupDie) {
+            imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlersDie);
             imageView.setDisable(false);
         }
+
+        for(ImageView imageView : groupDestination){
+            imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlersDestination);
+            imageView.setDisable(false);
+        }
+
         groupDestination.clear();
-        //E se non fosse draftpool?
-        for(ImageView imageView : draftPool) imageView.setDisable(false);
-        if(!message.isThereAnotherMove()) buttonEndTurn.fire();
+        groupDie.clear();
+        eventHandlersDestination = null;
+        eventHandlersDie = null;
+
+        news.setText(null);
+        news.setText("OK!");
 
     }
 
     @Override
     public void visit(MessageErrorMove message) {
+
         this.news.setText(message.getReason());
+
+
         this.dieChoosen = null;
         this.targetOfDie = null;
+
         for(ImageView imageView : groupDestination){
-            imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, handleChooseBox);
+            imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlersDestination);
             imageView.setDisable(false);
         }
+
+        for(ImageView imageView : groupDie){
+            imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlersDie);
+            imageView.setDisable(false);
+        }
+
         groupDestination.clear();
-        //E se non fosse draftpool?
-        for(ImageView imageView : draftPool) imageView.setDisable(false);
+        groupDie.clear();
+
+        eventHandlersDestination = null;
+        eventHandlersDie = null;
+
+        Runnable runnable = () -> {
+                try {
+                    for(int i = 10; i > 0; i--){
+                            Thread.sleep(1000);
+                    }
+                    news.setText(null);
+                    news.setText(lastBeautifulMessage);
+                }catch(InterruptedException e){
+                    news.setText(null);
+                    news.setText(lastBeautifulMessage);
+                }
+        };
+
+        (new Thread(runnable)).start();
     }
 
     @Override
@@ -818,7 +881,9 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
     @Override
     public void visit(MessageRoundChanged message) {
-            this.news.setText("New Round!");
+
+        this.news.setText(message.getNickname() + " is playing.");
+        if(message.getDraftPool() != null) this.visit(new MessageDPChanged(message.getDraftPool()));
     }
 
     @Override
@@ -838,16 +903,40 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
     @Override
     public void visit(MessageAskMove message) {
-        out.println("MessageAskMove Arrived");
+        String text = "It's your turn! You can: ";
+        out.println("Message Ask Move");
+
+        if(message.getWindowPattern() != null) this.visit( new MessageWPChanged(message.getNickname(), message.getWindowPattern()) );
+        if(message.getDraftPool() != null) this.visit(new MessageDPChanged(message.getDraftPool()));
+
         if (!message.isHasMovedDie()){
+
+            text = text + "-Move a die! ";
+            groupDestination.clear();
             groupDie.clear();
             for (ImageView imageView : draftPool) {
                 imageView.setOnMouseClicked(handleChooseDie);
                 groupDie.add(imageView);
             }
-            out.println("Handle Choose Die");
+
+            for(int i = 0; i < 4; i ++){
+                for (int j = 0 ; j < 5; j++){
+                    groupDestination.add(windowPattern.get(0)[i][j]);
+                }
+            }
+
+            for(ImageView imageView : groupDie) imageView.setDisable(false);
+            for(ImageView imageView : groupDestination) imageView.setDisable(true);
+
+            eventHandlersDie = handleChooseDie;
+            eventHandlersDestination = handleChooseBox;
     }
-        else if(!message.isHasUsedTool()){}
+        if(!message.isHasUsedTool()){
+            text = text + "-Use Tool!";
+        }
+        this.news.setText(null);
+        this.news.setText(text);
+        this.lastBeautifulMessage = text;
 
     }
 
@@ -855,5 +944,6 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     public void visit(MessageForceMove message) {
 
     }
+    public void stopTimer(){buttonEndTurn.fire();}
 
 }

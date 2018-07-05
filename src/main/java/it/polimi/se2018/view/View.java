@@ -540,9 +540,9 @@ public class View extends Observable implements VisitorView, ViewInterface {
         return choice;
 
     }
-
-    public static InputThread getInputThread() {
-        return inputThread;
+    @Override
+    public void stopTimer() {
+        inputThread.stopThread();
     }
 
     @Override
@@ -652,6 +652,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
     public void notifyObserver(Message message){
         notifyObservers(message);
     }
+
 }
 
 

@@ -37,7 +37,7 @@ public class Controller implements VisitorController, Observer {
         this.virtualView = view;
         view.register(this);
 
-        timeForRound = 60; // HARDCODED
+        timeForRound = 10000; // HARDCODED
 
         prepareGame(nickname);
     }

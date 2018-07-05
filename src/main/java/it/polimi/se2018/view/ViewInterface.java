@@ -10,4 +10,5 @@ public interface ViewInterface extends Observer {
     String askNickname();
     void addObserver(Observer observer);
     void notifyObserver(Message message);
+    void stopTimer();
 }
