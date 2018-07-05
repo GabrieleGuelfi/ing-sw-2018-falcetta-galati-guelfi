@@ -75,7 +75,6 @@ public class Controller implements VisitorController, Observer {
         //Tools
         for (int i=0; i<3; i++) {
             index = generator.nextInt(11);
-            index = 11;
             while (rand.contains(index))
                 index = generator.nextInt(11);
             rand.add(index);
@@ -160,6 +159,12 @@ public class Controller implements VisitorController, Observer {
             match.getRound().nextTurn(match.getPlayers());
             Player player = match.getRound().getPlayerTurn();
             match.notifyObservers(new MessageTurnChanged(player.getNickname()));
+            if (player.isPlacedDie() && player.isUsedTool()) {
+                player.setUsedTool(false);
+                player.setPlacedDie(false);
+                nextTurn();
+                return;
+            }
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool()));
             startTimer();
         }
