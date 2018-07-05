@@ -530,6 +530,8 @@ public class View extends Observable implements VisitorView, ViewInterface {
     }
 
     private void askCustomWP() {
+        out.println(StringJSON.printStrings("askCustom", "timer"));
+        int timer = chooseBetween(20, 300);
         out.println(StringJSON.printStrings("askCustom", "useCustom"));
         int choice = chooseBetween(1, 2);
         if (choice==1) {
@@ -545,13 +547,13 @@ public class View extends Observable implements VisitorView, ViewInterface {
             }
             if(jsonFile==null) {
                 out.println(StringJSON.printStrings("askCustom", "incorrectFile"));
-                notifyObservers(new MessageCustomResponse(this.nickname, false, null));
+                notifyObservers(new MessageCustomResponse(this.nickname, false, null, timer));
                 return;
             }
-            notifyObservers(new MessageCustomResponse(this.nickname, true, jsonFile));
+            notifyObservers(new MessageCustomResponse(this.nickname, true, jsonFile, timer));
         }
         else
-            notifyObservers(new MessageCustomResponse(this.nickname, false, null));
+            notifyObservers(new MessageCustomResponse(this.nickname, false, null, timer));
     }
 
     private int chooseBetween(int min, int max) {

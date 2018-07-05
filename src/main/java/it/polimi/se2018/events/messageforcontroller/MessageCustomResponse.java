@@ -7,11 +7,13 @@ public class MessageCustomResponse extends Message {
 
     private boolean useCustom;
     private String file;
+    private int timer;
 
-    public MessageCustomResponse(String nickname, boolean useCustom, String file) {
+    public MessageCustomResponse(String nickname, boolean useCustom, String file, int timer) {
         super(nickname);
         this.useCustom = useCustom;
         this.file = file;
+        this.timer = timer;
         this.noTurn = true;
     }
 
@@ -21,6 +23,10 @@ public class MessageCustomResponse extends Message {
 
     public String getFile() {
         return file;
+    }
+
+    public int getTimer() {
+        return timer;
     }
 
     @Override

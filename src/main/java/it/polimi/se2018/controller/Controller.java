@@ -36,9 +36,6 @@ public class Controller implements VisitorController, Observer {
     public Controller(List<String> nickname, VirtualView view) {
         this.virtualView = view;
         view.register(this);
-
-        timeForRound = 60; // HARDCODED
-
         prepareGame(nickname);
     }
 
@@ -558,6 +555,8 @@ public class Controller implements VisitorController, Observer {
 
     @Override
     public void visit(MessageCustomResponse message) {
+        this.timeForRound = message.getTimer();
+
         if(message.isUseCustom()) {
             HandleJSON.addWP(message.getFile());
         }
