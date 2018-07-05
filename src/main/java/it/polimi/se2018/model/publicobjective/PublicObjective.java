@@ -15,31 +15,33 @@ public abstract class PublicObjective {
     private String description;
     int vp;
     int points;
+    private int id;
 
     /**
      * Class Constructor
      * @param description the short description of the objective
      * @param vp how much points give the objective
      */
-    public PublicObjective(String description, int vp) {
+    public PublicObjective( int id, String description, int vp) {
         this.description = description;
         this.vp = vp;
+        this.id = id;
     }
 
     private static final List<Command> PUBOBJ;
 
     static {
         final List<Command> pubObj = new ArrayList<>();
-        pubObj.add(() -> new DiffRow("Rows with no repeated colors", 6, true));
-        pubObj.add(() -> new DiffColumn("Column with no repeated colours", 5, true));
-        pubObj.add(() -> new DiffRow("Rows with no repeated values", 5, false));
-        pubObj.add(() -> new DiffColumn("Column with no repeated values", 4, false));
-        pubObj.add(() -> new SetShades("Sets of 1 & 2 values anywhere", 2, 1));
-        pubObj.add(() -> new SetShades("Sets of 3 & 4 values anywhere", 2, 3));
-        pubObj.add(() -> new SetShades("Sets of 5 & 6 values anywhere", 2, 5));
-        pubObj.add(() -> new DiffEverywhere("Sets of one of each value anywhere", 5, false));
-        pubObj.add(() -> new DiagColour("Count of diagonally adjacent same color dice"));
-        pubObj.add(() -> new DiffEverywhere("Sets of one of each color anywhere", 4, true));
+        pubObj.add(() -> new DiffRow(0, "Rows with no repeated colors", 6, true));
+        pubObj.add(() -> new DiffColumn(1, "Column with no repeated colours", 5, true));
+        pubObj.add(() -> new DiffRow(2, "Rows with no repeated values", 5, false));
+        pubObj.add(() -> new DiffColumn(3, "Column with no repeated values", 4, false));
+        pubObj.add(() -> new SetShades(4, "Sets of 1 & 2 values anywhere", 2, 1));
+        pubObj.add(() -> new SetShades(5, "Sets of 3 & 4 values anywhere", 2, 3));
+        pubObj.add(() -> new SetShades(6, "Sets of 5 & 6 values anywhere", 2, 5));
+        pubObj.add(() -> new DiffEverywhere(7, "Sets of one of each value anywhere", 5, false));
+        pubObj.add(() -> new DiagColour(8, "Count of diagonally adjacent same color dice"));
+        pubObj.add(() -> new DiffEverywhere(9, "Sets of one of each color anywhere", 4, true));
         PUBOBJ = Collections.unmodifiableList(pubObj);
     }
 
@@ -72,6 +74,10 @@ public abstract class PublicObjective {
      */
     public int getVp() {
         return vp;
+    }
+
+    public int getId() {
+        return id;
     }
 
     /**

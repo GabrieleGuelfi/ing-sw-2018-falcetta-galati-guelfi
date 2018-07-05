@@ -21,8 +21,8 @@ public class DiffRow extends PublicObjective {
      * @param vp how much points give the objective
      * @param isColour establish if calculate the different colour or shade
      */
-    DiffRow(String description, int vp, boolean isColour) {
-        super(description, vp);
+    DiffRow(int id, String description, int vp, boolean isColour) {
+        super(id, description, vp);
         this.isColour = isColour;
     }
 

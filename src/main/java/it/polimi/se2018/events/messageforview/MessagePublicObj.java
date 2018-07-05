@@ -9,16 +9,19 @@ public class MessagePublicObj extends Message {
 
     private List<String> descriptions;
     private List<Integer> points;
+    private List<Integer> id;
 
-    public MessagePublicObj(List<String> descriptions, List<Integer> points) {
+    public MessagePublicObj(List<String> descriptions, List<Integer> points, List<Integer> id) {
         this.descriptions = descriptions;
         this.points = points;
+        this.id = id;
     }
 
-    public MessagePublicObj (String nickname, List<String> descriptions, List<Integer> points) {
+    public MessagePublicObj (String nickname, List<String> descriptions, List<Integer> points, List<Integer> id) {
         super(nickname);
         this.descriptions = descriptions;
         this.points = points;
+        this.id = id;
     }
 
     public List<String> getDescriptions() {
@@ -27,6 +30,10 @@ public class MessagePublicObj extends Message {
 
     public List<Integer> getPoints() {
         return points;
+    }
+
+    public List<Integer> getId() {
+        return id;
     }
 
     @Override

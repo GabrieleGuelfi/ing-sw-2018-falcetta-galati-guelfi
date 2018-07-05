@@ -35,7 +35,7 @@ public enum RequestType {
 
         @Override
         public void performRequest(Player player, VirtualView virtualView, Match match) {
-            virtualView.send(new MessagePrivObj(player.getNickname(), player.getPrivateObjective().getDescription()));
+            virtualView.send(new MessagePrivObj(player.getNickname(), player.getPrivateObjective().getDescription(), player.getPrivateObjective().getShade().toString()));
         }
     },
     PUBLIC {
@@ -48,12 +48,14 @@ public enum RequestType {
         public void performRequest(Player player, VirtualView virtualView, Match match) {
             List<String> publicObjDescriptions = new ArrayList<>();
             List<Integer> publicObjPoints = new ArrayList<>();
+            List<Integer> id = new ArrayList<>();
             for(PublicObjective p: match.getPublicObjectives()) {
                 publicObjDescriptions.add(p.getDescription());
                 publicObjPoints.add(p.getVp());
+                id.add(p.getId());
             }
             if(!publicObjDescriptions.isEmpty())
-                virtualView.send(new MessagePublicObj(player.getNickname(), publicObjDescriptions, publicObjPoints));
+                virtualView.send(new MessagePublicObj(player.getNickname(), publicObjDescriptions, publicObjPoints, id));
         }
     },
     ALLWP {

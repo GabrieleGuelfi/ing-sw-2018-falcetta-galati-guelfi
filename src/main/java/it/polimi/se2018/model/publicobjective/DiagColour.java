@@ -12,8 +12,8 @@ public class DiagColour extends PublicObjective {
      * Class Constructor
      * @param description the short description of the objective
      */
-    DiagColour (String description) {
-        super(description, 0);
+    DiagColour (int id, String description) {
+        super(id, description, 0);
     }
 
     /**

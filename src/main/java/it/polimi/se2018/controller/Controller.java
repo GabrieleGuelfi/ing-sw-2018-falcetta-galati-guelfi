@@ -134,7 +134,7 @@ public class Controller implements VisitorController, Observer {
                 index = generator.nextInt(colours.length);
             rand.add(index);
             p.setPrivateObjective(HandleJSON.createPrivateObjective(colours[index]));
-            virtualView.send(new MessagePrivObj(p.getNickname(), p.getPrivateObjective().getDescription()));
+            virtualView.send(new MessagePrivObj(p.getNickname(), p.getPrivateObjective().getDescription(), p.getPrivateObjective().getShade().toString()));
         }
     }
 
@@ -272,7 +272,7 @@ public class Controller implements VisitorController, Observer {
     }
 
     @Override
-    public void update(Message message) {
+    public synchronized void update(Message message) {
         if (!message.getNickname().equals(match.getRound().getPlayerTurn().getNickname()) && !message.isNoTurn()) {
             virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings(ERROR_MOVE, "errorTurn")));
         }
