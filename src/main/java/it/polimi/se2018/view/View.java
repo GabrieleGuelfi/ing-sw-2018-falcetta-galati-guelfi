@@ -60,6 +60,11 @@ public class View extends Observable implements VisitorView, ViewInterface {
         return this.nickname;
     }
 
+    @Override
+    public String getHost() {
+        return null;
+    }
+
     private void nicknameConfirmation(MessageNickname nicknameMessage) {
         if (nicknameMessage.getBoolean()) {
             out.println(StringJSON.printStrings("introductionStrings","nicknameIsOk"));

@@ -155,7 +155,7 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
     private String nicknamePlayer = null;
     private int connection = 1;
-    private int port;
+    private String port;
     private boolean initialize = true;
     private boolean gui = true;
     private int first;
@@ -310,7 +310,7 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
             choise = this.textField.getText();
             if(this.text.getText().equals("Choose IP")) {
                 try {
-                    this.port = Integer.parseInt(choise);
+                    this.port = choise;
                     this.textField.clear();
                     this.setChooseNickname();
                 } catch (NumberFormatException e) {
@@ -440,6 +440,11 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     @Override
     public String askNickname() {
         return this.nicknamePlayer;
+    }
+
+    @Override
+    public String getHost() {
+        return port;
     }
 
     @Override

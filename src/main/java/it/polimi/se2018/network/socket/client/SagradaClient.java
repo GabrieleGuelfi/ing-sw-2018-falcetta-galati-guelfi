@@ -17,7 +17,7 @@ import static javafx.application.Application.launch;
 public class SagradaClient {
 
     private static final int PORT = 1111;
-    private static final String HOST = "localhost";
+    private static String HOST = "localhost";
 
     private static ClientImplementation client;
     private static ServerInterface server;
@@ -68,6 +68,9 @@ public class SagradaClient {
         view.addObserver(client);
         client.register(view);
         nick = view.askNickname();
+
+        String userHost = view.getHost();
+        if(!userHost.equals("")) HOST = userHost;
 
         newConnection(nick);
 
