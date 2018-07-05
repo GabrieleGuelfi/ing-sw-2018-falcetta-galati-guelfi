@@ -417,6 +417,91 @@ public class TestController {
         //assertEquals(dieDP, match.getRound().getDraftPool().getBag().get(0));
     }
 
+    @Test
+    public void testTool7() {
+        testSetWp();
+        match.getTools().clear();
+        match.getTools().add(Tool.factory(1));
+        match.getTools().get(0).setVirtualView(virtualView);
+
+        match.getRound().getDraftPool().getBag().clear();
+        for(int i=0; i<6; i++) {
+            match.getRound().getDraftPool().getBag().add(new Die(Colour.RED));
+            match.getRound().getDraftPool().getBag().get(i).setValue(i+1);
+        }
+
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        for(int i=0; i<6; i++) {
+            assertEquals(i+1, match.getRound().getDraftPool().getBag().get(i).getValue());
+        }
+        virtualView.notifyObservers(new MessageDoNothing("player0"));
+        virtualView.notifyObservers(new MessageDoNothing("player1"));
+        virtualView.notifyObservers(new MessageDoNothing("player2"));
+        virtualView.notifyObservers(new MessageDoNothing("player3"));
+
+        virtualView.notifyObservers(new MessageMoveDie("player3", 0, 0, 0));
+        for(int i=0; i<5; i++) {
+            assertEquals(i+2, match.getRound().getDraftPool().getBag().get(i).getValue());
+        }
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player3", 0));
+        for(int i=0; i<5; i++) {
+            assertEquals(i+2, match.getRound().getDraftPool().getBag().get(i).getValue());
+        }
+
+        virtualView.notifyObservers(new MessageDoNothing("player3"));
+        virtualView.notifyObservers(new MessageDoNothing("player2"));
+        virtualView.notifyObservers(new MessageDoNothing("player1"));
+
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+
+    }
+
+
+    @Test
+    public void testTool10() {
+        testSetWp();
+        match.getTools().clear();
+        match.getTools().add(Tool.factory(2));
+        match.getTools().get(0).setVirtualView(virtualView);
+
+        match.getRound().getDraftPool().getBag().clear();
+        for(int i=0; i<6; i++) {
+            match.getRound().getDraftPool().getBag().add(new Die(Colour.RED));
+            match.getRound().getDraftPool().getBag().get(i).setValue(i+1);
+        }
+
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        virtualView.notifyObservers(new MessageToolResponse("player0", 0, null, null, null, false));
+        assertEquals(6, match.getRound().getDraftPool().getBag().get(0).getValue());
+        virtualView.notifyObservers(new MessageDoNothing("player0"));
+
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player1", 0));
+        virtualView.notifyObservers(new MessageToolResponse("player1", 1, null, null, null, false));
+        assertEquals(5, match.getRound().getDraftPool().getBag().get(1).getValue());
+        virtualView.notifyObservers(new MessageDoNothing("player1"));
+
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player2", 0));
+        virtualView.notifyObservers(new MessageToolResponse("player2", 2, null, null, null, false));
+        assertEquals(4, match.getRound().getDraftPool().getBag().get(2).getValue());
+        virtualView.notifyObservers(new MessageDoNothing("player2"));
+
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player3", 0));
+        virtualView.notifyObservers(new MessageToolResponse("player3", 3, null, null, null, false));
+        assertEquals(3, match.getRound().getDraftPool().getBag().get(3).getValue());
+        virtualView.notifyObservers(new MessageDoNothing("player3"));
+
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player3", 0));
+        virtualView.notifyObservers(new MessageToolResponse("player3", 4, null, null, null, false));
+        assertEquals(2, match.getRound().getDraftPool().getBag().get(4).getValue());
+        virtualView.notifyObservers(new MessageDoNothing("player3"));
+
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player2", 0));
+        virtualView.notifyObservers(new MessageToolResponse("player2", 5, null, null, null, false));
+        assertEquals(1, match.getRound().getDraftPool().getBag().get(5).getValue());
+        virtualView.notifyObservers(new MessageDoNothing("player2"));
+
+    }
+
     /*
     @Test
     public void visit1() {
