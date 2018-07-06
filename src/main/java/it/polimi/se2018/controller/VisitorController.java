@@ -9,7 +9,7 @@ public interface VisitorController {
     void visit(MessageMoveDie message);
     void visit(MessageDoNothing message);
     void visit(MessageRequest message);
-    void visit(MessageEndGame message);
+    void visit(MessageClientDisconnected message);
     void visit(MessageToolResponse message);
     void visit(MessageRequestUseOfTool message);
     void visit(MessageForcedMove message);
