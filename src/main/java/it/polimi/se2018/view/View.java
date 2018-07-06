@@ -228,7 +228,8 @@ public class View extends Observable implements VisitorView, ViewInterface {
             out.println(StringJSON.printStrings("askStrings","draftPool"));
             printDraftPool(draftPool);
         }
-        out.println(StringJSON.printStrings("askStrings", "favorTokens") + favorTokens);
+        if (favorTokens!=-1)
+            out.println(StringJSON.printStrings("askStrings", "favorTokens") + favorTokens);
 
         out.println(StringJSON.printStrings("askStrings","selectMove"));
         int i=1;
@@ -578,6 +579,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
             inputThread = new InputThread();
             inputThread.start();
             choice = inputThread.getChoice();
+            if(choice==-1) return choice;
         }
         return choice;
 

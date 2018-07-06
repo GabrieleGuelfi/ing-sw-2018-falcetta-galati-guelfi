@@ -279,7 +279,7 @@ public class Controller implements VisitorController, Observer {
      */
     @Override
     public synchronized void update(Message message) {
-        if (!message.getNickname().equals(match.getRound().getPlayerTurn().getNickname()) && !message.isNoTurn()) {
+        if (!message.isNoTurn() && !message.getNickname().equals(match.getRound().getPlayerTurn().getNickname())) {
             virtualView.send(new MessageErrorMove(message.getNickname(), StringJSON.printStrings(ERROR_MOVE, "errorTurn")));
         }
         else {
@@ -356,7 +356,7 @@ public class Controller implements VisitorController, Observer {
             return;
         }
         if (!verifyColor(player.getWindowPattern(), message.getRow(), message.getColumn(), d)) {
-            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings(ERROR_MOVE,"colourRestriction!")));
+            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings(ERROR_MOVE,"colourRestriction")));
             virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), match.getRound().getDraftPool(), player.getFavorTokens()));
             return;
         }
@@ -376,7 +376,7 @@ public class Controller implements VisitorController, Observer {
 
         if(!isThereAnotherMove) nextTurn();
         else {
-            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getFavorTokens()));
         }
 
     }
@@ -412,7 +412,7 @@ public class Controller implements VisitorController, Observer {
             return;
         }
         message.getType().performRequest(player, virtualView, match);
-        virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+        virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), -1));
     }
 
     /**
@@ -420,9 +420,11 @@ public class Controller implements VisitorController, Observer {
      * @param message contains the nickname of the winner
      */
     @Override
-    public void visit(MessageEndGame message){
+    public void visit(MessageClientDisconnected message){
         //IN THIS MESSAGE THERE IS THE NAME OF THE WINNER
-        this.endMatch(searchNick(message.getNickname()));
+
+        if(message.isMatchHasToFinish()) this.endMatch(searchNick(message.getNickname()));
+        else handleEndTime();
 
     }
 

@@ -113,7 +113,7 @@ public class DieChanger extends Tool {
         if (mixAllDice) {
             if(match.getRound().getNumTurn() <= match.getPlayers().size() || player.isPlacedDie()) {
                 virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","cantUseTool")));
-                virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+                virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), -1));
                 return;
             }
             virtualView.send(new MessageToolOrder(player.getNickname(), 0, false));
@@ -123,7 +123,7 @@ public class DieChanger extends Tool {
         if (!oppositeFace && !plusMinusOne && !mixAllDice){
             if (player.isPlacedDie()) {
                 virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","alreadyPlaced")));
-                virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+                virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), -1));
                 return;
             }
             virtualView.send(new MessageToolOrder(player.getNickname(), 1, false));

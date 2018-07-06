@@ -54,6 +54,7 @@ public class InputThread extends Thread {
                 if(br.ready()) {
                     try {
                         choice = Integer.parseInt(br.readLine());
+                        if(choice==-1) choice=-2;
                         isChosing = false;
                     }
                     catch (NumberFormatException e) {

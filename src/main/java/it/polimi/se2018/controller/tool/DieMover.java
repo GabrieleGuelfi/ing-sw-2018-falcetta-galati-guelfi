@@ -133,7 +133,7 @@ public class DieMover extends Tool {
         else if(!respectRoundtrack) virtualView.send(new MessageToolOrder(player.getNickname(), 0, 2, 2, 0));
         else if (match.getRoundTrack().isEmpty()) {
             virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","firstRound")));
-            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), -1));
             return;
         }
         else
