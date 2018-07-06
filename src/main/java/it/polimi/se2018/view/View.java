@@ -537,9 +537,11 @@ public class View extends Observable implements VisitorView, ViewInterface {
         out.println("\n");
     }
 
-    private void askCustomWP() {
-        out.println(StringJSON.printStrings("askCustom", "timer"));
-        int timer = chooseBetween(20, 300);
+    private void askCustomWP(int timer) {
+        if (timer==0) {
+            out.println(StringJSON.printStrings("askCustom", "timer"));
+            timer = chooseBetween(20, 300);
+        }
         out.println(StringJSON.printStrings("askCustom", "useCustom"));
         int choice = chooseBetween(1, 2);
         if (choice==1) {
@@ -550,7 +552,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
                 jsonFile = HandleJSON.readFile(file);
             } catch (FileNotFoundException e) {
                 out.println(StringJSON.printStrings("askCustom", "fileNotFound"));
-                askCustomWP();
+                askCustomWP(timer);
                 return;
             }
             if(jsonFile==null) {
@@ -688,7 +690,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
 
     @Override
     public void visit(MessageCustomWP message) {
-        askCustomWP();
+        askCustomWP(0);
     }
 
     public void addObserver(Observer observer){
