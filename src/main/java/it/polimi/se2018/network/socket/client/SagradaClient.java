@@ -34,7 +34,7 @@ public class SagradaClient {
 
     private static void connectThroughRmi(String nickname) {
         try {
-            server = (ServerInterface) Naming.lookup("//localhost/RemoteServer");
+            server = (ServerInterface) Naming.lookup("//"+ HOST + "/RemoteServer");
             if(remoteRef==null) remoteRef =  (ClientInterface) UnicastRemoteObject.exportObject(client, 0);
             server.addClient(remoteRef, nickname);
         } catch (RemoteException | NotBoundException | MalformedURLException e) {
