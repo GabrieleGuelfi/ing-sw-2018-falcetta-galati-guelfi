@@ -161,7 +161,7 @@ public final class HandleJSON {
         JSONArray string = (JSONArray) tools.get(number);
 
         tool.add((String) string.get(0));
-        tool.add((String) string.get(0));
+        tool.add((String) string.get(1));
 
         return tool;
     }

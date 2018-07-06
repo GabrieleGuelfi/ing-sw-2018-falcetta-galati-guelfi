@@ -1,6 +1,7 @@
 package it.polimi.se2018.controller.tool;
 
 import it.polimi.se2018.events.messageforcontroller.MessageToolResponse;
+import it.polimi.se2018.events.messageforview.MessageAskMove;
 import it.polimi.se2018.events.messageforview.MessageErrorMove;
 import it.polimi.se2018.events.messageforview.MessageToolOrder;
 import it.polimi.se2018.events.messageforview.MessageWPChanged;
@@ -130,7 +131,13 @@ public class DieMover extends Tool {
         if(!canUseTool(player)) return;
         if(!(respectValue&&respectColour)) virtualView.send(new MessageToolOrder(player.getNickname(), 0, 1,  1, 0));
         else if(!respectRoundtrack) virtualView.send(new MessageToolOrder(player.getNickname(), 0, 2, 2, 0));
-        else virtualView.send(new MessageToolOrder(player.getNickname(),2, 2, true));
+        else if (match.getRoundTrack().isEmpty()) {
+            virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","firstRound")));
+            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+            return;
+        }
+        else
+            virtualView.send(new MessageToolOrder(player.getNickname(),2, 2, true));
         this.isBeingUsed = true;
     }
 }

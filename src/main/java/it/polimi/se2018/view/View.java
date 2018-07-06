@@ -87,10 +87,12 @@ public class View extends Observable implements VisitorView, ViewInterface {
         }
     }
 
-    private void showTools(List<String> names) {
+    private void showTools(List<String> names, List<String> descriptions, List<Boolean> used) {
         out.println(StringJSON.printStrings("stateUpdateStrings","tools"));
         for(int i=0; i<names.size(); i++) {
-            out.println(i+1 + ") " + names.get(i));
+            out.print(i+1 + ") " + names.get(i));
+            out.println("    "+ansi().fg(RED).a(StringJSON.printStrings("printStrings","used")+used.get(i)).reset());
+            out.println(descriptions.get(i));
         }
     }
 
@@ -595,7 +597,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
 
     @Override
     public void visit(MessageTool message) {
-        showTools(message.getNames());
+        showTools(message.getNames(), message.getDescriptions(), message.getUsed());
     }
 
     @Override

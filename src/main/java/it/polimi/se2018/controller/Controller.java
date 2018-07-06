@@ -36,6 +36,7 @@ public class Controller implements VisitorController, Observer {
     public Controller(List<String> nickname, VirtualView view) {
         this.virtualView = view;
         view.register(this);
+        this.timeForRound = 120; //default
         prepareGame(nickname);
     }
 

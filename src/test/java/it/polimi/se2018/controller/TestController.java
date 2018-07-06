@@ -2,7 +2,6 @@ package it.polimi.se2018.controller;
 
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.messageforcontroller.*;
-import it.polimi.se2018.events.messageforview.MessageToolOrder;
 import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.Match;
@@ -13,8 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -291,7 +288,6 @@ public class TestController {
         assertEquals(die.getColour(), match.getPlayers().get(0).getWindowPattern().getBox(1,0).getDie().getColour());
     }
 
-
     @Test
     public void testTool3() {
         testSetWp();
@@ -417,6 +413,45 @@ public class TestController {
 
         assertEquals(dieRT, match.getRoundTrack().get(1).get(0));
         assertEquals(dieDP, match.getRound().getDraftPool().getBag().get(0));
+    }
+
+    @Test
+    public void testTool7() {
+        testSetWp();
+        match.getTools().clear();
+        match.getTools().add(Tool.factory(1));
+        match.getTools().get(0).setVirtualView(virtualView);
+
+        match.getRound().getDraftPool().getBag().clear();
+        for(int i=0; i<6; i++) {
+            match.getRound().getDraftPool().getBag().add(new Die(Colour.RED));
+            match.getRound().getDraftPool().getBag().get(i).setValue(i+1);
+        }
+
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        for(int i=0; i<6; i++) {
+            assertEquals(i+1, match.getRound().getDraftPool().getBag().get(i).getValue());
+        }
+        virtualView.notifyObservers(new MessageDoNothing("player0"));
+        virtualView.notifyObservers(new MessageDoNothing("player1"));
+        virtualView.notifyObservers(new MessageDoNothing("player2"));
+        virtualView.notifyObservers(new MessageDoNothing("player3"));
+
+        virtualView.notifyObservers(new MessageMoveDie("player3", 0, 0, 0));
+        for(int i=0; i<5; i++) {
+            assertEquals(i+2, match.getRound().getDraftPool().getBag().get(i).getValue());
+        }
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player3", 0));
+        for(int i=0; i<5; i++) {
+            assertEquals(i+2, match.getRound().getDraftPool().getBag().get(i).getValue());
+        }
+
+        virtualView.notifyObservers(new MessageDoNothing("player3"));
+        virtualView.notifyObservers(new MessageDoNothing("player2"));
+        virtualView.notifyObservers(new MessageDoNothing("player1"));
+
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+
     }
 
     @Test
@@ -562,46 +597,6 @@ public class TestController {
     }
 
     @Test
-    public void testTool7() {
-        testSetWp();
-        match.getTools().clear();
-        match.getTools().add(Tool.factory(1));
-        match.getTools().get(0).setVirtualView(virtualView);
-
-        match.getRound().getDraftPool().getBag().clear();
-        for(int i=0; i<6; i++) {
-            match.getRound().getDraftPool().getBag().add(new Die(Colour.RED));
-            match.getRound().getDraftPool().getBag().get(i).setValue(i+1);
-        }
-
-        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
-        for(int i=0; i<6; i++) {
-            assertEquals(i+1, match.getRound().getDraftPool().getBag().get(i).getValue());
-        }
-        virtualView.notifyObservers(new MessageDoNothing("player0"));
-        virtualView.notifyObservers(new MessageDoNothing("player1"));
-        virtualView.notifyObservers(new MessageDoNothing("player2"));
-        virtualView.notifyObservers(new MessageDoNothing("player3"));
-
-        virtualView.notifyObservers(new MessageMoveDie("player3", 0, 0, 0));
-        for(int i=0; i<5; i++) {
-            assertEquals(i+2, match.getRound().getDraftPool().getBag().get(i).getValue());
-        }
-        virtualView.notifyObservers(new MessageRequestUseOfTool("player3", 0));
-        for(int i=0; i<5; i++) {
-            assertEquals(i+2, match.getRound().getDraftPool().getBag().get(i).getValue());
-        }
-
-        virtualView.notifyObservers(new MessageDoNothing("player3"));
-        virtualView.notifyObservers(new MessageDoNothing("player2"));
-        virtualView.notifyObservers(new MessageDoNothing("player1"));
-
-        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
-
-    }
-
-
-    @Test
     public void testTool10() {
         testSetWp();
         match.getTools().clear();
@@ -644,6 +639,95 @@ public class TestController {
         assertEquals(1, match.getRound().getDraftPool().getBag().get(5).getValue());
         virtualView.notifyObservers(new MessageDoNothing("player2"));
 
+    }
+
+    @Test
+    public void testTool11() {
+        testSetWp();
+        match.getTools().clear();
+        match.getTools().add(Tool.factory(7));
+        match.getTools().get(0).setVirtualView(virtualView);
+
+        match.getRound().getDraftPool().getBag().clear();
+        Die die1 = new Die(Colour.MAGENTA);
+        die1.setValue(3);
+        Die die2 = new Die(Colour.MAGENTA);
+        die2.setValue(2);
+        Die die3 = new Die(Colour.MAGENTA);
+        die3.setValue(2);
+        match.getRound().getDraftPool().addDie(die1);
+        match.getRound().getDraftPool().addDie(die2);
+        match.getRound().getDraftPool().addDie(die3);
+
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        assertEquals(false, match.getTools().get(0).isBeingUsed());
+
+        for (int i=0; i<8; i++) {
+            if (i==1) {
+                virtualView.notifyObservers(new MessageMoveDie("player1", 0, 0, 2));
+            }
+            if (i==6) {
+                virtualView.notifyObservers(new MessageMoveDie("player1", 0, 1, 3));
+            }
+            if (i < 4)
+                virtualView.notifyObservers(new MessageDoNothing("player" + i));
+            else
+                virtualView.notifyObservers(new MessageDoNothing("player" + (7-i)));
+        }
+
+        match.getRound().getDraftPool().getBag().clear();
+        Die die4 = new Die(Colour.BLUE);
+        die3.setValue(2);
+        match.getRound().getDraftPool().addDie(die4);
+        virtualView.notifyObservers(new MessageMoveDie("player1", 0, 2, 3));
+
+        //noDiePosition
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player1", 0));
+        List<Integer[]> diceFromWp = new ArrayList<>();
+        Integer[] positions = { 0, 0 };
+        Integer[] positions1 = { 1, 3 };
+        diceFromWp.add(positions);
+        diceFromWp.add(positions1);
+        List<Integer[]> newPositionsWP = new ArrayList<>();
+        Integer[] positionsWP = { 3, 3 };
+        Integer[] positionsWP1 = { 2, 4 };
+        newPositionsWP.add(positionsWP);
+        newPositionsWP.add(positionsWP1);
+        virtualView.notifyObservers(new MessageToolResponse("player1", 0, diceFromWp, null, newPositionsWP, false));
+        assertEquals(die1, match.getPlayers().get(1).getWindowPattern().getBox(0, 2).getDie());
+        assertEquals(die2, match.getPlayers().get(1).getWindowPattern().getBox(1, 3).getDie());
+
+        //noDieRoundTrack
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player1", 0));
+        diceFromWp.clear();
+        positions[0] = 2;
+        positions[1] = 3;
+        diceFromWp.add(positions);
+        diceFromWp.add(positions1);
+        newPositionsWP.add(positionsWP);
+        newPositionsWP.add(positionsWP1);
+        virtualView.notifyObservers(new MessageToolResponse("player1", 0, diceFromWp, null, newPositionsWP, false));
+        assertEquals(die1, match.getPlayers().get(1).getWindowPattern().getBox(0, 2).getDie());
+        assertEquals(die2, match.getPlayers().get(1).getWindowPattern().getBox(1, 3).getDie());
+
+        //correctUse
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player1", 0));
+        diceFromWp.clear();
+        positions[0] = 0;
+        positions[1] = 2;
+        diceFromWp.add(positions);
+        diceFromWp.add(positions1);
+        newPositionsWP.add(positionsWP);
+        newPositionsWP.add(positionsWP1);
+        virtualView.notifyObservers(new MessageToolResponse("player1", 0, diceFromWp, null, newPositionsWP, false));
+
+        if (match.getPlayers().get(1).getWindowPattern().getBox(0, 2).getDie()!=null || match.getPlayers().get(1).getWindowPattern().getBox(1, 3).getDie()!=null)
+            fail();
+
+        assertEquals(die1.getColour(), match.getPlayers().get(1).getWindowPattern().getBox(3, 3).getDie().getColour());
+        assertEquals(die1.getValue(), match.getPlayers().get(1).getWindowPattern().getBox(3, 3).getDie().getValue());
+        assertEquals(die2.getColour(), match.getPlayers().get(1).getWindowPattern().getBox(2, 4).getDie().getColour());
+        assertEquals(die2.getValue(), match.getPlayers().get(1).getWindowPattern().getBox(2, 4).getDie().getValue());
     }
 
     /*

@@ -58,7 +58,8 @@
   },
 
   "printStrings": {
-    "difficulty": "\nDifficulty: "
+    "difficulty": "\nDifficulty: ",
+    "used": "used: "
   },
   "errorMove": {
     "playerNotFound": "404 Player not found!",
@@ -102,7 +103,7 @@
     "file": "Place the file in the directory of the jar(for example Desktop)\nThen write the name of the file with extension(i.e. prova.json)",
     "fileNotFound": "File not Found, you can try again",
     "incorrectFile": "Your file is incorrect! Sorry we can't use it",
-    "timer": "Set the Timer for every turn: (min 20s, max 300s)"
+    "timer": "\nSet the Timer for every turn: (min 20s, max 300s)"
   }
 
 }
