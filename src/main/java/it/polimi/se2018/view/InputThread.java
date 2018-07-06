@@ -35,7 +35,7 @@ public class InputThread extends Thread {
     public void run() {
 
         try {
-            System.in.skip(System.in.available());
+            final long skip = System.in.skip(System.in.available());
         } catch (IOException e) {
             final Logger logger = Logger.getLogger(this.getClass().getName());
             logger.log(Level.WARNING, e.getMessage());
