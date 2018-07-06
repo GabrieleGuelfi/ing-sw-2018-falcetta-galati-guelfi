@@ -16,6 +16,12 @@ public class MessageRoundTrack extends Message{
         this.roundTrack = roundTrack;
     }
 
+    public MessageRoundTrack (Map<Integer, List<Die>> roundTrack) {
+        super();
+        this.roundTrack = roundTrack;
+    }
+
+
     @Override
     public void accept(VisitorView v) {
         v.visit(this);

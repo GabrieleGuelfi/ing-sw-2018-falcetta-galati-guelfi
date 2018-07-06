@@ -171,6 +171,7 @@ public class Controller implements VisitorController, Observer {
                 match.setRoundTrack();
                 match.setRound();
                 match.notifyObservers(new MessageRoundChanged(match.getFirstPlayerRound().getNickname(), match.getNumRound(), match.getRound().getDraftPool()));
+                match.notifyObservers(new MessageRoundTrack(match.getRoundTrack()));
                 Player player = match.getRound().getPlayerTurn();
                 virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getWindowPattern(), null, player.getFavorTokens()));
                 startTimer();
