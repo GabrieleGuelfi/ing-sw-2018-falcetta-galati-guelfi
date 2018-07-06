@@ -4,6 +4,10 @@ import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.WindowPattern;
 
+/**
+ * contains rules for placing die
+ * @author Gabriele Guelfi
+ */
 public final class VerifyRules {
 
     /**
