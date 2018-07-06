@@ -2,16 +2,17 @@ package it.polimi.se2018.view;
 
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.messageforcontroller.MessageDoNothing;
-import it.polimi.se2018.network.socket.client.ClientInterface;
-import it.polimi.se2018.network.socket.client.ConnectionHandlerThread;
-import it.polimi.se2018.network.socket.server.*;
+import it.polimi.se2018.network.client.ClientInterface;
+import it.polimi.se2018.network.client.ConnectionHandlerThread;
+import it.polimi.se2018.network.server.SagradaServer;
+import it.polimi.se2018.network.server.ServerInterface;
 import it.polimi.se2018.utils.*;
 
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class VirtualView extends Observable implements Observer, ServerInterface{
+public class VirtualView extends Observable implements Observer, ServerInterface {
 
     private SagradaServer sagradaServer;
 

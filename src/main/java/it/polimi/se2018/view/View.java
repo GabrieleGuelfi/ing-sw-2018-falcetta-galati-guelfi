@@ -9,7 +9,7 @@ import it.polimi.se2018.events.messageforview.*;
 import it.polimi.se2018.model.Box;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.dicecollection.DraftPool;
-import it.polimi.se2018.network.socket.client.SagradaClient;
+import it.polimi.se2018.network.client.SagradaClient;
 import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.WindowPattern;

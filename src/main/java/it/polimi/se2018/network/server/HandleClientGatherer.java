@@ -1,4 +1,4 @@
-package it.polimi.se2018.network.socket.server;
+package it.polimi.se2018.network.server;
 
 import static java.lang.System.*;
 

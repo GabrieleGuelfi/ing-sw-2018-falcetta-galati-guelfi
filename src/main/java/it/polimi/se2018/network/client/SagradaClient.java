@@ -1,7 +1,7 @@
-package it.polimi.se2018.network.socket.client;
+package it.polimi.se2018.network.client;
 
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.network.socket.server.ServerInterface;
+import it.polimi.se2018.network.server.ServerInterface;
 import it.polimi.se2018.view.*;
 
 import java.net.MalformedURLException;
@@ -26,12 +26,20 @@ public class SagradaClient {
     private String nick;
 
 
+    /**
+     * Perform a connection through Socket and send the selected nickname to server
+     * @param nickname nickname to send to server
+     */
     private static void connectThroughSocket(String nickname) {
         server = new NetworkHandler(HOST, PORT, client);
         client.addServer(server);
         view.notifyObserver(new Message(nickname));
     }
 
+    /**
+     * Perform a connection through RMI and send the selected nickname to server
+     * @param nickname nickname to send to server
+     */
     private static void connectThroughRmi(String nickname) {
         try {
             server = (ServerInterface) Naming.lookup("//"+ HOST + "/RemoteServer");
@@ -45,6 +53,10 @@ public class SagradaClient {
 
     }
 
+    /**
+     * Used by main or by ViewInterface to perform a new connection with the selected nickname
+     * @param nickname nickname to send to server
+     */
     public static void newConnection(String nickname) {
 
         int choice;
@@ -56,12 +68,19 @@ public class SagradaClient {
 
     }
 
+    /**
+     * Exit from the game
+     */
     public static void closeClient() {
 
         System.exit(0);
 
     }
 
+    /**
+     * Constructor of the class
+     * @param viewInterface view which will be used during the game
+     */
     public SagradaClient(ViewInterface viewInterface) {
         view = viewInterface;
         client = new ClientImplementation();
@@ -77,6 +96,9 @@ public class SagradaClient {
 
     }
 
+    /**
+     * Used by GUI to switch to CLI
+     */
     public static void setCLI(String nickname) {
 
         client.deregister(view);
@@ -87,6 +109,9 @@ public class SagradaClient {
 
     }
 
+    /**
+     * Reachable method used by client to interrupt the timer
+     */
     public static void stopTurn(){
         view.stopTimer();
     }

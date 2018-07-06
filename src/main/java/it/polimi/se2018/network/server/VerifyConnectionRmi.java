@@ -1,9 +1,9 @@
-package it.polimi.se2018.network.socket.server;
+package it.polimi.se2018.network.server;
 
 
 import it.polimi.se2018.events.messageforserver.MessageErrorVirtualClientClosed;
 import it.polimi.se2018.events.messageforserver.MessagePing;
-import it.polimi.se2018.network.socket.client.ClientInterface;
+import it.polimi.se2018.network.client.ClientInterface;
 import it.polimi.se2018.utils.Observable;
 
 import java.rmi.RemoteException;

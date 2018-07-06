@@ -1,12 +1,12 @@
-package it.polimi.se2018.network.socket.server;
+package it.polimi.se2018.network.server;
 
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.messageforcontroller.MessageClientDisconnected;
 import it.polimi.se2018.events.messageforserver.*;
 import it.polimi.se2018.events.messageforview.MessageNickname;
-import it.polimi.se2018.network.socket.client.ClientInterface;
-import it.polimi.se2018.network.socket.client.ConnectionHandlerThread;
+import it.polimi.se2018.network.client.ClientInterface;
+import it.polimi.se2018.network.client.ConnectionHandlerThread;
 import it.polimi.se2018.view.VirtualView;
 import static java.lang.System.*;
 
@@ -75,6 +75,11 @@ public class SagradaServer implements VisitorServer, Observer{
         new SagradaServer();
     }
 
+    /**
+     * It will save the user and his nickname / socketConnection to the current players
+     * @param clientConnection socket of the client
+     * @param nick nick to save
+     */
     protected void addClient(Socket clientConnection, String nick) {
 
         //CREATE A VIRTUAL CLIENT AND SET NICKNAME
@@ -110,6 +115,11 @@ public class SagradaServer implements VisitorServer, Observer{
 
     }
 
+    /**
+     * It will add the user and his nickname / RMI client to the current players
+     * @param clientInterface RMI client
+     * @param nick nickname to save
+     */
     private void addClient(ClientInterface clientInterface, String nick){
 
         //CREATE NEW COUPLE-CLIENT-NICKNAME AND ADD IT TO THIS.CLIENTS
@@ -138,6 +148,10 @@ public class SagradaServer implements VisitorServer, Observer{
         else if(this.gameIsStarted) out.println(nick + " was reconnected");
     }
 
+    /**
+     * Getter for current clients
+     * @return current clients
+     */
     protected ArrayList<CoupleClientNickname> getClients() {
         return this.clients;
     }
@@ -173,6 +187,11 @@ public class SagradaServer implements VisitorServer, Observer{
         }
     }
 
+    /**
+     * Used to look for the virtualClient / RMI client, from a nickname
+     * @param player nickname to look for
+     * @return virtualClient / RMI of the user
+     */
     public ClientInterface searchVirtualClient(String player) {
         //SEARCH WHICH VIRTUAL CLIENT IS ASSOCIATED TO NICKNAME 'PLAYER'
         try {
@@ -185,6 +204,10 @@ public class SagradaServer implements VisitorServer, Observer{
         return null;
     }
 
+    /**
+     * Send a message to all users
+     * @param message to send
+     */
     public void broadcast(Message message) {
         //SEND A MESSAGE TO ALL CLIENT
         for (CoupleClientNickname c : this.clients) {
@@ -198,6 +221,12 @@ public class SagradaServer implements VisitorServer, Observer{
         }
     }
 
+    /**
+     * Check if a nickname is in the ones that were previously connected but then crashed
+     * Or, in a match which is not started, checks if it is already choosen
+     * @param string player's nickname to verify
+     * @return true if the nickname can be used
+     */
     protected boolean verifyNickname(String string){
         if(gameIsStarted && this.nicknameDisconnected.contains(string)) return true;
         else if(gameIsStarted) return false;
@@ -207,6 +236,10 @@ public class SagradaServer implements VisitorServer, Observer{
         return true;
     }
 
+    /**
+     * Starts the controller for the incoming match
+     * Called if lobby time is finished or if 4 players were reached
+     */
     protected void startGame() {
 
         if (this.clients.size() == 1) {
@@ -230,6 +263,9 @@ public class SagradaServer implements VisitorServer, Observer{
         }
     }
 
+    /**
+     * Restart the game if players want to play again
+     */
     private void restartGame(){
 
         //BE READY FOR A NEW MATCH
