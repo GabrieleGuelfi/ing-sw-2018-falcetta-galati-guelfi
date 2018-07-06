@@ -6,6 +6,11 @@ import it.polimi.se2018.utils.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * This thread will simply perform the action of calling a notifyObservers on an observable object
+ * It's necessary because RMI can create chain of function calling, which leads to deadlocks.
+ * Using a thread assures that this chain is broken, and server and client are kept really detached.
+ */
 public class ConnectionHandlerThread extends Thread {
 
     private Observable o;

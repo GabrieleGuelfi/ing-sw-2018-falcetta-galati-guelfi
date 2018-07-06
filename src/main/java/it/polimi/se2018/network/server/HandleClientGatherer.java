@@ -2,6 +2,10 @@ package it.polimi.se2018.network.server;
 
 import static java.lang.System.*;
 
+/**
+ * Utility class used from server to handle the ClientGatherer, which is a thread
+ * which listens for incoming socket connections
+ */
 public class HandleClientGatherer extends Thread {
 
     private final ClientGatherer clientGatherer;

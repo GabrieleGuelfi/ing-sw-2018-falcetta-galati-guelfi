@@ -10,6 +10,12 @@ import java.util.logging.Logger;
 
 import static java.lang.System.out;
 
+/**
+ * Class used to avoid blocking methods using CLI
+ * In fact, without this it's impossible to print new messages in the terminal window if the user is still
+ * putting an input
+ */
+
 public class InputThread extends Thread {
 
     private int choice;

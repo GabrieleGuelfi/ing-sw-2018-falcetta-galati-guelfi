@@ -12,6 +12,12 @@ import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+/**
+ * VirtualView is used by the controller and the model to simulate a View
+ * This class will reorder the messages to their destination
+ *
+ */
 public class VirtualView extends Observable implements Observer, ServerInterface {
 
     private SagradaServer sagradaServer;

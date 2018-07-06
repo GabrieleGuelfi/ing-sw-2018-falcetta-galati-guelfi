@@ -26,6 +26,12 @@ import static java.lang.System.*;
 import static org.fusesource.jansi.Ansi.*;
 import static org.fusesource.jansi.Ansi.Color.*;
 
+/**
+ * View offers the CLI service
+ * It accepts messages from the server (controller, model), manage them according to instructions in
+ * VisitorView and manages to show the end user the contents of the game
+ */
+
 public class View extends Observable implements VisitorView, ViewInterface {
 
     private static final int MAX_ROW = WindowPattern.MAX_ROW;
