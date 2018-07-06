@@ -46,7 +46,7 @@ public class DieSwapper extends Tool {
         if (canUseTool(player) ) {
             if (match.getRoundTrack().isEmpty()) {
                 virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","firstRound")));
-                virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+                virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), -1));
             }
             else {
                 this.isBeingUsed = true;

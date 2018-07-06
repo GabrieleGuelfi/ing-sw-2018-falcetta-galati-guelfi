@@ -375,7 +375,7 @@ public class Controller implements VisitorController, Observer {
 
         if(!isThereAnotherMove) nextTurn();
         else {
-            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), player.getFavorTokens()));
         }
 
     }
@@ -411,7 +411,7 @@ public class Controller implements VisitorController, Observer {
             return;
         }
         message.getType().performRequest(player, virtualView, match);
-        virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+        virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), -1));
     }
 
     /**

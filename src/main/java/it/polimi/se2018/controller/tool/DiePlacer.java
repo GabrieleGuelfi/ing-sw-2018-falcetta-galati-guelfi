@@ -111,7 +111,7 @@ public class DiePlacer extends Tool {
         if(!respectDistance && !takeFromBag) {
             if(match.getRound().getNumTurn() > match.getPlayers().size()) {
                 virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","secondTurn")));
-                virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+                virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), -1));
                 return;
             }
             else virtualView.send(new MessageToolOrder(player.getNickname(), 1, 0, 1, 0));
@@ -119,7 +119,7 @@ public class DiePlacer extends Tool {
         if(respectDistance && !takeFromBag) {
             if(player.isPlacedDie())  {
                 virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","alreadyPlaced")));
-                virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+                virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), -1));
                 return;
             }
             else virtualView.send(new MessageToolOrder(player.getNickname(), 1, 0, 1, 0));

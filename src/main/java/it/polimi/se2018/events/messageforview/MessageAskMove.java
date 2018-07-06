@@ -22,12 +22,13 @@ public class MessageAskMove extends Message {
         this.favorTokens = favorTokens;
     }
 
-    public MessageAskMove(String nickname, boolean hasUsedTool, boolean hasMovedDie) {
+    public MessageAskMove(String nickname, boolean hasUsedTool, boolean hasMovedDie, int favorTokens) {
         super(nickname);
         this.hasUsedTool = hasUsedTool;
         this.hasMovedDie = hasMovedDie;
         windowPattern = null;
         draftPool = null;
+        this.favorTokens = favorTokens;
     }
 
     public DraftPool getDraftPool() {

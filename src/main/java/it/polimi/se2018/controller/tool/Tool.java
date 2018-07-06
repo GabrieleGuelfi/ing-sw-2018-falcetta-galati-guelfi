@@ -71,7 +71,7 @@ public abstract class Tool {
     boolean canUseTool(Player player) {
         if((this.used && player.getFavorTokens()<2) || (player.getFavorTokens()<1)) {
             virtualView.send(new MessageErrorMove(player.getNickname(), StringJSON.printStrings("errorTool","favorTokens")));
-            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie()));
+            virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), -1));
             return false;
         }
         return true;

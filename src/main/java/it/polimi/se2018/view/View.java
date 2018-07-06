@@ -228,7 +228,8 @@ public class View extends Observable implements VisitorView, ViewInterface {
             out.println(StringJSON.printStrings("askStrings","draftPool"));
             printDraftPool(draftPool);
         }
-        out.println(StringJSON.printStrings("askStrings", "favorTokens") + favorTokens);
+        if (favorTokens!=-1)
+            out.println(StringJSON.printStrings("askStrings", "favorTokens") + favorTokens);
 
         out.println(StringJSON.printStrings("askStrings","selectMove"));
         int i=1;
