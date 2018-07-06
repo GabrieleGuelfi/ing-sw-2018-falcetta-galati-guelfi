@@ -22,9 +22,14 @@ public enum RequestType {
         @Override
         public void performRequest(Player player, VirtualView virtualView, Match match) {
             List<String> names = new ArrayList<>();
-            for (Tool t : match.getTools())
+            List<String> descriptions = new ArrayList<>();
+            List<Boolean> used = new ArrayList<>();
+            for (Tool t : match.getTools()) {
                 names.add(t.getName());
-            virtualView.send(new MessageTool(player.getNickname(), names));
+                descriptions.add(t.getDescription());
+                used.add(t.isUsed());
+            }
+            virtualView.send(new MessageTool(player.getNickname(), names, descriptions, used));
         }
     },
     PRIVATE{

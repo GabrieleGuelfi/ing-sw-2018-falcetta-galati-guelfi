@@ -66,10 +66,14 @@ public class Match extends Observable {
         if(!publicObjDescriptions.isEmpty()) notifyObservers(new MessagePublicObj(publicObjDescriptions, publicObjPoints, id));
 
         List<String> toolsNames = new ArrayList<>();
+        List<String> toolDescriptions = new ArrayList<>();
+        List<Boolean> used = new ArrayList<>();
         for(Tool t: tools) {
             toolsNames.add(t.getName());
+            toolDescriptions.add(t.getDescription());
+            used.add(t.isUsed());
         }
-        if(!toolsNames.isEmpty()) notifyObservers(new MessageTool(toolsNames));
+        if(!toolsNames.isEmpty()) notifyObservers(new MessageTool(toolsNames, toolDescriptions, used));
 
     }
 
