@@ -211,59 +211,6 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     private int second;
     private ThreadGui th;
 
-    /*
-    @FXML
-    public void handleButtonWp(){
-        String string = textFieldWp.getText();
-        if(textWp.getText().equals("Set Timer")){
-            if(string == null){
-                textFieldWp.clear();
-                textWp.setText(textWp.getText() + "Invalid number");
-            }
-            else{
-                timer = Integer.parseInt(string);
-                if(timer > 20 && timer < 300){
-                    textWp.setText(StringJSON.printStrings("askCustom", "file"));
-                    textFieldWp.clear();
-                }
-                else{
-                    textFieldWp.clear();
-                    textWp.setText(textWp.getText() + "Invalid number");
-                    timer = 20;
-                }
-            }
-        }
-        else{
-            try {
-                out.println(string + " DIO" );
-                if(!string.equals(""))
-                {
-                    file = HandleJSON.readFile(string);
-                    if (file == null) {
-                        notifyObservers(new MessageCustomResponse(nicknamePlayer, false, null, timer));
-                    } else {
-                        notifyObservers(new MessageCustomResponse(nicknamePlayer, true, file, timer));
-                    }
-                }
-                else {
-                    notifyObservers(new MessageCustomResponse(nicknamePlayer, false, null, timer));
-                    out.println("DIOCANE");
-                    Stage stageWp = (Stage) this.btnWp.getScene().getWindow();
-                    stageWp.close();
-
-                }
-
-            }
-            catch(FileNotFoundException e ){
-                textFieldWp.clear();
-                textWp.setText(StringJSON.printStrings("askCustom", "fileNotFound"));
-            }
-
-
-        }
-    }
-
-*/
     private EventHandler<MouseEvent> handleDieEnterMouse = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
@@ -307,6 +254,9 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                     plus.setOnMouseClicked(plusOne);
                     minus.setOnMouseClicked(minusOne);
                 }
+                else if(eventHandlersDestination == null){
+                    notifyObservers(new MessageToolResponse(nicknamePlayer, draftPool.indexOf(die), null, null, null, false));
+                    }
                 else{
                     news.setText(null);
                     news.setText("Tell me where do you want to place it!");
@@ -422,7 +372,6 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
             for(ImageView im : groupDie) im.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlersDie);
             for(ImageView im : groupDestination) im.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlersDestination);
             eventHandlersDestination = null;
-            //eventHandlersDie = null;
             groupDestination.clear();
             groupDie.clear();
 
@@ -547,6 +496,8 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
     @FXML
     private Text errorText;
+
+    private ArrayList<ImageView> roundTrackArray;
 
     private boolean notifyController = false;
 
@@ -836,10 +787,10 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                 this.imageTool = new ImageView();
                 this.vBox = new VBox();
                 this.textFieldTool = new TextField();
-                this.roundTrack = new GridPane();
                 this.dieChoosen = new ArrayList<>();
                 this.targetOfDie = new ArrayList<>();
                 this.roundT = new HashMap<>();
+                roundTrackArray = new ArrayList<>();
 
 
                 //setting of Tool object
@@ -1235,9 +1186,9 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     @Override
     public void visit(MessageRoundTrack message) {
 
-        Platform.runLater(()->{
             roundT = message.getRoundTrack();
             roundTrack.getChildren().clear();
+            roundTrackArray.clear();
 
             for(Integer i  : roundT.keySet() ){
                 int j = 0;
@@ -1246,11 +1197,11 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                     ImageView imageView = new ImageView(image);
                     imageView.setFitHeight(25);
                     imageView.setFitWidth(25);
+                    roundTrackArray.add(imageView);
                     roundTrack.add(imageView, i, j );
                     j++;
                 }
             }
-        });
 
     }
 
@@ -1326,11 +1277,16 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
         }
         if(diceFromRoundtrack != 0){
-
+            for(ImageView i : roundTrackArray) groupDie.add(i);
         }
         for(ImageView im : groupDie) im.setOnMouseClicked(handleChooseDie);
         this.eventHandlersDie = handleChooseDie;
-        if(eventHandlersDestination == null) notifyObservers(new MessageToolResponse(nicknamePlayer, 0, null, null, null, false));
+        if(eventHandlersDestination == null && diceFromTot == 0) {
+            notifyObservers(new MessageToolResponse(nicknamePlayer, 0, null, null, null, false));
+        }
+        if(diceFromTot > 1){
+            for(ImageView im : groupDie) im.setOnMouseClicked(handleChooseDie);
+        }
     }
 
     @Override
@@ -1383,7 +1339,7 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
     @Override
     public void visit(MessageCustomWP message) {
-        notifyObservers(new MessageCustomResponse(nicknamePlayer, false, null, 120));
+        notifyObservers(new MessageCustomResponse(nicknamePlayer, false, null, 1));
        /*Platform.runLater(()->{
             try {
                 AnchorPane root = new AnchorPane();

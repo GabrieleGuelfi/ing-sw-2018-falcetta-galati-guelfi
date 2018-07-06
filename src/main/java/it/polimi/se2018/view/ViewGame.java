@@ -42,6 +42,7 @@ public class ViewGame extends Application {
             Scene scene = new Scene(root, 1000, 1000);
             stage.setTitle("SAGRADA");
             stage.setScene(scene);
+            stage.setOnCloseRequest(e -> System.exit(0));
             stage.setMaximized(true);
             stage.setResizable(true);
 
