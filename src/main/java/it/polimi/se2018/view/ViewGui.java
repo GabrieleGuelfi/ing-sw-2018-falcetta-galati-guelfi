@@ -1,6 +1,5 @@
 package it.polimi.se2018.view;
 
-import it.polimi.se2018.controller.RequestType;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.messageforcontroller.*;
 import it.polimi.se2018.events.messageforserver.MessageError;
@@ -15,12 +14,14 @@ import it.polimi.se2018.network.client.SagradaClient;
 import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
-import it.polimi.se2018.utils.StringJSON;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -33,19 +34,15 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.lang.System.out;
 
@@ -210,59 +207,7 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     private int second;
     private ThreadGui th;
 
-    /*
-    @FXML
-    public void handleButtonWp(){
-        String string = textFieldWp.getText();
-        if(textWp.getText().equals("Set Timer")){
-            if(string == null){
-                textFieldWp.clear();
-                textWp.setText(textWp.getText() + "Invalid number");
-            }
-            else{
-                timer = Integer.parseInt(string);
-                if(timer > 20 && timer < 300){
-                    textWp.setText(StringJSON.printStrings("askCustom", "file"));
-                    textFieldWp.clear();
-                }
-                else{
-                    textFieldWp.clear();
-                    textWp.setText(textWp.getText() + "Invalid number");
-                    timer = 20;
-                }
-            }
-        }
-        else{
-            try {
-                out.println(string + " DIO" );
-                if(!string.equals(""))
-                {
-                    file = HandleJSON.readFile(string);
-                    if (file == null) {
-                        notifyObservers(new MessageCustomResponse(nicknamePlayer, false, null, timer));
-                    } else {
-                        notifyObservers(new MessageCustomResponse(nicknamePlayer, true, file, timer));
-                    }
-                }
-                else {
-                    notifyObservers(new MessageCustomResponse(nicknamePlayer, false, null, timer));
-                    out.println("DIOCANE");
-                    Stage stageWp = (Stage) this.btnWp.getScene().getWindow();
-                    stageWp.close();
 
-                }
-
-            }
-            catch(FileNotFoundException e ){
-                textFieldWp.clear();
-                textWp.setText(StringJSON.printStrings("askCustom", "fileNotFound"));
-            }
-
-
-        }
-    }
-
-*/
     private EventHandler<MouseEvent> handleDieEnterMouse = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
@@ -1204,6 +1149,7 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                 }catch(InterruptedException e){
                     news.setText(null);
                     news.setText(lastBeautifulMessage);
+                    Thread.currentThread().interrupt();
                 }
         };
 
@@ -1369,39 +1315,62 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
     public void stopTimer(){buttonEndTurn.fire();}
 
+    private Map<String, Object> showPopupWindow() {
+        PopUpController popupController = new PopUpController();
+
+        Platform.runLater(()-> {FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/fileutils/Popup.fxml"));
+            // initializing the controller
+
+            loader.setController(popupController);
+            Parent layout;
+            try {
+                layout = loader.load();
+                Scene scene = new Scene(layout);
+                // this is the popup stage
+                Stage popupStage = new Stage();
+                // Giving the popup controller access to the popup stage (to allow the controller to close the stage)
+                popupController.setStage(popupStage);
+                popupStage.initOwner(buttonEndTurn.getScene().getWindow());
+                popupStage.initModality(Modality.WINDOW_MODAL);
+                popupStage.setScene(scene);
+                popupStage.showAndWait();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }});
+        Map<String, Object> stringObjectMap = new HashMap<>();
+        do {
+            stringObjectMap = popupController.getResult();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }while (stringObjectMap.isEmpty());
+        return stringObjectMap;
+    }
+
     @Override
     public void visit(MessageCustomWP message) {
-        notifyObservers(new MessageCustomResponse(nicknamePlayer, false, null, 120));
-       /*Platform.runLater(()->{
-            try {
-                AnchorPane root = new AnchorPane();
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fileutils/prova.fxml"));
-                Stage stage = new Stage();
-                Scene scene = new Scene(fxmlLoader.load(), 200, 290);
-                fxmlLoader.setController(viewGui);
+        Map<String, Object> resultMap;
+        resultMap = showPopupWindow();
 
-                stage.setScene(scene);
+        int timer1 = Integer.parseInt((String) resultMap.get("timer"));
 
-                stage.show();
-
-               /*
-
-                AnchorPane root = fxmlLoader.getRoot();
-                fxmlLoader.setRoot(root);
-                fxmlLoader.setController(viewGui);
-                fxmlLoader.load();
-                //Parent root = FXMLLoader.load(getClass().getResource("/fileutils/prova.fxml"));
-                Stage stage = new Stage();
-                Scene scene = new Scene(root, 200, 200);
-                stage.setScene(scene);
-                stage.show();
-                */
-           /* }
-            catch(IOException e){
-
+        while (timer1<20 || timer1>300)
+            resultMap = showPopupWindow();
+        try {
+            String file1 = HandleJSON.readFile((String)resultMap.get("file"));
+            if (file!=null) {
+                notifyObservers(new MessageCustomResponse(nicknamePlayer, false, file1, timer1));
+                return;
             }
+        } catch (FileNotFoundException e) {
+            notifyObservers(new MessageCustomResponse(nicknamePlayer, false, null, timer1));
+            return;
+        }
 
-        });*/
+        notifyObservers(new MessageCustomResponse(nicknamePlayer, false, null, timer1));
 
     }
 
