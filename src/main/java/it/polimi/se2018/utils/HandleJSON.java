@@ -192,12 +192,14 @@ public final class HandleJSON {
     }
 
     public static void addWP(String file) {
+        if (file==null)
+            return;
         JSONParser parser = new JSONParser();
         try {
             JSONArray custom = (JSONArray) parser.parse(file);
             for (int i=0; i<custom.size(); i++)
                 schemes.add(custom.get(i));
-            System.out.println(schemes.toJSONString());
+            out.println(schemes.toJSONString());
         } catch (ParseException e) {
             out.println("parseException in addWP");
         }
