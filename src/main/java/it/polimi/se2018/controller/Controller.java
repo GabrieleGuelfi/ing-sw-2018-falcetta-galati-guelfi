@@ -73,6 +73,7 @@ public class Controller implements VisitorController, Observer {
         //Tools
         for (int i=0; i<3; i++) {
             index = generator.nextInt(11);
+            index = 2;
             while (rand.contains(index))
                 index = generator.nextInt(11);
             rand.add(index);
