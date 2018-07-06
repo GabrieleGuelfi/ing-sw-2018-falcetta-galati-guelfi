@@ -11,13 +11,15 @@ public class MessageAskMove extends Message {
     private boolean hasMovedDie;
     private WindowPattern windowPattern;
     private DraftPool draftPool;
+    private int favorTokens;
 
-    public MessageAskMove(String nickname, boolean hasUsedTool, boolean hasMovedDie, WindowPattern windowPattern, DraftPool draftPool) {
+    public MessageAskMove(String nickname, boolean hasUsedTool, boolean hasMovedDie, WindowPattern windowPattern, DraftPool draftPool, int favorTokens) {
         super(nickname);
         this.hasUsedTool = hasUsedTool;
         this.hasMovedDie = hasMovedDie;
         this.windowPattern = windowPattern;
         this.draftPool = draftPool;
+        this.favorTokens = favorTokens;
     }
 
     public MessageAskMove(String nickname, boolean hasUsedTool, boolean hasMovedDie) {
@@ -42,6 +44,10 @@ public class MessageAskMove extends Message {
 
     public boolean isHasMovedDie() {
         return hasMovedDie;
+    }
+
+    public int getFavorTokens() {
+        return favorTokens;
     }
 
     @Override

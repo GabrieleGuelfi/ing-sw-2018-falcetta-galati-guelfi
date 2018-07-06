@@ -38,6 +38,7 @@
   "askStrings": {
     "windowPattern": "\nCurrently, this is your windows pattern:",
     "draftPool": "\nCurrently, this is the draftpool:",
+    "favorTokens": "\nYou have this amount of favor tokens: ",
     "selectMove": "\n\nPlease, select your move: ",
     "requestInformation": ") Request information",
     "moveDie": ") Move a die",

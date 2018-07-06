@@ -11,4 +11,5 @@ public interface ViewInterface extends Observer {
     String getHost();
     void addObserver(Observer observer);
     void notifyObserver(Message message);
+    void stopTimer();
 }

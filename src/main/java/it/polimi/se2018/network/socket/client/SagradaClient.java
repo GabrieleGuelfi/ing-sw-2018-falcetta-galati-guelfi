@@ -25,6 +25,7 @@ public class SagradaClient {
     private static ClientInterface remoteRef=null;
     private String nick;
 
+
     private static void connectThroughSocket(String nickname) {
         server = new NetworkHandler(HOST, PORT, client);
         client.addServer(server);
@@ -83,6 +84,11 @@ public class SagradaClient {
         view.addObserver(client);
         client.register(view);
 
+
+    }
+
+    public static void stopTurn(){
+        view.stopTimer();
     }
 
     public static void main(String[] args) {
