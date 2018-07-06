@@ -1,5 +1,6 @@
 package it.polimi.se2018.view;
 
+import it.polimi.se2018.controller.RequestType;
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.messageforcontroller.*;
 import it.polimi.se2018.events.messageforserver.MessageError;
@@ -31,10 +32,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -46,7 +44,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -145,6 +145,9 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     @FXML
     private ImageView image4;
 
+    @FXML
+    GridPane roundTrack = new GridPane();
+
 
 
     @FXML
@@ -157,8 +160,6 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     private GridPane gridpaneClient;
     @FXML
     private GridPane gridPaneGame;
-
-    private GridPane roundTrack;
 
     //Tool
     private Button ok;
@@ -201,6 +202,7 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     private ArrayList<GridPane> gridPanePlayer;
     private EventHandler<MouseEvent> eventHandlersDie;
     private EventHandler<MouseEvent> eventHandlersDestination;
+    private Map<Integer, List<Die>> roundT;
 
     private String nicknamePlayer = null;
     private int connection = 1;
@@ -211,15 +213,7 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     private int second;
     private ThreadGui th;
 
-    @FXML
-    private TextField textFieldWp;
-
-    @FXML
-    private Text textWp;
-
-    @FXML
-    private Button btnWp;
-
+    /*
     @FXML
     public void handleButtonWp(){
         String string = textFieldWp.getText();
@@ -271,7 +265,7 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
         }
     }
 
-
+*/
     private EventHandler<MouseEvent> handleDieEnterMouse = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
@@ -354,8 +348,11 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
         @Override
         public void handle(MouseEvent event) {
             ImageView imageView = (ImageView) event.getSource();
-            imageView.setFitHeight(imageView.getFitHeight()*4);
-            imageView.setFitWidth(imageView.getFitWidth()*4);
+            imageTool.setDisable(false);
+
+            imageTool.setImage(imageView.getImage());
+            imageTool.setFitHeight(imageView.getFitHeight()*3.7);
+            imageTool.setFitWidth(imageView.getFitWidth()*3.7);
         }
     };
 
@@ -363,8 +360,11 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
         @Override
         public void handle(MouseEvent event) {
             ImageView imageView = (ImageView) event.getSource();
-            imageView.setFitHeight(imageView.getFitHeight()*0.25);
-            imageView.setFitWidth(imageView.getFitWidth()*0.25);
+            imageTool.setImage(null);
+            imageTool.setDisable(true);
+            vBox.setLayoutY(vBox.getLayoutY() - 200);
+            imageTool.setFitHeight(imageTool.getFitHeight()/3.7);
+            imageTool.setFitWidth(imageTool.getFitWidth()/3.7);
         }
     };
 
@@ -404,6 +404,7 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
             diceDestinationTot = 0;
 
             notifyObserver(new MessageDoNothing(nicknamePlayer));
+
         }
     };
 
@@ -809,16 +810,15 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                 this.windowPattern = new ArrayList<>();
                 this.nickname = new ArrayList<>();
                 this.gridPanePlayer = new ArrayList<>();
-                this.roundTrack = new GridPane();
                 this.ok = new Button();
                 this.plus = new Button();
                 this.minus = new Button();
                 this.imageTool = new ImageView();
                 this.vBox = new VBox();
                 this.textFieldTool = new TextField();
-                this.roundTrack = new GridPane();
                 this.dieChoosen = new ArrayList<>();
                 this.targetOfDie = new ArrayList<>();
+                this.roundT = new HashMap<>();
 
 
                 //setting of Tool object
@@ -930,6 +930,8 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                     vBox.getChildren().add(minus);
                     vBox.getChildren().add(ok);
                     gridPaneGame.add(vBox, 5, 2);
+
+
 
                 });
                 this.nickname.add(nicknamePlayer);
@@ -1223,11 +1225,43 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
     @Override
     public void visit(MessageRoundTrack message) {
+        out.println("DIOCANE");
+        Platform.runLater(()->{
+            roundT = message.getRoundTrack();
+            roundTrack.getChildren().clear();
+
+            for(Integer i  : roundT.keySet() ){
+                int j = 0;
+                for(Die die : roundT.get(i)){
+                    Image image = new Image("/images/" + die.getColour().toString() + "/" + die.getValue() + ".jpg");
+                    ImageView imageView = new ImageView(image);
+                    imageView.setFitHeight(25);
+                    imageView.setFitWidth(25);
+                    roundTrack.add(imageView, i, j );
+                    j++;
+                }
+            }
+        });
 
     }
 
     @Override
     public void visit(MessageEndMatch message) {
+        Platform.runLater(() -> {
+            anchorPane.getChildren().clear();
+            Pane pane = new Pane();
+            VBox vBox1 = new VBox();
+            anchorPane.getChildren().add(pane);
+            anchorPane.getChildren().add(vBox1);
+
+            vBox1.getChildren().add(new Text("The WINNER IS:  " + message.getResults().keySet().toArray()[0]));
+
+            for(String s : message.getResults().keySet()){
+                vBox1.getChildren().add(new Text(s +"    "+ message.getResults().get(s)));
+            }
+
+        });
+
 
     }
 
