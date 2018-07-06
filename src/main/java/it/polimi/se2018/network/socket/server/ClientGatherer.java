@@ -26,7 +26,6 @@ public class ClientGatherer extends Observable implements Runnable{
         try {
             this.serverSocket = new ServerSocket(port);
         } catch (IOException e) {
-            e.printStackTrace();
             out.println("IOException in Client Gatherer\n");
             this.notifyObservers(new MessageErrorClientGathererClosed());
         }
@@ -59,7 +58,6 @@ public class ClientGatherer extends Observable implements Runnable{
             } catch (IOException e) {
 
                 //NOTIFY THAT THERE WAS A PROBLEM AND CLIENT GATHERER CLOSED
-                e.printStackTrace();
                 out.println("IOException in Client Gatherer\n");
                 this.notifyObservers(new MessageErrorClientGathererClosed());
             }

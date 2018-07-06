@@ -16,6 +16,7 @@ import it.polimi.se2018.model.WindowPattern;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
 
+import java.io.FileNotFoundException;
 import java.util.*;
 
 import it.polimi.se2018.utils.StringJSON;
@@ -57,6 +58,11 @@ public class View extends Observable implements VisitorView, ViewInterface {
         out.println(StringJSON.printStrings("introductionStrings", "askNickname"));
         this.nickname = scanner.nextLine();
         return this.nickname;
+    }
+
+    @Override
+    public String getHost() {
+        return null;
     }
 
     private void nicknameConfirmation(MessageNickname nicknameMessage) {
@@ -119,7 +125,9 @@ public class View extends Observable implements VisitorView, ViewInterface {
         }
     }
 
-    private void askWindowPattern(int firstCard, int secondCard) {
+    private void askWindowPattern(int firstCard, int secondCard, String file) {
+        if (file!=null)
+            HandleJSON.addWP(file);
 
         int choice;
         List<WindowPattern> windowPatterns = new ArrayList<>();
@@ -205,7 +213,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
         return false;
     }
 
-    private void askMove(boolean hasMovedDie, boolean hasUsedTool, WindowPattern windowPattern, DraftPool draftPool) {
+    private void askMove(boolean hasMovedDie, boolean hasUsedTool, WindowPattern windowPattern, DraftPool draftPool, int favorTokens) {
 
         boolean moveDieOk = true;
         boolean moveToolOk = true;
@@ -218,6 +226,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
             out.println(StringJSON.printStrings("askStrings","draftPool"));
             printDraftPool(draftPool);
         }
+        out.println(StringJSON.printStrings("askStrings", "favorTokens") + favorTokens);
 
         out.println(StringJSON.printStrings("askStrings","selectMove"));
         int i=1;
@@ -244,7 +253,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
         if (choice==2 && hasMovedDie && hasUsedTool) notifyObservers(new MessageDoNothing(this.nickname));
 
         if(!moveDieOk || !moveToolOk) {
-            askMove(hasMovedDie, hasUsedTool, windowPattern, draftPool);
+            askMove(hasMovedDie, hasUsedTool, windowPattern, draftPool, favorTokens);
         }
 
         isTimeFinished(choice);
@@ -526,6 +535,33 @@ public class View extends Observable implements VisitorView, ViewInterface {
         out.println("\n");
     }
 
+    private void askCustomWP() {
+        out.println(StringJSON.printStrings("askCustom", "timer"));
+        int timer = chooseBetween(20, 300);
+        out.println(StringJSON.printStrings("askCustom", "useCustom"));
+        int choice = chooseBetween(1, 2);
+        if (choice==1) {
+            out.println(StringJSON.printStrings("askCustom", "file"));
+            String file = scanner.nextLine();
+            String jsonFile;
+            try {
+                jsonFile = HandleJSON.readFile(file);
+            } catch (FileNotFoundException e) {
+                out.println(StringJSON.printStrings("askCustom", "fileNotFound"));
+                askCustomWP();
+                return;
+            }
+            if(jsonFile==null) {
+                out.println(StringJSON.printStrings("askCustom", "incorrectFile"));
+                notifyObservers(new MessageCustomResponse(this.nickname, false, null, timer));
+                return;
+            }
+            notifyObservers(new MessageCustomResponse(this.nickname, true, jsonFile, timer));
+        }
+        else
+            notifyObservers(new MessageCustomResponse(this.nickname, false, null, timer));
+    }
+
     private int chooseBetween(int min, int max) {
 
         int choice;
@@ -585,7 +621,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
 
     @Override
     public void visit(MessageChooseWP message) {
-        askWindowPattern(message.getFirstIndex(), message.getSecondIndex());
+        askWindowPattern(message.getFirstIndex(), message.getSecondIndex(), message.getFile());
     }
 
     @Override
@@ -640,12 +676,17 @@ public class View extends Observable implements VisitorView, ViewInterface {
 
     @Override
     public void visit(MessageAskMove message) {
-        askMove(message.isHasMovedDie(), message.isHasUsedTool(), message.getWindowPattern(), message.getDraftPool());
+        askMove(message.isHasMovedDie(), message.isHasUsedTool(), message.getWindowPattern(), message.getDraftPool(), message.getFavorTokens());
     }
 
     @Override
     public void visit(MessageForceMove message) {
         forceMove(message.getDie(), message.getWindowPattern(), message.isNewValue(), message.isPlacedDie(), message.isCanChoose());
+    }
+
+    @Override
+    public void visit(MessageCustomWP message) {
+        askCustomWP();
     }
 
     public void addObserver(Observer observer){

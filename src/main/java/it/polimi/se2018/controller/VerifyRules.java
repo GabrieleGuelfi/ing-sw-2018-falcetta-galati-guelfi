@@ -6,6 +6,9 @@ import it.polimi.se2018.model.WindowPattern;
 
 public final class VerifyRules {
 
+    /**
+     * hide the public constructor, no one can create an instance of this class
+     */
     private VerifyRules() {
         throw new IllegalStateException("utility class");
     }

@@ -38,6 +38,7 @@
   "askStrings": {
     "windowPattern": "\nCurrently, this is your windows pattern:",
     "draftPool": "\nCurrently, this is the draftpool:",
+    "favorTokens": "\nYou have this amount of favor tokens: ",
     "selectMove": "\n\nPlease, select your move: ",
     "requestInformation": ") Request information",
     "moveDie": ") Move a die",
@@ -95,6 +96,14 @@
     "allWP": "Window pattern of other players",
     "myWP": "My window pattern",
     "roundTrack": "Roundtrack"
+  },
+
+  "askCustom": {
+    "useCustom": "\nDo you want to add your custom Window Pattern?\n1) Yes\n2) No",
+    "file": "Place the file in the directory of the jar(for example Desktop)\nThen write the name of the file with extension(i.e. prova.json)",
+    "fileNotFound": "File not Found, you can try again",
+    "incorrectFile": "Your file is incorrect! Sorry we can't use it",
+    "timer": "Set the Timer for every turn: (min 20s, max 300s)"
   }
 
 }
