@@ -1,11 +1,14 @@
-it.polimi.se2018
 it.polimi.se2018.controller
 it.polimi.se2018.controller.tool
 it.polimi.se2018.events
+it.polimi.se2018.events.messageforcontroller
+it.polimi.se2018.events.messageforserver
+it.polimi.se2018.events.messageforview
+it.polimi.se2018.message
 it.polimi.se2018.model
 it.polimi.se2018.model.dicecollection
 it.polimi.se2018.model.publicobjective
-it.polimi.se2018.network.socket.client
-it.polimi.se2018.network.socket.server
+it.polimi.se2018.network.client
+it.polimi.se2018.network.server
 it.polimi.se2018.utils
 it.polimi.se2018.view
