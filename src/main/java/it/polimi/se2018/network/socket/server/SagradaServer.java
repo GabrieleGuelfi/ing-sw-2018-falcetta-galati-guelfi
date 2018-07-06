@@ -2,9 +2,8 @@ package it.polimi.se2018.network.socket.server;
 
 import it.polimi.se2018.controller.Controller;
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.messageforcontroller.MessageEndGame;
+import it.polimi.se2018.events.messageforcontroller.MessageClientDisconnected;
 import it.polimi.se2018.events.messageforserver.*;
-import it.polimi.se2018.events.messageforview.MessageEndMatch;
 import it.polimi.se2018.events.messageforview.MessageNickname;
 import it.polimi.se2018.network.socket.client.ClientInterface;
 import it.polimi.se2018.network.socket.client.ConnectionHandlerThread;
@@ -14,7 +13,6 @@ import static java.lang.System.*;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.rmi.Naming;
-import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -159,8 +157,9 @@ public class SagradaServer implements VisitorServer, Observer{
         this.clients.remove(couple);
         out.println(string  + " is removed.");
 
-        if(this.gameIsStarted && this.clients.size()==1) this.virtualView.notifyObservers(new MessageEndGame(this.clients.get(0).getNickname()));
+        if(this.gameIsStarted && this.clients.size()==1) this.virtualView.notifyObservers(new MessageClientDisconnected(this.clients.get(0).getNickname(), true));
         else {
+            this.virtualView.notifyObservers(new MessageClientDisconnected(null, false));
 
             //CONTROL TIMER AND CLIENT GATHERER
             if (this.clients.size() < this.maxClients && gameIsStarted) {
