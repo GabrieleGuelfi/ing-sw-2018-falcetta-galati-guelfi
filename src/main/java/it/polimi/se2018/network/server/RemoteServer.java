@@ -5,6 +5,9 @@ import it.polimi.se2018.events.messageforserver.MessageAddClientInterface;
 import it.polimi.se2018.network.client.ClientInterface;
 import it.polimi.se2018.utils.Observable;
 
+/**
+ * RMI server
+ */
 
 public class RemoteServer extends Observable implements ServerInterface {
 

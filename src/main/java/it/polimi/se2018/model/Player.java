@@ -109,8 +109,6 @@ public class Player {
     }
 
 
-    //MISS THE COPY OF OBJECTIVE
-
     /**
      * @return Copy of this Object
      */

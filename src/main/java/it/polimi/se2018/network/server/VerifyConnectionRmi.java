@@ -10,6 +10,10 @@ import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * This class will contact the RMI client with ping every two seconds
+ * That's necessary because using RMI it's impossible to check if a client is still connected otherwise.
+ */
 public class VerifyConnectionRmi extends Observable implements Runnable {
     private ClientInterface clientInterface;
     private boolean loop;

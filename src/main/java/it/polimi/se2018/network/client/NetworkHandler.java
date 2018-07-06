@@ -11,6 +11,12 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * NetworkHandler hides the socket layer to the client
+ * In fact it will manage sending of messages to server and will stay running
+ * to listen from ones from the server
+ * In the end, it will send them to ClientImplementation
+ */
 public class NetworkHandler extends Thread implements ServerInterface {
 
     private Socket socket;
