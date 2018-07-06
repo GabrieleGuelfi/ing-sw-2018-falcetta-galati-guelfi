@@ -14,6 +14,10 @@ import java.util.logging.Logger;
 
 import static java.lang.System.*;
 
+/**
+ * VirtualClient is used to mask the socket layer to the server; in fact it will send messages through
+ * sockets and will stay running in order to listen for messages from client
+ */
 public class VirtualClient extends Observable implements ClientInterface, Runnable{
 
     private Socket clientConnection;

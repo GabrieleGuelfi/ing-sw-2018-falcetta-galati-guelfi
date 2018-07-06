@@ -9,6 +9,12 @@ import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Main class for the functioning of the Client
+ * In RMI this is the class directly used from the server
+ * In Socket, NetworkHandler will contact this class after the socket parsing
+ */
+
 public class ClientImplementation extends Observable implements ClientInterface, Observer {
 
     private ServerInterface server;

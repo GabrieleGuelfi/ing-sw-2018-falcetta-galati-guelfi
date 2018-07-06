@@ -2,6 +2,9 @@ package it.polimi.se2018.network.server;
 
 import static java.lang.System.*;
 
+/**
+ * This class introduces the timer for lobby
+ */
 public class ServerTimer extends Thread{
 
     private SagradaServer sagradaServer;

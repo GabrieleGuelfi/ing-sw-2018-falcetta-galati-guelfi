@@ -3,7 +3,7 @@ package it.polimi.se2018.model;
 import java.io.Serializable;
 
 /**
- * is a Boc of a window pattern, with colour or value restriction
+ * is a Box of a window pattern, with colour or value restriction
  */
 public class Box implements Serializable {
 
@@ -30,7 +30,11 @@ public class Box implements Serializable {
         colourRestriction = Colour.WHITE;
     }
 
-    // Maybe this can be removed.
+    /**
+     * create a Box with both value restriction n and colour restriction
+     * @param n is the value restriction
+     * @param c is the colour restriction
+     */
     public Box(int n, Colour c){
         if(n<0 || n>6) throw new IllegalArgumentException("Invalid value restriction!");
         valueRestriction = n;

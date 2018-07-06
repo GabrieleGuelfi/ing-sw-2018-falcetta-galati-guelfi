@@ -44,7 +44,9 @@ public class Round {
      */
     public Player getPlayerTurn() { return playerTurn;}
 
-
+    /**
+     * Set the current playing player according to the rule A-B-C-C-B-A
+     */
     public void nextTurn(List<Player> players) {
         if (numTurn == players.size()*2) throw new IllegalStateException("No other turn for this round!");
         if (numTurn < players.size()) {

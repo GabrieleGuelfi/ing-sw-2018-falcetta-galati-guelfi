@@ -12,6 +12,9 @@ import java.util.logging.Logger;
 import it.polimi.se2018.events.messageforview.MessageNickname;
 import static java.lang.System.*;
 
+/**
+ * Check if a user can really access the game with the choosen nickname
+ */
 public class VerifyClientAccess extends Thread{
     private SagradaServer sagradaServer;
     private Socket clientConnection;

@@ -2,6 +2,12 @@ package it.polimi.se2018.controller;
 
 public class GameTimer extends Thread {
 
+
+    /**
+     * Implementation of game timer
+     * This thread will count down for the duration of time, and then call controller.handleEndtime()
+     * It can be stopped with stopTimer method.
+     */
     private Controller controller;
     private int time;
     private boolean loop;
