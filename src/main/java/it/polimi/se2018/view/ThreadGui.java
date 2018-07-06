@@ -1,6 +1,6 @@
 package it.polimi.se2018.view;
 
-import it.polimi.se2018.network.socket.client.SagradaClient;
+import it.polimi.se2018.network.client.SagradaClient;
 
 public class ThreadGui extends Thread{
 

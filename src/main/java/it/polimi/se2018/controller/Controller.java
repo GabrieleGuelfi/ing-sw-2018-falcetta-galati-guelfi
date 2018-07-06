@@ -18,6 +18,10 @@ import java.util.*;
 
 import static it.polimi.se2018.controller.VerifyRules.*;
 
+/**
+ * manage all logic of the game
+ * @author Gabriele Guelfi
+ */
 public class Controller implements VisitorController, Observer {
 
     private Match match;
@@ -288,10 +292,6 @@ public class Controller implements VisitorController, Observer {
         }
     }
 
-    /**
-     * set a Window Pattern for the players
-     * @param message contains parameters to set the Window Pattern
-     */
     @Override
     public void visit(MessageSetWP message) {
         Player player = null;
@@ -315,10 +315,6 @@ public class Controller implements VisitorController, Observer {
         }
     }
 
-    /**
-     * place a die after verifying all placement restrictions
-     * @param message contains positions of the die in the draftpool and in the window pattern
-     */
     @Override
     public void visit(MessageMoveDie message) {
 
@@ -382,10 +378,6 @@ public class Controller implements VisitorController, Observer {
 
     }
 
-    /**
-     * skip the turn for the player
-     * @param message contains nickname of the player that want to skip
-     */
     @Override
     public void visit(MessageDoNothing message) {
 
@@ -400,10 +392,6 @@ public class Controller implements VisitorController, Observer {
         nextTurn();
     }
 
-    /**
-     * answer to request of info of a player
-     * @param message contains the type of request
-     */
     @Override
     public void visit(MessageRequest message) {
         Player player = searchNick(message.getNickname());
@@ -416,23 +404,12 @@ public class Controller implements VisitorController, Observer {
         virtualView.send(new MessageAskMove(player.getNickname(), player.isUsedTool(), player.isPlacedDie(), -1));
     }
 
-    /**
-     * end a game if only one player remain in the match
-     * @param message contains the nickname of the winner
-     */
     @Override
     public void visit(MessageClientDisconnected message){
-        //IN THIS MESSAGE THERE IS THE NAME OF THE WINNER
-
         if(message.isMatchHasToFinish()) this.endMatch(searchNick(message.getNickname()));
         else handleEndTime();
-
     }
 
-    /**
-     * manage the usage of a tool
-     * @param message contains all parameter necessary to handle the usage of the tool
-     */
     @Override
     public void visit(MessageToolResponse message) {
 
@@ -477,19 +454,11 @@ public class Controller implements VisitorController, Observer {
         }
     }
 
-    /**
-     * verify if the player can use a tool
-     * @param message contains the number of tool player want to use
-     */
     @Override
     public void visit(MessageRequestUseOfTool message) {
         match.getTools().get(message.getNumberOfTool()).requestOrders(searchNick(message.getNickname()), match);
     }
 
-    /**
-     * manage the second move of a tool
-     * @param message contains the choice of the player
-     */
     @Override
     public void visit(MessageForcedMove message) {
         Player player = searchNick(message.getNickname());

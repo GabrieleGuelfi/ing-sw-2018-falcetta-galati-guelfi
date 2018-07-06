@@ -2,6 +2,7 @@ package it.polimi.se2018.controller;
 
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.events.messageforcontroller.*;
+import it.polimi.se2018.events.messageforview.MessageEndMatch;
 import it.polimi.se2018.model.Colour;
 import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.Match;
@@ -12,6 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +28,7 @@ public class TestController {
 
     private VirtualView virtualView;
     private Match match;
+    private Controller controller;
 
     @Before
     public void setUp() throws Exception {
@@ -33,7 +37,7 @@ public class TestController {
         for (int i = 0; i < 4; i++)
             player.add("player" + i);
 
-        Controller controller = new Controller(player, virtualView);
+        controller = new Controller(player, virtualView);
 
         Field field = null;
         try {
@@ -57,9 +61,36 @@ public class TestController {
     }
 
     @Test
-    public void visitEndGame() {
-        virtualView.notifyObservers(new MessageDoNothing("player1"));
-        assertEquals(0, match.getPlayers().get(1).getPoints());
+    public void testEndGameOnePlayer() {
+        testSetWp();
+        virtualView.notifyObservers(new MessageClientDisconnected("player2", true));
+        assertEquals(0, match.getPlayers().get(2).getPoints());
+    }
+
+    @Test
+    public void testEndGameMorePlayer() {
+        testSetWp();
+
+        Method method = null;
+        try {
+            method = controller.getClass().getDeclaredMethod("endMatch");
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        if (method != null) {
+            method.setAccessible(true);
+        }
+        else
+            return;
+        try {
+            method.invoke(controller);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        for (Player p : match.getPlayers()) {
+            assertEquals(0, p.getPoints());
+        }
+
     }
 
     @Test
@@ -159,10 +190,11 @@ public class TestController {
         Die die = new Die(Colour.MAGENTA);
         die.setValue(3);
         match.getRound().getDraftPool().getBag().add(die);
+        //isNearDie
         virtualView.notifyObservers(new MessageMoveDie("player0", 0, 2, 3));
         if (match.getPlayers().get(0).getWindowPattern().getBox(2, 3).getDie()!=null)
             fail();
-
+        //ValueRestriction
         virtualView.notifyObservers(new MessageMoveDie("player0", 0, 0, 1));
         if (match.getPlayers().get(0).getWindowPattern().getBox(0, 1).getDie()!=null)
             fail();
@@ -170,7 +202,12 @@ public class TestController {
         die = new Die(Colour.YELLOW);
         die.setValue(3);
         match.getRound().getDraftPool().getBag().add(die);
+        //ColourRestriction
         virtualView.notifyObservers(new MessageMoveDie("player0", 1, 1, 0));
+        if (match.getPlayers().get(0).getWindowPattern().getBox(1, 0).getDie()!=null)
+            fail();
+        //nDieDraftpool
+        virtualView.notifyObservers(new MessageMoveDie("player0", 5, 1, 0));
         if (match.getPlayers().get(0).getWindowPattern().getBox(1, 0).getDie()!=null)
             fail();
 
@@ -178,7 +215,7 @@ public class TestController {
         virtualView.notifyObservers(new MessageMoveDie("player0", 0, 0, 0));
         assertEquals(die, match.getPlayers().get(0).getWindowPattern().getBox(0, 0).getDie());
         assertEquals(false, match.getRound().getDraftPool().getBag().contains(die));
-
+        //isPlacedDie
         virtualView.notifyObservers(new MessageMoveDie("player0", 0, 2, 3));
         if (match.getPlayers().get(0).getWindowPattern().getBox(1, 1).getDie()!=null)
             fail();
@@ -194,6 +231,8 @@ public class TestController {
         virtualView.notifyObservers(new MessageMoveDie("player0", 0, 2, 3));
         if (match.getPlayers().get(0).getWindowPattern().getBox(2, 3).getDie()!=null)
             fail();
+        //boxFull
+        virtualView.notifyObservers(new MessageMoveDie("player0", 0, 0, 0));
 
         match.getRound().getPlayerTurn().setUsedTool(true);
         die = match.getRound().getDraftPool().getBag().get(0);
@@ -206,42 +245,36 @@ public class TestController {
     }
 
     @Test
+    public void testRequestType() {
+        testSetWp();
+        for (RequestType type:RequestType.values()) {
+            virtualView.notifyObservers(new MessageRequest("player0", type));
+            assertEquals("player0", match.getRound().getPlayerTurn().getNickname());
+            assertFalse(match.getPlayers().get(0).isPlacedDie());
+            assertFalse(match.getPlayers().get(0).isUsedTool());
+        }
+    }
+
+    @Test
     public void testTool1() {
         testSetWp();
         match.getTools().clear();
         match.getTools().add(Tool.factory(0));
         match.getTools().get(0).setVirtualView(virtualView);
-        Player player = match.getPlayers().get(0);
 
-        /*
-        Method method = null;
-        try {
-            method = player.getClass().getDeclaredMethod("setFavorTokens", int.class);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        if (method != null) {
-            method.setAccessible(true);
-        }
-        else
-            return;
-        try {
-            method.invoke(player, 3);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        System.out.println(player.getFavorTokens());
-        */
         Die die = match.getRound().getDraftPool().getBag().get(0).copy();
         int ft = match.getPlayers().get(0).getFavorTokens();
-        match.getTools().get(0).use(new MessageToolResponse("player0", 0, null, null, null, true), match, player);
+        virtualView.notifyObservers(new MessageRequestUseOfTool("player0", 0));
+        virtualView.notifyObservers(new MessageToolResponse("player0", 0, null, null, null, true));
 
-        if (die.getValue() == 6)
+        if (die.getValue() == 6) {
             assertEquals(6, match.getRound().getDraftPool().getBag().get(0).getValue());
-        else
+            assertEquals(ft, match.getPlayers().get(0).getFavorTokens());
+        }
+        else {
             assertEquals(die.getValue() + 1, match.getRound().getDraftPool().getBag().get(0).getValue());
-
-        assertEquals(ft - 1, player.getFavorTokens());
+            assertEquals(ft - 1, match.getPlayers().get(0).getFavorTokens());
+        }
 
     }
 

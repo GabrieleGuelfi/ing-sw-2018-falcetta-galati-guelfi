@@ -1,7 +1,7 @@
 package it.polimi.se2018.events;
 
 import it.polimi.se2018.controller.VisitorController;
-import it.polimi.se2018.network.socket.server.VisitorServer;
+import it.polimi.se2018.network.server.VisitorServer;
 import it.polimi.se2018.view.VisitorView;
 
 import java.io.Serializable;

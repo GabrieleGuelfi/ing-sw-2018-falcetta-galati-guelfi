@@ -1,11 +1,10 @@
-package it.polimi.se2018.network.socket.server;
+package it.polimi.se2018.network.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import it.polimi.se2018.events.messageforserver.MessageError;
 import it.polimi.se2018.events.messageforserver.MessageErrorClientGathererClosed;
 import it.polimi.se2018.utils.Observable;
 
