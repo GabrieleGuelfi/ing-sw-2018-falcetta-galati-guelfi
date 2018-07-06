@@ -1359,7 +1359,8 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                 popupStage.setScene(scene);
                 popupStage.showAndWait();
             } catch (IOException e) {
-                e.printStackTrace();
+                final Logger logger = Logger.getLogger(this.getClass().getName());
+                logger.log(Level.FINE, e.getMessage());
             }});
         Map<String, Object> stringObjectMap = new HashMap<>();
         do {
