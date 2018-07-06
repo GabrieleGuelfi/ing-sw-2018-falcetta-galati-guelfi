@@ -579,6 +579,7 @@ public class View extends Observable implements VisitorView, ViewInterface {
             inputThread = new InputThread();
             inputThread.start();
             choice = inputThread.getChoice();
+            if(choice==-1) return choice;
         }
         return choice;
 
