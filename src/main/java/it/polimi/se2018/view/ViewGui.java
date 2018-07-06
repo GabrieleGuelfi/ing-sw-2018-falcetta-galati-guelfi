@@ -1093,7 +1093,7 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
             for(ImageView i : this.draftPool){
                 if(i.getImage() == null) {
-                    i.setImage(new Image("/images/"+colour+"/"+value+".jpg"));
+                    i.setImage(new Image("/images/"+colour.toString()+"/"+value+".jpg"));
                     i.setFitWidth(50);
                     i.setFitHeight(50);
                     break;
@@ -1294,7 +1294,6 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     @Override
     public void visit(MessageAskMove message) {
         String text = "It's your turn! You can: ";
-        out.println("Message Ask Move");
 
         if(message.getWindowPattern() != null) this.visit( new MessageWPChanged(message.getNickname(), message.getWindowPattern()) );
         if(message.getDraftPool() != null) this.visit(new MessageDPChanged(message.getDraftPool()));
@@ -1379,10 +1378,21 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
         Map<String, Object> resultMap;
         resultMap = showPopupWindow();
 
-        int timer1 = Integer.parseInt((String) resultMap.get("timer"));
+        int timer1 = 0;
+        try {
+            timer1 = Integer.parseInt((String) resultMap.get("timer"));
+        }catch (NumberFormatException e) {
+            timer1 = 0;
+        }
 
-        while (timer1<20 || timer1>300)
+        while (timer1<20 || timer1>300) {
             resultMap = showPopupWindow();
+            try {
+                timer1 = Integer.parseInt((String) resultMap.get("timer"));
+            } catch (NumberFormatException e) {
+                timer1 = 0;
+            }
+        }
         try {
             String file1 = HandleJSON.readFile((String)resultMap.get("file"));
             if (file!=null) {

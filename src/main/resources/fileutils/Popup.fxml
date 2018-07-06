@@ -11,7 +11,7 @@
     <children>
         <HBox alignment="CENTER" style="-fx-background-color: #e1c1c1;">
             <children>
-                <Label text="POPUP WINDOW EXAMPLE" textFill="#752b2b">
+                <Label text="Set Timer and Custom WP" textFill="#752b2b">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -20,7 +20,7 @@
         </HBox>
         <HBox alignment="CENTER">
             <children>
-                <Label prefWidth="70.0" text="timer" />
+                <Label prefWidth="70.0" text="Set timer" />
                 <TextField fx:id="usernameTF" />
             </children>
         </HBox>
@@ -32,7 +32,7 @@
         </HBox>
         <HBox alignment="CENTER">
             <children>
-                <Button fx:id="connectBtn" mnemonicParsing="false" text="Connect" />
+                <Button fx:id="connectBtn" mnemonicParsing="false" text="Send" />
             </children>
         </HBox>
     </children>
