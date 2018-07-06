@@ -1,13 +1,9 @@
-package it.polimi.se2018.network.socket.server;
+package it.polimi.se2018.network.server;
 
 import it.polimi.se2018.events.Message;
 import it.polimi.se2018.events.messageforserver.MessageAddClientInterface;
-import it.polimi.se2018.network.socket.client.ClientInterface;
+import it.polimi.se2018.network.client.ClientInterface;
 import it.polimi.se2018.utils.Observable;
-
-import java.rmi.RemoteException;
-
-import static java.lang.System.*;
 
 
 public class RemoteServer extends Observable implements ServerInterface {

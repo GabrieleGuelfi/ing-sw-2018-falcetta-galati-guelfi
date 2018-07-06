@@ -1,10 +1,9 @@
-package it.polimi.se2018.network.socket.client;
+package it.polimi.se2018.network.client;
 
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.network.socket.server.ServerInterface;
+import it.polimi.se2018.network.server.ServerInterface;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
-import it.polimi.se2018.view.View;
 
 import java.rmi.RemoteException;
 import java.util.logging.Level;

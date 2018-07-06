@@ -1,6 +1,6 @@
-package it.polimi.se2018.network.socket.server;
+package it.polimi.se2018.network.server;
 
-import it.polimi.se2018.network.socket.client.ClientInterface;
+import it.polimi.se2018.network.client.ClientInterface;
 
 public class CoupleClientNickname {
     private ClientInterface virtualClient;

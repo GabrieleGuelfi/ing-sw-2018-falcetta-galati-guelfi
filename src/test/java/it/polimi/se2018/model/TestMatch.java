@@ -2,8 +2,8 @@ package it.polimi.se2018.model;
 
 import it.polimi.se2018.controller.tool.Tool;
 import it.polimi.se2018.model.dicecollection.Bag;
-import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.model.publicobjective.PublicObjective;
+import it.polimi.se2018.view.VirtualView;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -17,8 +17,10 @@ public class TestMatch {
     @Test
     public void testConstructorPositive() {
         Bag bag = new Bag();
+        bag.populateBag();
         ArrayList<Player> players = new ArrayList<>();
         ArrayList<PublicObjective> objectives = new ArrayList<>();
+        VirtualView view = new VirtualView(null);
 
         objectives.add(PublicObjective.factory(2));
         objectives.add(PublicObjective.factory(3));
@@ -29,14 +31,17 @@ public class TestMatch {
         players.add(player);
 
         try {
-            Match match = new Match(bag, players, objectives, tools, null);
+            Match match = new Match(bag, players, objectives, tools, view);
 
             assertEquals(1, match.getNumRound());
             assertEquals(bag, match.getBag());
-            assertEquals(players, match.getActivePlayers());
+            assertEquals(players, match.getPlayers());
             assertEquals(tools, match.getTools());
             assertEquals(objectives, match.getPublicObjectives());
-            assertEquals(new Round(match.getRound().getDraftPool(), player), match.getRound());
+            Round testRound = new Round(match.getRound().getDraftPool(), player);
+            assertEquals(testRound.getDraftPool(), match.getRound().getDraftPool());
+            assertEquals(testRound.getPlayerTurn(), match.getRound().getPlayerTurn());
+            assertEquals(testRound.getNumTurn(), match.getRound().getNumTurn());
             assertEquals(bag, match.getBag());
             assertEquals(player, match.getFirstPlayerRound());
 
@@ -47,7 +52,7 @@ public class TestMatch {
         }
 
         catch(NullPointerException e){
-
+            fail();
             }
     }
 
