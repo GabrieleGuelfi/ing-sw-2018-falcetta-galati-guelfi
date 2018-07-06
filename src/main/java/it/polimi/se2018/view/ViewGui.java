@@ -11,14 +11,18 @@ import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.WindowPattern;
 import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.network.socket.client.SagradaClient;
-import it.polimi.se2018.network.socket.server.HandleClientGatherer;
+import it.polimi.se2018.utils.HandleJSON;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
+import it.polimi.se2018.utils.StringJSON;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -34,10 +38,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
-import javax.xml.bind.annotation.XmlAnyAttribute;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.lang.System.out;
 
@@ -200,6 +211,66 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     private int second;
     private ThreadGui th;
 
+    @FXML
+    private TextField textFieldWp;
+
+    @FXML
+    private Text textWp;
+
+    @FXML
+    private Button btnWp;
+
+    @FXML
+    public void handleButtonWp(){
+        String string = textFieldWp.getText();
+        if(textWp.getText().equals("Set Timer")){
+            if(string == null){
+                textFieldWp.clear();
+                textWp.setText(textWp.getText() + "Invalid number");
+            }
+            else{
+                timer = Integer.parseInt(string);
+                if(timer > 20 && timer < 300){
+                    textWp.setText(StringJSON.printStrings("askCustom", "file"));
+                    textFieldWp.clear();
+                }
+                else{
+                    textFieldWp.clear();
+                    textWp.setText(textWp.getText() + "Invalid number");
+                    timer = 20;
+                }
+            }
+        }
+        else{
+            try {
+                out.println(string + " DIO" );
+                if(!string.equals(""))
+                {
+                    file = HandleJSON.readFile(string);
+                    if (file == null) {
+                        notifyObservers(new MessageCustomResponse(nicknamePlayer, false, null, timer));
+                    } else {
+                        notifyObservers(new MessageCustomResponse(nicknamePlayer, true, file, timer));
+                    }
+                }
+                else {
+                    notifyObservers(new MessageCustomResponse(nicknamePlayer, false, null, timer));
+                    out.println("DIOCANE");
+                    Stage stageWp = (Stage) this.btnWp.getScene().getWindow();
+                    stageWp.close();
+
+                }
+
+            }
+            catch(FileNotFoundException e ){
+                textFieldWp.clear();
+                textWp.setText(StringJSON.printStrings("askCustom", "fileNotFound"));
+            }
+
+
+        }
+    }
+
 
     private EventHandler<MouseEvent> handleDieEnterMouse = new EventHandler<MouseEvent>() {
         @Override
@@ -341,14 +412,16 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
         public void handle(MouseEvent event) {
 
             ImageView imageView = (ImageView) event.getSource();
-            notifyObservers(new MessageRequestUseOfTool(nicknamePlayer, tool.indexOf(imageView)));
+
             for(ImageView im : tool) im.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
             for(ImageView im : groupDie) im.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlersDie);
             for(ImageView im : groupDestination) im.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlersDestination);
             eventHandlersDestination = null;
-            eventHandlersDie = null;
+            //eventHandlersDie = null;
             groupDestination.clear();
             groupDie.clear();
+
+            notifyObservers(new MessageRequestUseOfTool(nicknamePlayer, tool.indexOf(imageView)));
         }
     };
 
@@ -464,6 +537,10 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
     private boolean notifyController = false;
 
+    private String file = null;
+    private int timer = 30;
+
+
     @FXML
     void handleKeyEnter(KeyEvent event){
          if(event.getCode() == KeyCode.ENTER){
@@ -540,7 +617,6 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                     this.setGui();
                 }
             }
-
         }
     }
 
@@ -1236,9 +1312,8 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                     groupDestination.add(windowPattern.get(0)[i][j]);
                 }
             }
-
-            for(ImageView imageView : groupDie) imageView.setDisable(false);
             for(ImageView imageView : groupDestination) imageView.setDisable(true);
+            for(ImageView imageView : groupDie) imageView.setDisable(false);
 
             eventHandlersDie = handleChooseDie;
             eventHandlersDestination = handleChooseBox;
@@ -1263,6 +1338,37 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
 
     @Override
     public void visit(MessageCustomWP message) {
+        notifyObservers(new MessageCustomResponse(nicknamePlayer, false, null, 120));
+       /*Platform.runLater(()->{
+            try {
+                AnchorPane root = new AnchorPane();
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fileutils/prova.fxml"));
+                Stage stage = new Stage();
+                Scene scene = new Scene(fxmlLoader.load(), 200, 290);
+                fxmlLoader.setController(viewGui);
+
+                stage.setScene(scene);
+
+                stage.show();
+
+               /*
+
+                AnchorPane root = fxmlLoader.getRoot();
+                fxmlLoader.setRoot(root);
+                fxmlLoader.setController(viewGui);
+                fxmlLoader.load();
+                //Parent root = FXMLLoader.load(getClass().getResource("/fileutils/prova.fxml"));
+                Stage stage = new Stage();
+                Scene scene = new Scene(root, 200, 200);
+                stage.setScene(scene);
+                stage.show();
+                */
+           /* }
+            catch(IOException e){
+
+            }
+
+        });*/
 
     }
 
