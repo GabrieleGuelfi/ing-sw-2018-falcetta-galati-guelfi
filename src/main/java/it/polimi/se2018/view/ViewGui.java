@@ -1,9 +1,7 @@
 package it.polimi.se2018.view;
 
 import it.polimi.se2018.events.Message;
-import it.polimi.se2018.events.messageforcontroller.MessageDoNothing;
-import it.polimi.se2018.events.messageforcontroller.MessageMoveDie;
-import it.polimi.se2018.events.messageforcontroller.MessageSetWP;
+import it.polimi.se2018.events.messageforcontroller.*;
 import it.polimi.se2018.events.messageforserver.MessageError;
 import it.polimi.se2018.events.messageforserver.MessagePing;
 import it.polimi.se2018.events.messageforview.*;
@@ -13,12 +11,14 @@ import it.polimi.se2018.model.Die;
 import it.polimi.se2018.model.WindowPattern;
 import it.polimi.se2018.model.dicecollection.DraftPool;
 import it.polimi.se2018.network.socket.client.SagradaClient;
+import it.polimi.se2018.network.socket.server.HandleClientGatherer;
 import it.polimi.se2018.utils.Observable;
 import it.polimi.se2018.utils.Observer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -29,11 +29,15 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.System.out;
 
@@ -51,6 +55,8 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     private ImageView publicObjective1;
     @FXML
     private ImageView publicObjective2;
+    @FXML
+    private ImageView publicObjective3;
     @FXML
     private ImageView tool2;
     @FXML
@@ -108,6 +114,14 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     private Text nicknamePlayer2;
     @FXML
     private Text nicknamePlayer3;
+    @FXML
+    private Text textRoundTrack;
+
+    @FXML
+    private HBox hBox1;
+    @FXML
+    private HBox hBox2;
+
 
 
 
@@ -130,7 +144,29 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     private GridPane gridpanePlayer1;
     @FXML
     private GridPane gridpaneClient;
+    @FXML
+    private GridPane gridPaneGame;
 
+    private GridPane roundTrack;
+
+    //Tool
+    private Button ok;
+    private Button plus;
+    private Button minus;
+
+    private VBox vBox;
+    private ImageView imageTool;
+    private ImageView imageTool2;
+    private TextField textFieldTool;
+
+    private int diceFromDp = 0;
+    private int diceFromWp = 0;
+    private int positionInWp = 0;
+    private boolean askPlusOrMinusOne = false;
+    private int diceFromRoundtrack = 0;
+    private boolean canReduceDiceFromWP;
+    private int diceFromTot = 0;
+    private int diceDestinationTot = 0;
     @FXML
     private Text news;
     private String lastBeautifulMessage = null;
@@ -142,12 +178,13 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     private ArrayList<ImageView> draftPool;
 
 
-    private ImageView dieChoosen;
-    private ImageView targetOfDie;
+    private ArrayList<ImageView> dieChoosen;
+    private ArrayList<ImageView> targetOfDie;
 
     private ArrayList<ImageView> groupDie;
     private ArrayList<ImageView> groupDestination;
     private ArrayList<ImageView> groupOtherImage;
+    private ArrayList<Node> groupToolObject;
     private ArrayList<ImageView> chooseWindowPattern;
     private ArrayList<ImageView> tool;
     private ArrayList<GridPane> gridPanePlayer;
@@ -187,18 +224,28 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     private EventHandler<MouseEvent> handleChooseDie = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
+            ImageView die = (ImageView) event.getSource();
+            die.setFitHeight(die.getFitHeight() + 20);
+            die.setFitWidth(die.getFitWidth() + 20);
+            dieChoosen.add(die);
+            diceFromTot--;
+            die.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+            groupDie.remove(die);
 
-            dieChoosen = (ImageView) event.getSource();
-            for(ImageView imageView : groupDestination) {
-                imageView.setOnMouseClicked(handleChooseBox);
-                imageView.setDisable(false);
+            if (diceFromTot <= 0) {
+
+                for (ImageView imageView : groupDie) imageView.setDisable(true);
+
+                for (ImageView imageView : groupDestination) {
+                    imageView.setOnMouseClicked(eventHandlersDestination);
+                    imageView.setDisable(false);
+                }
+
+
+                news.setText(null);
+                news.setText("Tell me where do you want to place it!");
+
             }
-
-            for(ImageView imageView : groupDie) imageView.setDisable(true);
-
-            news.setText(null);
-            news.setText("Tell me where do you want to place it!");
-
         }
     };
 
@@ -206,22 +253,28 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
         @Override
         public void handle(MouseEvent event) {
 
-            targetOfDie = (ImageView) event.getSource();
+            targetOfDie.add((ImageView) event.getSource());
 
             int row;
             int column;
-            for(row = 0; row < 4; row ++){
-                for(column = 0; column < 5 ; column++){
-                   if( windowPattern.get(0)[row][column] == targetOfDie) {
-                       notifyObservers(new MessageMoveDie(nicknamePlayer, draftPool.indexOf(dieChoosen), row, column ));
-                       break;
-                   }
+
+                for (row = 0; row < 4; row++) {
+                    for (column = 0; column < 5; column++) {
+                        if (windowPattern.get(0)[row][column] == targetOfDie.get(0)) {
+                            notifyObservers(new MessageMoveDie(nicknamePlayer, draftPool.indexOf(dieChoosen.get(0)), row, column));
+                            break;
+                        }
+                    }
                 }
-            }
+
             for(ImageView imageView : groupDestination){
                 imageView.setDisable(true);
             }
-            news.setText(null);
+
+            for(ImageView imageView : dieChoosen) {
+                    imageView.setFitWidth(imageView.getFitWidth() - 20);
+                    imageView.setFitHeight(imageView.getFitHeight() - 20);
+            }
             news.setText("You made your choise baby!");
         }
     };
@@ -230,8 +283,8 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
         @Override
         public void handle(MouseEvent event) {
             ImageView imageView = (ImageView) event.getSource();
-            imageView.setFitHeight(imageView.getFitHeight()*2);
-            imageView.setFitWidth(imageView.getFitWidth()*2);
+            imageView.setFitHeight(imageView.getFitHeight()*4);
+            imageView.setFitWidth(imageView.getFitWidth()*4);
         }
     };
 
@@ -239,8 +292,8 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
         @Override
         public void handle(MouseEvent event) {
             ImageView imageView = (ImageView) event.getSource();
-            imageView.setFitHeight(imageView.getFitHeight()*0.5);
-            imageView.setFitWidth(imageView.getFitWidth()*0.5);
+            imageView.setFitHeight(imageView.getFitHeight()*0.25);
+            imageView.setFitWidth(imageView.getFitWidth()*0.25);
         }
     };
 
@@ -262,9 +315,8 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                 }
             }
 
-            dieChoosen = null;
-            targetOfDie = null;
-
+            dieChoosen.clear();
+            targetOfDie.clear();
             groupDie.clear();
             groupDestination.clear();
 
@@ -272,7 +324,119 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
             news.setText(lastBeautifulMessage);
             out.println("buttonEndTurn");
 
+            diceFromDp = 0;
+            diceFromWp = 0;
+            positionInWp = 0;
+            askPlusOrMinusOne = false;
+            diceFromRoundtrack = 0;
+            canReduceDiceFromWP = false;
+            diceDestinationTot = 0;
+
             notifyObserver(new MessageDoNothing(nicknamePlayer));
+        }
+    };
+
+    private EventHandler<MouseEvent> handleChooseTool = new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+
+            ImageView imageView = (ImageView) event.getSource();
+            notifyObservers(new MessageRequestUseOfTool(nicknamePlayer, tool.indexOf(imageView)));
+            for(ImageView im : tool) im.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+            for(ImageView im : groupDie) im.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlersDie);
+            for(ImageView im : groupDestination) im.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlersDestination);
+            eventHandlersDestination = null;
+            eventHandlersDie = null;
+            groupDestination.clear();
+            groupDie.clear();
+        }
+    };
+
+    private EventHandler<MouseEvent> handleChooseBoxTool = new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+            out.println("EVENT HANDLER");
+            targetOfDie.add((ImageView) event.getSource());
+            groupDestination.remove((ImageView) event.getSource());
+
+            int diceDp = 0;
+            List<Integer[]> positionsWp = new ArrayList<>();
+            List<Integer[]> diceWp = new ArrayList<>();
+            List<Integer> diceRoundtrack = new ArrayList<>();
+
+            text.setText(targetOfDie.size() + "box chosen");
+            positionInWp--;
+
+            if(positionInWp <= 0){
+                text.setText("You made your choise.");
+                for(ImageView imageView : dieChoosen) {
+                    imageView.setFitWidth(imageView.getFitWidth() - 20);
+                    imageView.setFitHeight(imageView.getFitHeight() - 20);
+                }
+
+                for(int row = 0; row < 4; row++){
+                    for(int column = 0; column < 5 ; column++){
+                        for(ImageView imageView : targetOfDie){
+                            if(imageView.equals(windowPattern.get(0)[row][column])){
+                                Integer[] num = new Integer[2];
+                                num[0] = row;
+                                num[1] = column;
+                                positionsWp.add(num);
+                            }
+                        }
+                    }
+                }
+                for(ImageView imageView : dieChoosen){
+                    for(ImageView i : draftPool){
+                        if(i.equals(imageView)) diceDp = draftPool.indexOf(imageView);
+                    }
+
+                    for(int row = 0; row < 4 ; row ++){
+                        for(int column = 0; column < 5 ; column++){
+                            if(windowPattern.get(0)[row][column].equals(imageView)){
+                                Integer[] num = new Integer[2];
+                                num[0] = row;
+                                num[1] = column;
+                                diceWp.add(num);
+                            }
+                        }
+                    }
+
+                }
+
+                notifyObservers(new MessageToolResponse(nicknamePlayer, diceDp, diceWp, diceRoundtrack, positionsWp, false ));
+            }
+
+        }
+    };
+
+    private EventHandler<MouseEvent> handlePlus = new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+            out.println("MINUS");
+            targetOfDie.add((ImageView) event.getSource());
+            news.setText("Choose PLUS or MINUS");
+
+            for(ImageView imageView : groupDestination) imageView.setDisable(true);
+            for(ImageView imageView : groupDie) imageView.setDisable(true);
+
+            ok.setOnMouseClicked(e ->{
+                for(ImageView imageView : dieChoosen) {
+                    imageView.setFitWidth(imageView.getFitWidth() - 20);
+                    imageView.setFitHeight(imageView.getFitHeight() - 20);
+                }
+                notifyObservers(new MessageToolResponse(nicknamePlayer, draftPool.indexOf(dieChoosen.get(0)), null, null, null, askPlusOrMinusOne ));
+            });
+
+            plus.setOnMouseClicked(e ->{
+                askPlusOrMinusOne = true;
+                news.setText("PLUS");
+            });
+
+            minus.setOnMouseClicked(e ->{
+                askPlusOrMinusOne = false;
+                news.setText("MINUS");
+            });
         }
     };
 
@@ -534,6 +698,12 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                 textNickname.setStroke(Color.gray(0));
                 textNickname.setStrokeWidth(2);
 
+                this.textRoundTrack.setFont(Font.font("Segoe UI Black", 12));
+                textRoundTrack.setOpacity(1);
+                textRoundTrack.setFill(Color.gray(1));
+                textRoundTrack.setStroke(Color.gray(0));
+                textRoundTrack.setStrokeWidth(2);
+
                 this.text.setText("Waiting...");
                 this.errorText.setText(null);
                 this.radioBtnA.setVisible(false);
@@ -553,10 +723,41 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                 this.groupDestination = new ArrayList<>();
                 this.groupOtherImage = new ArrayList<>();
                 this.chooseWindowPattern = new ArrayList<>();
+                this.groupToolObject = new ArrayList<>();
                 this.tool = new ArrayList<>();
                 this.windowPattern = new ArrayList<>();
                 this.nickname = new ArrayList<>();
                 this.gridPanePlayer = new ArrayList<>();
+                this.roundTrack = new GridPane();
+                this.ok = new Button();
+                this.plus = new Button();
+                this.minus = new Button();
+                this.imageTool = new ImageView();
+                this.vBox = new VBox();
+                this.textFieldTool = new TextField();
+                this.roundTrack = new GridPane();
+                this.dieChoosen = new ArrayList<>();
+                this.targetOfDie = new ArrayList<>();
+
+
+                //setting of Tool object
+                ok.setText("Ok");
+                plus.setText("+");
+                minus.setText("-");
+                textFieldTool.setMaxWidth(50);
+                imageTool.setFitWidth(50);
+                imageTool.setFitHeight(50);
+                ok.setOpacity(0);
+                ok.setDisable(true);
+                plus.setDisable(true);
+                plus.setOpacity(0);
+                minus.setOpacity(0);
+                minus.setDisable(true);
+                textFieldTool.setOpacity(0);
+                textFieldTool.setDisable(true);
+                imageTool.setImage(null);
+                imageTool.setDisable(true);
+
 
                 this.draftPool.add(draftpool5);
                 this.draftPool.add(draftpool4);
@@ -577,6 +778,7 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                 groupOtherImage.add(privateObjective);
                 groupOtherImage.add(publicObjective1);
                 groupOtherImage.add(publicObjective2);
+                groupOtherImage.add(publicObjective3);
                 groupOtherImage.add(tool1);
                 groupOtherImage.add(tool2);
                 groupOtherImage.add(tool3);
@@ -641,6 +843,12 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
                     }
 
                     anchorPane.getChildren().remove(this.gridPane);
+                    vBox.getChildren().add(imageTool);
+                    vBox.getChildren().add(textFieldTool);
+                    vBox.getChildren().add(plus);
+                    vBox.getChildren().add(minus);
+                    vBox.getChildren().add(ok);
+                    gridPaneGame.add(vBox, 5, 2);
 
                 });
                 this.nickname.add(nicknamePlayer);
@@ -667,14 +875,46 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
         this.textPublicObjective.setText("Public Objective");
         this.textPrivateObjective.setText("Private Objective");
 
-        out.println("Private Obj: " + message.getDescription());
+        try {
+            privateObjective.setImage(new Image("/images/privateObjectiveImage/" + message.getShade() + ".jpg"));
+        }
+        catch(Exception e){
+            privateObjective.setImage(new Image("/images/other/ObjEmpty.jpg"));
+        }
 
     }
 
     @Override
     public void visit(MessagePublicObj message) {
-        out.println("Public Obj: " + message.getDescriptions().get(0));
+        Image image1 = null;
+        Image image2 = null;
+        Image image3 = null;
+        try{
+            image1 = new Image("/images/publicObjectiveImage/" + message.getId().get(0) + ".jpg");
+        }
+        catch(Exception e){
 
+            image1 = new Image("/images/other/ObjEmpty.jpg");
+        }
+        try{
+            image2 = new Image("/images/publicObjectiveImage/" + message.getId().get(1) + ".jpg");
+        }
+        catch(Exception e){
+
+            image2 = new Image("/images/other/ObjEmpty.jpg");
+        }
+        try{
+            image3 = new Image("/images/publicObjectiveImage/" + message.getId().get(2) + ".jpg");
+        }
+        catch(Exception e){
+
+            image3 = new Image("/images/other/ObjEmpty.jpg");
+        }
+
+
+        publicObjective1.setImage(image1);
+        publicObjective2.setImage(image2);
+        publicObjective3.setImage(image3);
     }
 
     @Override
@@ -810,8 +1050,8 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     @Override
     public void visit(MessageConfirmMove message) {
 
-        dieChoosen = null;
-        targetOfDie = null;
+        dieChoosen.clear();
+        targetOfDie.clear();
 
         for(ImageView imageView : groupDie) {
             imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlersDie);
@@ -828,6 +1068,14 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
         eventHandlersDestination = null;
         eventHandlersDie = null;
 
+        diceFromDp = 0;
+        diceFromWp = 0;
+        positionInWp = 0;
+        askPlusOrMinusOne = false;
+        diceFromRoundtrack = 0;
+        canReduceDiceFromWP = false;
+        diceDestinationTot = 0;
+
         news.setText(null);
         news.setText("OK!");
 
@@ -837,10 +1085,6 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     public void visit(MessageErrorMove message) {
 
         this.news.setText(message.getReason());
-
-
-        this.dieChoosen = null;
-        this.targetOfDie = null;
 
         for(ImageView imageView : groupDestination){
             imageView.removeEventHandler(MouseEvent.MOUSE_CLICKED, eventHandlersDestination);
@@ -852,11 +1096,21 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
             imageView.setDisable(false);
         }
 
+        dieChoosen.clear();
+        targetOfDie.clear();
         groupDestination.clear();
         groupDie.clear();
 
         eventHandlersDestination = null;
         eventHandlersDie = null;
+
+        diceFromDp = 0;
+        diceFromWp = 0;
+        positionInWp = 0;
+        askPlusOrMinusOne = false;
+        diceFromRoundtrack = 0;
+        canReduceDiceFromWP = false;
+        diceDestinationTot = 0;
 
         Runnable runnable = () -> {
                 try {
@@ -899,6 +1153,59 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     @Override
     public void visit(MessageToolOrder message) {
 
+        news.setText("TOOL");
+        diceFromDp = message.getDiceFromDp();
+        diceFromWp = message.getDiceFromWp();
+        positionInWp = message.getPositionInWp();
+        askPlusOrMinusOne = message.isAskPlusOrMinusOne();
+        diceFromRoundtrack = message.getDiceFromRoundtrack();
+        canReduceDiceFromWP = message.isCanReduceDiceFromWP();
+        diceFromTot = diceFromDp + diceFromRoundtrack + diceFromWp;
+        eventHandlersDestination = null;
+
+        if(diceFromDp != 0) {
+            groupDie.addAll(draftPool);
+        }
+        if(diceFromWp != 0) {
+            for(int row = 0 ; row < 4; row++){
+                for(int column = 0; column < 5; column++){
+                    groupDie.add(windowPattern.get(0)[row][column]);
+                    windowPattern.get(0)[row][column].setDisable(false);
+                }
+            }
+        }
+        if(positionInWp != 0) {
+            for(int row = 0 ; row < 4; row++){
+                for(int column = 0; column < 5; column++){
+                    groupDestination.add(windowPattern.get(0)[row][column]);
+                }
+            }
+            this.eventHandlersDestination = handleChooseBoxTool;
+        }
+
+        if(askPlusOrMinusOne){
+            imageTool.setOpacity(1);
+            imageTool.setDisable(false);
+            imageTool.setImage(null);
+
+            plus.setOpacity(1);
+            plus.setDisable(false);
+
+            minus.setOpacity(1);
+            minus.setDisable(false);
+
+            ok.setOpacity(1);
+            ok.setDisable(false);
+
+            eventHandlersDestination = handlePlus;
+
+        }
+        if(diceFromRoundtrack != 0){
+
+        }
+        for(ImageView im : groupDie) im.setOnMouseClicked(handleChooseDie);
+        this.eventHandlersDie = handleChooseDie;
+        if(eventHandlersDestination == null) notifyObservers(new MessageToolResponse(nicknamePlayer, 0, null, null, null, false));
     }
 
     @Override
@@ -933,10 +1240,12 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     }
         if(!message.isHasUsedTool()){
             text = text + "-Use Tool!";
+            for(ImageView imageView : tool) imageView.setOnMouseClicked(handleChooseTool);
         }
         this.news.setText(null);
         this.news.setText(text);
         this.lastBeautifulMessage = text;
+        diceFromTot = 1;
 
     }
 
@@ -944,6 +1253,7 @@ public class ViewGui extends Observable implements VisitorView, ViewInterface{
     public void visit(MessageForceMove message) {
 
     }
+
     public void stopTimer(){buttonEndTurn.fire();}
 
 }

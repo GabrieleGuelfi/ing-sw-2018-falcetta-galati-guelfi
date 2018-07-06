@@ -11,18 +11,10 @@
 
 <AnchorPane fx:id="anchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2018.view.ViewGui">
    <children>
-      <ImageView>
-         <image>
-            <Image url="@/images/other/Colorfull.jpg" />
-         </image>
-         <viewport>
-            <Rectangle2D />
-         </viewport>
-      </ImageView>
-      <GridPane prefHeight="1080.0" prefWidth="1920.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <GridPane fx:id="gridPaneGame" prefHeight="1080.0" prefWidth="1920.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="0.0" prefWidth="40.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="210.0" prefWidth="210.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="250.0" prefWidth="250.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="10.0" prefWidth="50.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="450.0" prefWidth="450.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
@@ -35,6 +27,17 @@
           <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="111.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
+            <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <children>
+                  <Text fx:id="textRoundTrack" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="RoundTrack">
+                     <VBox.margin>
+                        <Insets left="120.0" />
+                     </VBox.margin>
+                  </Text>
+                  <HBox fx:id="hbox1" prefHeight="50.0" prefWidth="250.0" />
+                  <HBox fx:id="hbox2" layoutX="10.0" layoutY="10.0" prefHeight="50.0" prefWidth="250.0" />
+               </children>
+            </VBox>
             <Pane prefHeight="200.0" prefWidth="70.0" />
             <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <children>
@@ -59,6 +62,7 @@
                   <Text fx:id="textPublicObjective" strokeType="OUTSIDE" strokeWidth="0.0" />
                   <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                      <children>
+                        <ImageView fx:id="publicObjective3" fitHeight="100.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" />
                         <ImageView fx:id="publicObjective1" fitHeight="100.0" fitWidth="72.0" />
                         <ImageView fx:id="publicObjective2" fitHeight="100.0" fitWidth="72.0" layoutX="10.0" layoutY="10.0" />
                      </children>

@@ -30,12 +30,14 @@ public class ViewGame extends Application {
         try {
 
             Parent root = FXMLLoader.load(getClass().getResource("/fileutils/sagradaMatch.fxml"));
+            root.setStyle("-fx-background-color: yellow");
 
             Scene scene = new Scene(root, 1000, 1000);
             stage.setTitle("SAGRADA");
             stage.setScene(scene);
             stage.setMaximized(true);
             stage.setResizable(true);
+
 
         }
         catch(IOException e){
